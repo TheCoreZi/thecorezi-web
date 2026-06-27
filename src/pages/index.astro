@@ -45,6 +45,8 @@ const upcoming = (zoids ?? []) as Zoid[];
 	.hero-logo {
 		filter: invert(var(--logo-invert, 1));
 		margin-bottom: 1.5rem;
+		max-width: 100%;
+		height: auto;
 	}
 
 	.hero p {
@@ -65,8 +67,39 @@ const upcoming = (zoids ?? []) as Zoid[];
 
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		grid-template-columns: repeat(3, 1fr);
 		gap: 1.5rem;
+	}
+
+	@media (max-width: 900px) {
+		.grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 550px) {
+		.grid {
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+
+		.hero {
+			padding: 3rem 1rem 2rem;
+		}
+
+		.hero-logo {
+			height: auto;
+			max-height: 120px;
+		}
+
+		.hero p {
+			font-size: 1rem;
+		}
+
+		.section-title {
+			font-size: 1.5rem;
+			margin-bottom: 1.25rem;
+		}
 	}
 
 	@keyframes card-fade-in {
