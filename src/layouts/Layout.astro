@@ -1,0 +1,151 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/images/thecorezi.png';
+import ThemeSelector from '../components/ThemeSelector.astro';
+
+interface Props {
+	description?: string;
+	image?: string;
+	title: string;
+}
+
+const defaultDescription = 'Zoids corre por nuestras venas. Noticias, lanzamientos y todo sobre Zoids.';
+const {
+	description = defaultDescription,
+	image = '/web-app-manifest-512x512.png',
+	title,
+} = Astro.props;
+const fullTitle = `${title} | The Core Zi`;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+---
+
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/favicon.ico" sizes="48x48" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#0b1a2e" />
+		<link rel="canonical" href={canonicalUrl} />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={new URL(image, Astro.site)} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta property="og:site_name" content="The Core Zi" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={fullTitle} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={new URL(image, Astro.site)} />
+
+		<title>{fullTitle}</title>
+	</head>
+	<body>
+		<nav class="navbar">
+			<ul class="navbar-links">
+				<li><a href="#">Inicio</a></li>
+			</ul>
+			<a href="#" class="navbar-brand">
+				<Image src={logo} alt="The Core Zi" height={48} />
+			</a>
+			<ul class="navbar-links">
+				<li><a href="#lanzamientos">Lanzamientos</a></li>
+			</ul>
+		</nav>
+		<main>
+			<slot />
+		</main>
+		<footer>
+			<ThemeSelector />
+			<p>&copy; {new Date().getFullYear()} The Core Zi</p>
+		</footer>
+	</body>
+</html>
+
+<style>
+	:global(:root) {
+		--color-bg: #0b1a2e;
+		--color-surface: #112240;
+		--color-primary: #1a6bb5;
+		--color-accent: #e8a020;
+		--color-highlight: #3d8c40;
+		--color-text: #e0e8f0;
+		--color-text-muted: #7a9bbf;
+	}
+
+	:global(*) {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+
+	:global(html) {
+		scroll-behavior: smooth;
+	}
+
+	:global(body) {
+		font-family: system-ui, -apple-system, sans-serif;
+		background-color: var(--color-bg);
+		color: var(--color-text);
+		min-height: 100vh;
+	}
+
+	.navbar {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1.5rem;
+		padding: 1.5rem 2rem;
+		background-color: transparent;
+	}
+
+	.navbar-brand {
+		margin: 0 2rem;
+		line-height: 0;
+	}
+
+	.navbar-brand img {
+		filter: invert(var(--logo-invert, 1));
+	}
+
+	.navbar-links {
+		display: flex;
+		list-style: none;
+		gap: 1.5rem;
+	}
+
+	.navbar-links a {
+		color: var(--color-text);
+		text-decoration: none;
+		text-transform: uppercase;
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0.05em;
+		transition: color 0.2s;
+	}
+
+	.navbar-links a:hover {
+		color: var(--color-accent);
+	}
+
+	main {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	footer {
+		text-align: center;
+		padding: 2rem;
+		color: var(--color-text-muted);
+		border-top: 1px solid var(--color-surface);
+		margin-top: 4rem;
+	}
+</style>

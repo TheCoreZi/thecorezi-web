@@ -1,0 +1,92 @@
+---
+import { Image } from 'astro:assets';
+import ZoidCard from '../components/ZoidCard.astro';
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabase';
+import type { Zoid } from '../types/zoid';
+import logo from '../assets/images/thecorezi.png';
+
+const { data: zoids } = await supabase
+	.from('Zoids Releases')
+	.select('*')
+	.order('launch_date', { ascending: true, nullsFirst: false });
+
+const upcoming = (zoids ?? []) as Zoid[];
+---
+
+<Layout title="Inicio">
+	<section class="hero">
+		<Image src={logo} alt="The Core Zi" class="hero-logo" height={200} />
+		<p>Zoids corre por nuestras venas. Bienvenido al núcleo.</p>
+	</section>
+
+	<section id="lanzamientos">
+		<h2 class="section-title">Próximos Lanzamientos</h2>
+		{upcoming.length === 0 ? (
+			<p class="empty">No hay lanzamientos registrados aún.</p>
+		) : (
+			<div class="grid">
+				{upcoming.map((zoid, i) => (
+					<div class="card-entrance" style={`animation-delay: ${i * 200}ms`}>
+						<ZoidCard zoid={zoid} />
+					</div>
+				))}
+			</div>
+		)}
+	</section>
+</Layout>
+
+<style>
+	.hero {
+		text-align: center;
+		padding: 6rem 1rem 4rem;
+	}
+
+	.hero-logo {
+		filter: invert(var(--logo-invert, 1));
+		margin-bottom: 1.5rem;
+	}
+
+	.hero p {
+		font-size: 1.25rem;
+		color: var(--color-text-muted);
+	}
+
+	.section-title {
+		font-size: 2rem;
+		color: var(--color-accent);
+		margin-bottom: 2rem;
+	}
+
+	.empty {
+		color: var(--color-text-muted);
+		font-size: 1.1rem;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 1.5rem;
+	}
+
+	@keyframes card-fade-in {
+		from {
+			opacity: 0;
+			transform: translateY(30px) scale(0.9);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+	}
+
+	.card-entrance {
+		opacity: 0;
+		animation: card-fade-in 1.2s ease-out forwards;
+		height: 100%;
+	}
+
+	.card-entrance > :global(details) {
+		height: 100%;
+	}
+</style>

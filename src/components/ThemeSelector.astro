@@ -1,0 +1,203 @@
+---
+import { Image } from 'astro:assets';
+import darkArmyLogo from '../assets/images/factions/dark_army.png';
+import guylosLogo from '../assets/images/factions/guylos.png';
+import helicLogo from '../assets/images/factions/helic.png';
+import neoZenebasLogo from '../assets/images/factions/neo_zenebas.png';
+import zenebasLogo from '../assets/images/factions/zenebas.png';
+
+const factions = [
+	{ id: 'helic', name: 'Helic Republic', logo: helicLogo },
+	{ id: 'zenebas', name: 'Zenebas Empire', logo: zenebasLogo },
+	{ id: 'guylos', name: 'Guylos Empire', logo: guylosLogo },
+	{ id: 'neo-zenebas', name: 'Neo Zenebas', logo: neoZenebasLogo },
+	{ id: 'dark-army', name: 'Dark Army', logo: darkArmyLogo },
+];
+---
+
+<div data-theme-selector>
+	<button data-theme-toggle aria-label="Cambiar tema">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="12" r="5"/>
+			<path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+		</svg>
+		Tema
+	</button>
+	<div data-theme-dropdown hidden>
+		{factions.map((faction) => (
+			<button data-theme-option data-theme={faction.id}>
+				<Image src={faction.logo} alt={faction.name} height={20} data-theme-logo />
+				{faction.name}
+			</button>
+		))}
+	</div>
+</div>
+
+<style>
+	[data-theme-selector] {
+		position: relative;
+		display: inline-block;
+		margin-bottom: 1rem;
+	}
+
+	[data-theme-toggle] {
+		background: none;
+		border: 1px solid var(--color-primary);
+		color: var(--color-text-muted);
+		cursor: pointer;
+		padding: 0.4rem 0.75rem;
+		border-radius: 6px;
+		font-size: 0.8rem;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		transition: border-color 0.2s, color 0.2s;
+	}
+
+	[data-theme-toggle]:hover {
+		border-color: var(--color-accent);
+		color: var(--color-text);
+	}
+
+	[data-theme-dropdown] {
+		position: absolute;
+		bottom: calc(100% + 0.5rem);
+		left: 50%;
+		transform: translateX(-50%);
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-primary);
+		border-radius: 8px;
+		padding: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		min-width: 200px;
+		z-index: 100;
+	}
+
+	[data-theme-dropdown][hidden] {
+		display: none;
+	}
+
+	[data-theme-option] {
+		background: none;
+		border: none;
+		color: var(--color-text);
+		cursor: pointer;
+		padding: 0.5rem 0.75rem;
+		border-radius: 6px;
+		font-size: 0.85rem;
+		text-align: left;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: background-color 0.15s;
+	}
+
+	[data-theme-option]:hover,
+	[data-theme-option].active {
+		background-color: var(--color-primary);
+	}
+
+	[data-theme-logo] {
+		width: 20px;
+		height: 20px;
+		object-fit: contain;
+		filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.3));
+	}
+</style>
+
+<script>
+	const themes: Record<string, Record<string, string>> = {
+		helic: {
+			'--color-bg': '#0b1a2e',
+			'--color-surface': '#112240',
+			'--color-primary': '#1a6bb5',
+			'--color-accent': '#e8a020',
+			'--color-highlight': '#3d8c40',
+			'--color-text': '#e0e8f0',
+			'--color-text-muted': '#7a9bbf',
+			'--logo-invert': '1',
+		},
+		zenebas: {
+			'--color-bg': '#0a0505',
+			'--color-surface': '#151010',
+			'--color-primary': '#6b1515',
+			'--color-accent': '#e03030',
+			'--color-highlight': '#ff5040',
+			'--color-text': '#f0e0e0',
+			'--color-text-muted': '#aa6060',
+			'--logo-invert': '1',
+		},
+		guylos: {
+			'--color-bg': '#1a0808',
+			'--color-surface': '#2a0e0e',
+			'--color-primary': '#601820',
+			'--color-accent': '#d03040',
+			'--color-highlight': '#ff5050',
+			'--color-text': '#f5d0d0',
+			'--color-text-muted': '#a05050',
+			'--logo-invert': '1',
+		},
+		'neo-zenebas': {
+			'--color-bg': '#f0f0f0',
+			'--color-surface': '#e0e0e0',
+			'--color-primary': '#c0c0c0',
+			'--color-accent': '#1a1a1a',
+			'--color-highlight': '#404040',
+			'--color-text': '#1a1a1a',
+			'--color-text-muted': '#606060',
+			'--logo-invert': '0',
+		},
+		'dark-army': {
+			'--color-bg': '#050505',
+			'--color-surface': '#0a0a0a',
+			'--color-primary': '#1a3a28',
+			'--color-accent': '#2d9b5e',
+			'--color-highlight': '#40c878',
+			'--color-text': '#c8e8d0',
+			'--color-text-muted': '#4a8a60',
+			'--logo-invert': '1',
+		},
+	};
+
+	function applyTheme(name: string) {
+		const theme = themes[name];
+		if (!theme) return;
+		const root = document.documentElement;
+		Object.entries(theme).forEach(([prop, value]) => {
+			root.style.setProperty(prop, value);
+		});
+		localStorage.setItem('theme', name);
+		document.querySelectorAll('[data-theme-option]').forEach((btn) => {
+			btn.classList.toggle('active', (btn as HTMLElement).dataset.theme === name);
+		});
+	}
+
+	const saved = localStorage.getItem('theme') || 'helic';
+	applyTheme(saved);
+
+	document.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement;
+
+		if (target.closest('[data-theme-toggle]')) {
+			const dropdown = document.querySelector('[data-theme-dropdown]');
+			dropdown?.toggleAttribute('hidden');
+			return;
+		}
+
+		const option = target.closest('[data-theme-option]') as HTMLElement | null;
+		if (option) {
+			applyTheme(option.dataset.theme!);
+			const dropdown = document.querySelector('[data-theme-dropdown]');
+			dropdown?.setAttribute('hidden', '');
+			return;
+		}
+
+		if (!target.closest('[data-theme-selector]')) {
+			const dropdown = document.querySelector('[data-theme-dropdown]');
+			dropdown?.setAttribute('hidden', '');
+		}
+	});
+
+</script>
