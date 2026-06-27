@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/images/thecorezi.png';
+import CurrencySelector from '../components/CurrencySelector.astro';
 import ThemeSelector from '../components/ThemeSelector.astro';
 
 interface Props {
@@ -63,7 +64,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 			<slot />
 		</main>
 		<footer>
-			<ThemeSelector />
+			<div class="footer-controls">
+				<CurrencySelector />
+				<ThemeSelector />
+			</div>
 			<p>&copy; {new Date().getFullYear()} The Core Zi</p>
 		</footer>
 	</body>
@@ -104,6 +108,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		gap: 1.5rem;
 		padding: 1.5rem 2rem;
 		background-color: transparent;
+		flex-wrap: wrap;
 	}
 
 	.navbar-brand {
@@ -147,5 +152,45 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		color: var(--color-text-muted);
 		border-top: 1px solid var(--color-surface);
 		margin-top: 4rem;
+	}
+
+	.footer-controls {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+	}
+
+	@media (max-width: 550px) {
+		.navbar {
+			flex-direction: column;
+			gap: 0.5rem;
+			padding: 1rem;
+		}
+
+		.navbar-brand {
+			margin: 0;
+			order: -1;
+		}
+
+		.navbar-brand :global(img) {
+			height: 32px;
+		}
+
+		.navbar-links {
+			gap: 1rem;
+		}
+
+		.navbar-links a {
+			font-size: 0.75rem;
+		}
+
+		main {
+			padding: 1rem;
+		}
+
+		footer {
+			margin-top: 2rem;
+			padding: 1.5rem 1rem;
+		}
 	}
 </style>

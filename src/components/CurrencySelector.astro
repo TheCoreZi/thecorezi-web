@@ -1,0 +1,164 @@
+---
+const currencies = [
+	{ code: 'original', label: 'Original' },
+	{ code: 'JPY', label: 'JPY ¥' },
+	{ code: 'MXN', label: 'MXN $' },
+	{ code: 'USD', label: 'USD $' },
+];
+---
+
+<div data-currency-selector>
+	<button data-currency-toggle aria-label="Cambiar moneda">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<line x1="12" y1="1" x2="12" y2="23" />
+			<path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+		</svg>
+	</button>
+	<div data-currency-dropdown hidden>
+		{currencies.map((c) => (
+			<button data-currency-option data-currency-code={c.code}>
+				{c.label}
+			</button>
+		))}
+	</div>
+</div>
+
+<style>
+	[data-currency-selector] {
+		position: relative;
+		display: inline-block;
+		margin-bottom: 1rem;
+	}
+
+	[data-currency-toggle] {
+		background: none;
+		border: 1px solid var(--color-primary);
+		color: var(--color-text-muted);
+		cursor: pointer;
+		padding: 0.4rem 0.75rem;
+		border-radius: 6px;
+		font-size: 0.8rem;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		transition: border-color 0.2s, color 0.2s;
+	}
+
+	[data-currency-toggle]:hover {
+		border-color: var(--color-accent);
+		color: var(--color-text);
+	}
+
+	[data-currency-dropdown] {
+		position: absolute;
+		bottom: calc(100% + 0.5rem);
+		left: 50%;
+		transform: translateX(-50%);
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-primary);
+		border-radius: 8px;
+		padding: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		min-width: 140px;
+		z-index: 100;
+	}
+
+	[data-currency-dropdown][hidden] {
+		display: none;
+	}
+
+	[data-currency-option] {
+		background: none;
+		border: none;
+		color: var(--color-text);
+		cursor: pointer;
+		padding: 0.5rem 0.75rem;
+		border-radius: 6px;
+		font-size: 0.85rem;
+		text-align: left;
+		transition: background-color 0.15s;
+	}
+
+	[data-currency-option]:hover,
+	[data-currency-option].active {
+		background-color: var(--color-primary);
+	}
+</style>
+
+<script>
+	type Rates = Record<string, number>;
+
+	let rates: Rates | null = null;
+	let currentCurrency = 'original';
+
+	async function fetchRates(): Promise<Rates | null> {
+		try {
+			const res = await fetch('https://open.er-api.com/v6/latest/USD');
+			const data = await res.json();
+			return data.result === 'success' ? data.rates : null;
+		} catch {
+			return null;
+		}
+	}
+
+	function convertPrice(amount: number, from: string, to: string): number {
+		if (!rates || to === 'original' || from === to) return amount;
+		const inUsd = amount / (rates[from] ?? 1);
+		return inUsd * (rates[to] ?? 1);
+	}
+
+	function formatPrice(amount: number, currency: string): string {
+		return amount.toLocaleString('en', { style: 'currency', currency, minimumFractionDigits: currency === 'JPY' ? 0 : 2 });
+	}
+
+	function updatePrices() {
+		document.querySelectorAll<HTMLElement>('[data-price]').forEach((el) => {
+			const originalPrice = parseFloat(el.dataset.price!);
+			const originalCurrency = el.dataset.currency!;
+			if (currentCurrency === 'original') {
+				el.textContent = formatPrice(originalPrice, originalCurrency);
+			} else {
+				const converted = convertPrice(originalPrice, originalCurrency, currentCurrency);
+				el.textContent = `≈ ${formatPrice(converted, currentCurrency)}`;
+			}
+		});
+	}
+
+	function setActiveCurrency(code: string) {
+		currentCurrency = code;
+		localStorage.setItem('currency', code);
+		document.querySelectorAll('[data-currency-option]').forEach((btn) => {
+			btn.classList.toggle('active', (btn as HTMLElement).dataset.currencyCode === code);
+		});
+		updatePrices();
+	}
+
+	(async () => {
+		rates = await fetchRates();
+		const saved = localStorage.getItem('currency') || 'original';
+		setActiveCurrency(saved);
+	})();
+
+	document.addEventListener('click', (e) => {
+		const target = e.target as HTMLElement;
+
+		if (target.closest('[data-currency-toggle]')) {
+			const dropdown = document.querySelector('[data-currency-dropdown]');
+			dropdown?.toggleAttribute('hidden');
+			return;
+		}
+
+		const option = target.closest('[data-currency-option]') as HTMLElement | null;
+		if (option) {
+			setActiveCurrency(option.dataset.currencyCode!);
+			document.querySelector('[data-currency-dropdown]')?.setAttribute('hidden', '');
+			return;
+		}
+
+		if (!target.closest('[data-currency-selector]')) {
+			document.querySelector('[data-currency-dropdown]')?.setAttribute('hidden', '');
+		}
+	});
+</script>
