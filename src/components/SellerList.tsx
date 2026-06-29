@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { Seller } from '../data/sellers';
+import type { Seller, SellerType } from '../data/sellers';
 import { fetchAllVoteCounts } from '../lib/sellerVotes';
 import SellerVoteButtons from './SellerVoteButtons';
+
+const SELLER_TYPE_TITLES: Record<SellerType, string> = {
+	community: 'Comunidad',
+	independent: 'Vendedor independiente',
+	store: 'Tienda',
+};
 
 interface Props {
 	sellers: Seller[];
 }
 
 export default function SellerList({ sellers }: Props) {
-	const [expanded, setExpanded] = useState<Set<string>>(new Set());
 	const [sorted, setSorted] = useState<Seller[]>(sellers);
 
 	useEffect(() => {
@@ -22,67 +27,30 @@ export default function SellerList({ sellers }: Props) {
 		});
 	}, []);
 
-	function toggleCard(id: string) {
-		setExpanded((prev) => {
-			const next = new Set(prev);
-			if (next.has(id)) {
-				next.delete(id);
-			} else {
-				next.add(id);
-			}
-			return next;
-		});
+	function openSeller(seller: Seller) {
+		window.dispatchEvent(new CustomEvent('seller:open', { detail: seller }));
 	}
 
 	return (
 		<>
-			{sorted.map((seller) => {
-				const isExpanded = expanded.has(seller.id);
-				return (
-					<div class={`seller-card${isExpanded ? ' expanded' : ''}`} key={seller.id}>
-						<div class="seller-summary" onClick={() => toggleCard(seller.id)}>
-							{seller.image && (
-								<img alt={seller.name} class="seller-image" height="60" src={seller.image} width="160" />
-							)}
-							<div class="seller-summary-text">
-								<div class="seller-header">
+			{sorted.map((seller) => (
+				<div class="seller-card" key={seller.id} onClick={() => openSeller(seller)}>
+					<div class="seller-summary">
+						{seller.image && (
+							<img alt={seller.name} class="seller-image" height="60" src={seller.image} width="160" />
+						)}
+						<div class="seller-summary-text">
+							<div class="seller-header">
+								<div class="seller-name-row">
 									<h4 class="seller-name">{seller.name}</h4>
-									<SellerVoteButtons sellerId={seller.id} />
+									<img alt={SELLER_TYPE_TITLES[seller.type]} class={`seller-type-icon seller-type-icon--${seller.type}`} height="18" src={`/images/sellers/type-${seller.type}.svg`} title={SELLER_TYPE_TITLES[seller.type]} width="18" />
 								</div>
-							</div>
-						</div>
-						<div class="seller-body">
-							<div class="seller-body-top">
-								<a class="seller-link" href={seller.link} rel="noopener noreferrer" target="_blank">
-									Visitar ↗
-								</a>
-								<div class="seller-vote-buttons-expanded">
-									<SellerVoteButtons sellerId={seller.id} />
-								</div>
-							</div>
-							<p class="seller-description">{seller.description}</p>
-							<div class="seller-details">
-								<div class="seller-pros">
-									<h5>Lo bueno</h5>
-									<ul>
-										{seller.pros.map((pro) => (
-											<li key={pro}>{pro}</li>
-										))}
-									</ul>
-								</div>
-								<div class="seller-cons">
-									<h5>Lo malo</h5>
-									<ul>
-										{seller.cons.map((con) => (
-											<li key={con}>{con}</li>
-										))}
-									</ul>
-								</div>
+								<SellerVoteButtons sellerId={seller.id} />
 							</div>
 						</div>
 					</div>
-				);
-			})}
+				</div>
+			))}
 		</>
 	);
 }

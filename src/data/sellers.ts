@@ -1,3 +1,5 @@
+export type SellerType = 'community' | 'independent' | 'store';
+
 export interface Seller {
 	cons: string[];
 	description: string;
@@ -6,6 +8,7 @@ export interface Seller {
 	link: string;
 	name: string;
 	pros: string[];
+	type: SellerType;
 }
 
 export interface CountryGroup {
@@ -14,6 +17,36 @@ export interface CountryGroup {
 }
 
 export const sellersByCountry: CountryGroup[] = [
+	{
+		country: '🌎',
+		sellers: [
+			{
+				cons: [
+					'Además del envío hay que pagar tarifa de importación',
+					'Solo disponible en japonés e inglés',
+					'El envío internacional se agota rápido si no es preventa, hay que estar cazando',
+					'No todos los productos tienen envío internacional',
+					'Hay que verificar que el vendedor sea Amazon o la tienda oficial para evitar sorpresas',
+					'Requiere tarjeta de crédito para el pago',
+				],
+				description:
+					'La fuente directa desde Japón. Si no quieres depender de revendedores ni intermediarios, Amazon Japón es tu mejor opción para conseguir los lanzamientos más recientes al precio original. Es la forma más cercana de comprar como si estuvieras en una tienda japonesa, pero desde tu sillón.',
+				id: 'amazon-japon',
+				image: '/images/sellers/amazon.png',
+				link: 'https://www.amazon.co.jp',
+				name: 'Amazon Japón',
+				type: 'store',
+				pros: [
+					'Catálogo extenso con casi todos los lanzamientos nuevos',
+					'Precios de retail japonés, sin sobreprecio de revendedor',
+					'Respaldo y garantía de Amazon',
+					'La mayoría de productos tienen envío internacional',
+					'Puedes usar tu cuenta de Amazon existente',
+					'Envían el mismo día del lanzamiento y llega muy rápido, casi siempre por DHL',
+				],
+			},
+		],
+	},
 	{
 		country: '🇲🇽',
 		sellers: [
@@ -29,6 +62,7 @@ export const sellersByCountry: CountryGroup[] = [
 				image: '/images/sellers/zoidianos.jpg',
 				link: 'https://www.facebook.com/groups/1194809623913908',
 				name: 'Zoidianos: Intercambio, Venta y Más',
+				type: 'community',
 				pros: [
 					'Comunidad enfocada 100% en Zoids',
 					'Administración activa contra estafas',
@@ -50,6 +84,7 @@ export const sellersByCountry: CountryGroup[] = [
 				image: '/images/sellers/la_isla.jpg',
 				link: 'https://www.facebook.com/laisladelcoleccionista',
 				name: 'La Isla del Coleccionista',
+				type: 'independent',
 				pros: [
 					'Gran variedad de figuras, especialmente Zoids armados',
 					'Precios bajos comparados con modelos nuevos',
@@ -73,6 +108,7 @@ export const sellersByCountry: CountryGroup[] = [
 				image: '/images/sellers/modelkits.jpg',
 				link: 'https://www.facebook.com/ZoidianosDeLasSombras/',
 				name: 'Zoid Model Kits',
+				type: 'independent',
 				pros: [
 					'Tiene muchas recomendaciones y ventas que lo respaldan',
 					'Transparente con los costos desde el primer mensaje',
@@ -94,39 +130,11 @@ export const sellersByCountry: CountryGroup[] = [
 				image: '/images/sellers/brian.jpg',
 				link: 'https://www.facebook.com/brian.nunezgamez',
 				name: 'Brian Nuñez',
+				type: 'independent',
 				pros: [
 					'Tiene muchas recomendaciones que lo respaldan',
 					'Tiene varios contactos para conseguir los Zoids que quieras.',
 					'Incluye suaves en tus pedidos'
-				],
-			},
-		],
-	},
-	{
-		country: '🇯🇵',
-		sellers: [
-			{
-				cons: [
-					'Además del envío hay que pagar tarifa de importación',
-					'Solo disponible en japonés e inglés',
-					'El envío internacional se agota rápido si no es preventa, hay que estar cazando',
-					'No todos los productos tienen envío internacional',
-					'Hay que verificar que el vendedor sea Amazon o la tienda oficial para evitar sorpresas',
-					'Requiere tarjeta de crédito para el pago',
-				],
-				description:
-					'La fuente directa desde Japón. Si no quieres depender de revendedores ni intermediarios, Amazon Japón es tu mejor opción para conseguir los lanzamientos más recientes al precio original. Es la forma más cercana de comprar como si estuvieras en una tienda japonesa, pero desde tu sillón.',
-				id: 'amazon-japon',
-				image: '/images/sellers/amazon.png',
-				link: 'https://www.amazon.co.jp',
-				name: 'Amazon Japón',
-				pros: [
-					'Catálogo extenso con casi todos los lanzamientos nuevos',
-					'Precios de retail japonés, sin sobreprecio de revendedor',
-					'Respaldo y garantía de Amazon',
-					'La mayoría de productos tienen envío internacional',
-					'Puedes usar tu cuenta de Amazon existente',
-					'Envían el mismo día del lanzamiento y llega muy rápido, casi siempre por DHL',
 				],
 			},
 		],

@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { sellersByCountry } from '../data/sellers';
 import SellerList from '../components/SellerList';
+import SellerVoteButtonsDynamic from '../components/SellerVoteButtonsDynamic';
 import ZoidCardList from '../components/ZoidCardList';
 import Layout from '../layouts/Layout.astro';
 import logo from '../assets/images/thecorezi.png';
@@ -10,46 +11,36 @@ import '../styles/zoid-card.css';
 ---
 
 <Layout title="Lanzamientos, Vendedores y Podcast de Zoids">
-	<section class="hero">
-		<Image src={logo} alt="The Core Zi" class="hero-logo" height={200} loading="eager" />
-		<p>Zoids corre por nuestras venas. Bienvenido al núcleo.</p>
-	</section>
+	<div id="main-view">
+		<section class="hero">
+			<Image src={logo} alt="The Core Zi" class="hero-logo" height={200} loading="eager" />
+			<p>Zoids corre por nuestras venas. Bienvenido al núcleo.</p>
+		</section>
 
-	<section id="lanzamientos" class="animate-from-right">
-		<h2 class="section-title">Próximos Lanzamientos</h2>
-		<ZoidCardList client:visible />
-	</section>
+		<section id="lanzamientos" class="animate-from-right">
+			<h2 class="section-title">Próximos Lanzamientos</h2>
+			<ZoidCardList client:visible />
+		</section>
 
-	<section id="donde-comprar" class="animate-from-left">
-		<h2 class="section-title">¿Dónde comprar?</h2>
-		<p class="section-description">Encontrar dónde comprar Zoids no es fácil. No es una franquicia que encuentres en cualquier estante, así que la mayoría de vendedores son independientes que se mueven en redes sociales y grupos. Armamos esta lista con vendedores y comunidades donde hemos comprado personalmente. No estamos afiliados a ninguno y, siendo honestos, la mayoría nos cae mal. Aun así, esperamos que esta lista les ayude a conseguir el Zoid que tanto buscan.</p>
-		<div class="country-flags">
-			{sellersByCountry.map((group, i) => (
-				<button class="country-flag" data-country-index={i}>
-					{group.country}
-				</button>
-			))}
-		</div>
-		{sellersByCountry.map((group, i) => (
-			<div class="country-group" data-country-group={i} hidden>
-				<SellerList client:visible sellers={group.sellers} />
-			</div>
-		))}
-	</section>
+		<section id="donde-comprar-cta" class="animate-from-left">
+			<h2 class="cta-headline">¿No sabes dónde comprar?</h2>
+			<p class="cta-subtitle">Sabemos lo difícil que es encontrar dónde comprar Zoids. No es algo que encuentres en cualquier estante. Por eso armamos una lista con vendedores y comunidades donde hemos comprado personalmente.</p>
+			<button id="open-sellers-btn" class="cta-btn" type="button">Ver directorio de vendedores</button>
+		</section>
 
-	<section id="podcast" class="animate-from-right">
-		<div class="podcast-wrapper">
-			<img src="/images/podcast/ep1.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--1" />
-			<img src="/images/podcast/ep2.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--2" />
-			<img src="/images/podcast/ep4.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--3" />
-			<img src="/images/podcast/ep5.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--4" />
-			<img src="/images/podcast/ep6.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--5" />
-			<div class="podcast-content">
-				<p class="podcast-tagline">El único podcast de Zoids más allá de la Vía Láctea</p>
-				<h2 class="section-title">El Anali-Zi-s</h2>
-				<p class="podcast-description">Somos nuevos haciendo podcasts, pero llevamos toda la vida en el mundo de los Zoids. Acompáñanos a revivir el universo episodio por episodio: analizamos el anime, debatimos teorías, nos reímos de las decisiones cuestionables de los guionistas y platicamos como lo que somos, fans que crecieron con estas bestias mecánicas.</p>
-				<p class="podcast-catchphrase">Porque si el lore no se explica solo, alguien tiene que hacerlo… o al menos burlarse un rato.</p>
-				<div class="podcast-links">
+		<section id="podcast" class="animate-from-right">
+			<div class="podcast-wrapper">
+				<img src="/images/podcast/ep1.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--1" />
+				<img src="/images/podcast/ep2.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--2" />
+				<img src="/images/podcast/ep4.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--3" />
+				<img src="/images/podcast/ep5.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--4" />
+				<img src="/images/podcast/ep6.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--5" />
+				<div class="podcast-content">
+					<p class="podcast-tagline">El único podcast de Zoids más allá de la Vía Láctea</p>
+					<h2 class="section-title">El Anali-Zi-s</h2>
+					<p class="podcast-description">Somos nuevos haciendo podcasts, pero llevamos toda la vida en el mundo de los Zoids. Acompáñanos a revivir el universo episodio por episodio: analizamos el anime, debatimos teorías, nos reímos de las decisiones cuestionables de los guionistas y platicamos como lo que somos, fans que crecieron con estas bestias mecánicas.</p>
+					<p class="podcast-catchphrase">Porque si el lore no se explica solo, alguien tiene que hacerlo… o al menos burlarse un rato.</p>
+					<div class="podcast-links">
 			<a href="https://open.spotify.com/show/033kHuneLO4Chrsaq53l1y" target="_blank" rel="noopener noreferrer" class="podcast-link podcast-link--spotify">
 				<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
 				Spotify
@@ -59,43 +50,244 @@ import '../styles/zoid-card.css';
 				YouTube
 				</a>
 				</div>
-			</div>
-		</div>
-	</section>
-
-	<section id="zoids-sleeper" class="animate-from-left">
-		<div class="sleeper-hero">
-			<div class="sleeper-bg" style="background-image: url('/images/zoids-sleeper.jpg')"></div>
-			<div class="sleeper-overlay">
-				<h2 class="sleeper-title">Zoids Sleeper</h2>
-				<p class="sleeper-tagline">Un juego idle/clicker ambientado en Planet Zi</p>
-				<p class="sleeper-description">Vive las guerras de Planet Zi desde una perspectiva nunca antes contada. Encuentra el origen de la tecnología Sleeper que cambió el curso de las batallas para siempre. Elige tu bando, arma tu ejército y descubre hasta dónde estás dispuesto a llegar por la victoria.</p>
-				<div class="sleeper-features">
-					<div class="sleeper-feature">
-						<span class="sleeper-feature-icon">⚔️</span>
-						<span>Sistema de batallas y duelos con Zoids</span>
-					</div>
-					<div class="sleeper-feature">
-						<span class="sleeper-feature-icon">📖</span>
-						<span>Redescubre tus historias favoritas desde una nueva perspectiva.</span>
-					</div>
-					<div class="sleeper-feature">
-						<span class="sleeper-feature-icon">🏰</span>
-						<span>Multiples facciones, elige tu bando y dale la victoria en la guerra.</span>
-					</div>
-					<div class="sleeper-feature">
-						<span class="sleeper-feature-icon">🦾</span>
-						<span>Colecciona y mejora más de 50 Zoids</span>
-					</div>
 				</div>
-				<a href="https://elawdk.com/ZoidsSleeper/" target="_blank" rel="noopener noreferrer" class="sleeper-cta">
-					Jugar ahora
-				</a>
+			</div>
+		</section>
+
+		<section id="zoids-sleeper" class="animate-from-left">
+			<div class="sleeper-hero">
+				<div class="sleeper-bg" style="background-image: url('/images/zoids-sleeper.jpg')"></div>
+				<div class="sleeper-overlay">
+					<h2 class="sleeper-title">Zoids Sleeper</h2>
+					<p class="sleeper-tagline">Un juego idle/clicker ambientado en Planet Zi</p>
+					<p class="sleeper-description">Vive las guerras de Planet Zi desde una perspectiva nunca antes contada. Encuentra el origen de la tecnología Sleeper que cambió el curso de las batallas para siempre. Elige tu bando, arma tu ejército y descubre hasta dónde estás dispuesto a llegar por la victoria.</p>
+					<div class="sleeper-features">
+						<div class="sleeper-feature">
+							<span class="sleeper-feature-icon">⚔️</span>
+							<span>Sistema de batallas y duelos con Zoids</span>
+						</div>
+						<div class="sleeper-feature">
+							<span class="sleeper-feature-icon">📖</span>
+							<span>Redescubre tus historias favoritas desde una nueva perspectiva.</span>
+						</div>
+						<div class="sleeper-feature">
+							<span class="sleeper-feature-icon">🏰</span>
+							<span>Multiples facciones, elige tu bando y dale la victoria en la guerra.</span>
+						</div>
+						<div class="sleeper-feature">
+							<span class="sleeper-feature-icon">🦾</span>
+							<span>Colecciona y mejora más de 50 Zoids</span>
+						</div>
+					</div>
+					<a href="https://elawdk.com/ZoidsSleeper/" target="_blank" rel="noopener noreferrer" class="sleeper-cta">
+						Jugar ahora
+					</a>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<div id="sellers-view" hidden>
+		<button class="sellers-back-btn" id="sellers-back-btn" type="button">← Volver</button>
+		<h2 class="section-title sellers-title">¿Dónde comprar?</h2>
+		<p class="section-description">Encontrar dónde comprar Zoids no es fácil. No es una franquicia que encuentres en cualquier estante, así que la mayoría de vendedores son independientes que se mueven en redes sociales y grupos. Armamos esta lista con vendedores y comunidades donde hemos comprado personalmente. No estamos afiliados a ninguno y, siendo honestos, la mayoría nos cae mal. Aun así, esperamos que esta lista les ayude a conseguir el Zoid que tanto buscan.</p>
+		<p class="section-disclaimer">The Core Zi no se hace responsable por ninguna transacción realizada con los vendedores listados. Esta lista es solo una referencia basada en nuestra experiencia personal. Cualquier compra es bajo tu propio riesgo.</p>
+		<div class="country-flags">
+			{sellersByCountry.map((group, i) => (
+				<button class={`country-flag${i === 0 ? ' active' : ''}`} data-country-index={i}>
+					{group.country}
+				</button>
+			))}
+		</div>
+		{sellersByCountry.map((group, i) => (
+			<div class="country-group" data-country-group={i} hidden={i !== 0}>
+				<SellerList client:visible sellers={group.sellers} />
+			</div>
+		))}
+	</div>
+
+	<div id="seller-detail-view" hidden>
+		<button class="sellers-back-btn" id="seller-detail-back-btn" type="button">← Volver a la lista</button>
+		<div class="seller-detail-header">
+			<img alt="" class="seller-detail-image" id="seller-detail-image" src="" />
+			<div class="seller-detail-info">
+				<div class="seller-detail-title-row">
+					<h3 class="seller-detail-name" id="seller-detail-name"></h3>
+					<img alt="" class="seller-type-icon" id="seller-detail-type-icon" height="20" src="" width="20" />
+				</div>
+				<div class="seller-detail-actions">
+					<a class="seller-link" id="seller-detail-link" href="" rel="noopener noreferrer" target="_blank">Visitar ↗</a>
+					<SellerVoteButtonsDynamic client:idle />
+				</div>
 			</div>
 		</div>
-	</section>
+		<p class="seller-detail-description" id="seller-detail-description"></p>
+		<div class="seller-details">
+			<div class="seller-pros">
+				<h5>Lo bueno</h5>
+				<ul id="seller-detail-pros"></ul>
+			</div>
+			<div class="seller-cons">
+				<h5>Lo malo</h5>
+				<ul id="seller-detail-cons"></ul>
+			</div>
+		</div>
+	</div>
 
 	<script>
+		const mainView = document.getElementById('main-view')!;
+		const sellersView = document.getElementById('sellers-view')!;
+		const sellerDetailView = document.getElementById('seller-detail-view')!;
+		const openBtn = document.getElementById('open-sellers-btn')!;
+		const backBtn = document.getElementById('sellers-back-btn')!;
+		const detailBackBtn = document.getElementById('seller-detail-back-btn')!;
+
+		const SELLER_TYPE_TITLES: Record<string, string> = {
+			community: 'Comunidad',
+			independent: 'Vendedor independiente',
+			store: 'Tienda',
+		};
+
+		const views = [mainView, sellersView, sellerDetailView];
+		let savedScrollY = 0;
+		let sellersScrollY = 0;
+
+		function getActiveView() {
+			return views.find((v) => !v.hidden) ?? null;
+		}
+
+		function transitionTo(target: HTMLElement, scrollY: number) {
+			const current = getActiveView();
+			if (current === target) return Promise.resolve();
+
+			return new Promise<void>((resolve) => {
+				if (current) {
+					current.classList.add('view-fade-out');
+					current.addEventListener('animationend', () => {
+						current.classList.remove('view-fade-out');
+						views.forEach((v) => { v.hidden = true; });
+						target.hidden = false;
+						target.classList.add('view-fade-in');
+						window.scrollTo(0, scrollY);
+						target.addEventListener('animationend', () => {
+							target.classList.remove('view-fade-in');
+							resolve();
+						}, { once: true });
+					}, { once: true });
+				} else {
+					views.forEach((v) => { v.hidden = true; });
+					target.hidden = false;
+					target.classList.add('view-fade-in');
+					window.scrollTo(0, scrollY);
+					target.addEventListener('animationend', () => {
+						target.classList.remove('view-fade-in');
+						resolve();
+					}, { once: true });
+				}
+			});
+		}
+
+		function showSellers(pushHistory = true) {
+			savedScrollY = window.scrollY;
+			transitionTo(sellersView, 0);
+			if (pushHistory) {
+				history.pushState({ view: 'sellers' }, '', '#donde-comprar');
+			}
+		}
+
+		function showMain(pushHistory = true, restoreScroll = true) {
+			transitionTo(mainView, restoreScroll ? savedScrollY : 0);
+			if (pushHistory) {
+				history.pushState({ view: 'main' }, '', window.location.pathname);
+			}
+		}
+
+		function populateSellerDetail(seller: any) {
+			const nameEl = document.getElementById('seller-detail-name')!;
+			const imageEl = document.getElementById('seller-detail-image') as HTMLImageElement;
+			const typeIconEl = document.getElementById('seller-detail-type-icon') as HTMLImageElement;
+			const linkEl = document.getElementById('seller-detail-link') as HTMLAnchorElement;
+			const descEl = document.getElementById('seller-detail-description')!;
+			const prosEl = document.getElementById('seller-detail-pros')!;
+			const consEl = document.getElementById('seller-detail-cons')!;
+
+			nameEl.textContent = seller.name;
+			descEl.textContent = seller.description;
+			linkEl.href = seller.link;
+
+			if (seller.image) {
+				imageEl.src = seller.image;
+				imageEl.alt = seller.name;
+				imageEl.hidden = false;
+			} else {
+				imageEl.hidden = true;
+			}
+
+			typeIconEl.src = `/images/sellers/type-${seller.type}.svg`;
+			typeIconEl.alt = SELLER_TYPE_TITLES[seller.type] ?? '';
+			typeIconEl.title = SELLER_TYPE_TITLES[seller.type] ?? '';
+			typeIconEl.className = `seller-type-icon seller-type-icon--${seller.type}`;
+
+			prosEl.innerHTML = seller.pros.map((p: string) => `<li>${p}</li>`).join('');
+			consEl.innerHTML = seller.cons.map((c: string) => `<li>${c}</li>`).join('');
+
+			window.dispatchEvent(new CustomEvent('seller:detail', { detail: seller }));
+		}
+
+		function showSellerDetail(seller: any, pushHistory = true) {
+			sellersScrollY = window.scrollY;
+			populateSellerDetail(seller);
+			transitionTo(sellerDetailView, 0);
+			if (pushHistory) {
+				history.pushState({ view: 'seller-detail', seller }, '', `#vendedor/${seller.id}`);
+			}
+		}
+
+		function backToSellers(pushHistory = true) {
+			transitionTo(sellersView, sellersScrollY);
+			if (pushHistory) {
+				history.pushState({ view: 'sellers' }, '', '#donde-comprar');
+			}
+		}
+
+		openBtn.addEventListener('click', () => showSellers());
+		backBtn.addEventListener('click', () => showMain());
+		detailBackBtn.addEventListener('click', () => backToSellers());
+
+		document.querySelectorAll('a[href="#donde-comprar"]').forEach((link) => {
+			link.addEventListener('click', (e) => {
+				e.preventDefault();
+				showSellers();
+			});
+		});
+
+		window.addEventListener('seller:open', ((e: CustomEvent) => {
+			showSellerDetail(e.detail);
+		}) as EventListener);
+
+		function switchInstant(target: HTMLElement, scrollY: number) {
+			views.forEach((v) => { v.hidden = true; });
+			target.hidden = false;
+			window.scrollTo(0, scrollY);
+		}
+
+		window.addEventListener('popstate', (e) => {
+			const state = e.state;
+			if (state?.view === 'seller-detail' && state.seller) {
+				populateSellerDetail(state.seller);
+				switchInstant(sellerDetailView, 0);
+			} else if (state?.view === 'sellers' || window.location.hash === '#donde-comprar') {
+				switchInstant(sellersView, sellersScrollY);
+			} else {
+				switchInstant(mainView, savedScrollY);
+			}
+		});
+
+		if (window.location.hash === '#donde-comprar') {
+			showSellers(false);
+		}
+
+		// Country flag toggle
 		document.querySelectorAll('.country-flag').forEach((btn) => {
 			btn.addEventListener('click', () => {
 				const index = (btn as HTMLElement).dataset.countryIndex;
@@ -112,6 +304,7 @@ import '../styles/zoid-card.css';
 			});
 		});
 
+		// Scroll animations
 		const observer = new IntersectionObserver(
 			(entries) => {
 				entries.forEach((entry) => {
@@ -163,23 +356,105 @@ import '../styles/zoid-card.css';
 		font-size: 1.1rem;
 	}
 
-	#donde-comprar {
+	/* CTA teaser */
+	#donde-comprar-cta {
 		margin-top: 4rem;
-		padding: 3rem 2rem;
+		padding: 4rem 2rem;
 		border-radius: 16px;
 		background: linear-gradient(135deg, var(--color-surface) 0%, transparent 70%);
 		border: 1px solid rgba(255, 255, 255, 0.05);
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
 
-	#donde-comprar .section-title {
+	.cta-headline {
+		font-family: 'Russo One', sans-serif;
+		font-size: 2.5rem;
+		color: var(--color-accent);
+		margin-bottom: 1rem;
+		position: relative;
+		padding-bottom: 1rem;
+	}
+
+	.cta-headline::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 80px;
+		height: 3px;
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
+	}
+
+	.cta-subtitle {
+		color: var(--color-text-muted);
+		font-size: 1.1rem;
+		line-height: 1.6;
+		max-width: 600px;
+		margin-bottom: 2rem;
+	}
+
+	.cta-btn {
+		display: inline-block;
+		background: var(--color-accent);
+		color: var(--color-bg);
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.1rem;
+		padding: 0.85rem 2.5rem;
+		border: none;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: transform 0.2s, box-shadow 0.2s;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+	}
+
+	.cta-btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 160, 32, 0.2);
+	}
+
+	/* Sellers view */
+	#sellers-view,
+	#seller-detail-view {
+		padding-top: 1rem;
+	}
+
+	.sellers-back-btn {
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		color: var(--color-text);
+		cursor: pointer;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.85rem;
+		padding: 0.5rem 1rem;
+		position: sticky;
+		top: 80px;
+		transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+		z-index: 10;
+	}
+
+	.sellers-back-btn:hover {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-bg);
+	}
+
+	.sellers-title {
 		text-align: center;
 		font-size: 2.25rem;
 		position: relative;
 		padding-bottom: 1rem;
 		margin-bottom: 1.5rem;
+		margin-top: 1rem;
 	}
 
-	#donde-comprar .section-title::after {
+	.sellers-title::after {
 		content: '';
 		position: absolute;
 		bottom: 0;
@@ -195,11 +470,24 @@ import '../styles/zoid-card.css';
 		color: var(--color-text-muted);
 		font-size: 1rem;
 		line-height: 1.6;
-		margin-bottom: 2.5rem;
+		margin-bottom: 1.5rem;
 		text-align: center;
 		max-width: 700px;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.section-disclaimer {
+		color: var(--color-text-muted);
+		font-size: 0.8rem;
+		font-style: italic;
+		line-height: 1.5;
+		margin-bottom: 2.5rem;
+		max-width: 700px;
+		margin-left: auto;
+		margin-right: auto;
+		opacity: 0.7;
+		text-align: center;
 	}
 
 	.country-flags {
@@ -236,6 +524,7 @@ import '../styles/zoid-card.css';
 		margin-bottom: 2rem;
 	}
 
+	/* Podcast */
 	#podcast {
 		margin-top: 4rem;
 		text-align: center;
@@ -349,6 +638,7 @@ import '../styles/zoid-card.css';
 		color: #ffffff;
 	}
 
+	/* Zoids Sleeper */
 	#zoids-sleeper {
 		margin-top: 4rem;
 	}
@@ -383,13 +673,13 @@ import '../styles/zoid-card.css';
 		font-size: 3rem;
 		color: #ffffff;
 		margin-bottom: 0.5rem;
-		color: var(--color-accent);    
+		color: var(--color-accent);
 		text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
 	}
 
 	.sleeper-tagline {
 		font-size: 1.15rem;
-		color: var(--color-text-highline);    
+		color: var(--color-text-highline);
 		margin-bottom: 1.5rem;
 		font-style: italic;
 		text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
@@ -398,7 +688,7 @@ import '../styles/zoid-card.css';
 
 	.sleeper-description {
 		font-size: 1.05rem;
-		color: var(--color-text-contrast);    
+		color: var(--color-text-contrast);
 		line-height: 1.7;
 		max-width: 650px;
 		margin-bottom: 2rem;
@@ -422,7 +712,7 @@ import '../styles/zoid-card.css';
 		gap: 0.75rem;
 		text-align: left;
 		font-size: 0.95rem;
-		color: var(--color-text-contrast); 
+		color: var(--color-text-contrast);
 	}
 
 	.sleeper-feature-icon {
@@ -448,6 +738,7 @@ import '../styles/zoid-card.css';
 		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 160, 32, 0.2);
 	}
 
+	/* Responsive */
 	@media (max-width: 550px) {
 		.hero {
 			padding: 3rem 1rem 2rem;
@@ -467,9 +758,26 @@ import '../styles/zoid-card.css';
 			margin-bottom: 1.25rem;
 		}
 
-		#donde-comprar {
+		#donde-comprar-cta {
 			margin-top: 2rem;
-			padding: 2rem 0.4rem;
+			padding: 2.5rem 1.5rem;
+		}
+
+		.cta-headline {
+			font-size: 1.75rem;
+		}
+
+		.cta-subtitle {
+			font-size: 0.95rem;
+		}
+
+		.cta-btn {
+			font-size: 1rem;
+			padding: 0.75rem 2rem;
+		}
+
+		.sellers-back-btn {
+			top: 50px;
 		}
 
 		#podcast {
@@ -507,6 +815,7 @@ import '../styles/zoid-card.css';
 		}
 	}
 
+	/* Animations */
 	.animate-from-left,
 	.animate-from-right {
 		opacity: 0;
@@ -525,5 +834,24 @@ import '../styles/zoid-card.css';
 	.animate-from-right.visible {
 		opacity: 1;
 		transform: translateX(0);
+	}
+
+	/* View transitions */
+	@keyframes view-fade-out {
+		from { opacity: 1; transform: translateY(0); }
+		to { opacity: 0; transform: translateY(-10px); }
+	}
+
+	@keyframes view-fade-in {
+		from { opacity: 0; transform: translateY(10px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	:global(.view-fade-out) {
+		animation: view-fade-out 0.2s ease forwards;
+	}
+
+	:global(.view-fade-in) {
+		animation: view-fade-in 0.25s ease forwards;
 	}
 </style>
