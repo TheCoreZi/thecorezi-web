@@ -51,13 +51,13 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 	<body>
 		<nav class="navbar" id="navbar">
 			<ul class="navbar-links">
-				<li><a href="/">Inicio</a></li>
+				<li><a href="#lanzamientos">Lanzamientos</a></li>
 			</ul>
 			<a href="/" class="navbar-brand" id="navbar-brand">
 				<Image src={logo} alt="The Core Zi" height={48} loading="eager" />
 			</a>
 			<ul class="navbar-links">
-				<li><a href="#lanzamientos">Lanzamientos</a></li>
+				<li><a href="#donde-comprar">¿Dónde comprar?</a></li>
 			</ul>
 		</nav>
 		<main>
@@ -113,6 +113,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		--color-primary: #1a6bb5;
 		--color-accent: #e8a020;
 		--color-highlight: #3d8c40;
+		--color-negative: #c0392b;
+		--color-positive: #27ae60;
 		--color-text: #e0e8f0;
 		--color-text-muted: #7a9bbf;
 	}
