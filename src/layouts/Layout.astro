@@ -10,7 +10,7 @@ interface Props {
 	title: string;
 }
 
-const defaultDescription = 'Zoids corre por nuestras venas. Noticias, lanzamientos y todo sobre Zoids.';
+const defaultDescription = 'Zoids corre por nuestras venas. Bienvenido al núcleo. Somos una comunidad de fans de Zoids en español — si creías que estabas solo, ya no más.';
 const {
 	description = defaultDescription,
 	image = '/og-image.png',
@@ -240,11 +240,13 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		}
 
 		.navbar-links {
+			align-items: center;
 			gap: 0.75rem;
 		}
 
 		.navbar-links a {
 			font-size: 0.6rem;
+			text-align: center;
 		}
 
 		main {

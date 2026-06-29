@@ -48,7 +48,6 @@ export default function SellerList({ sellers }: Props) {
 								<div class="seller-header">
 									<h4 class="seller-name">{seller.name}</h4>
 									<SellerVoteButtons sellerId={seller.id} />
-									<span class="seller-chevron">▸</span>
 								</div>
 							</div>
 						</div>
@@ -57,6 +56,9 @@ export default function SellerList({ sellers }: Props) {
 								<a class="seller-link" href={seller.link} rel="noopener noreferrer" target="_blank">
 									Visitar ↗
 								</a>
+								<div class="seller-vote-buttons-expanded">
+									<SellerVoteButtons sellerId={seller.id} />
+								</div>
 							</div>
 							<p class="seller-description">{seller.description}</p>
 							<div class="seller-details">
