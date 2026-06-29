@@ -1,37 +1,35 @@
 ---
 import { Image } from 'astro:assets';
-import ZoidCard from '../components/ZoidCard.astro';
+import ZoidCardList from '../components/ZoidCardList';
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabase';
 import type { Zoid } from '../types/zoid';
 import logo from '../assets/images/thecorezi.png';
+import '../styles/zoid-card.css';
+
+const INITIAL_COUNT = 3;
 
 const { data: zoids } = await supabase
 	.from('Zoids Releases')
 	.select('*')
-	.order('launch_date', { ascending: true, nullsFirst: false });
+	.order('launch_date', { ascending: true, nullsFirst: false })
+	.range(0, INITIAL_COUNT - 1);
 
-const upcoming = (zoids ?? []) as Zoid[];
+const initialZoids = (zoids ?? []) as Zoid[];
 ---
 
 <Layout title="Inicio">
 	<section class="hero">
-		<Image src={logo} alt="The Core Zi" class="hero-logo" height={200} />
+		<Image src={logo} alt="The Core Zi" class="hero-logo" height={200} loading="eager" />
 		<p>Zoids corre por nuestras venas. Bienvenido al núcleo.</p>
 	</section>
 
 	<section id="lanzamientos">
 		<h2 class="section-title">Próximos Lanzamientos</h2>
-		{upcoming.length === 0 ? (
+		{initialZoids.length === 0 ? (
 			<p class="empty">No hay lanzamientos registrados aún.</p>
 		) : (
-			<div class="grid">
-				{upcoming.map((zoid, i) => (
-					<div class="card-entrance" style={`animation-delay: ${i * 200}ms`}>
-						<ZoidCard zoid={zoid} />
-					</div>
-				))}
-			</div>
+			<ZoidCardList client:visible initialZoids={initialZoids} />
 		)}
 	</section>
 </Layout>
@@ -67,24 +65,7 @@ const upcoming = (zoids ?? []) as Zoid[];
 		font-size: 1.1rem;
 	}
 
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: 1.5rem;
-	}
-
-	@media (max-width: 900px) {
-		.grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-
 	@media (max-width: 550px) {
-		.grid {
-			grid-template-columns: 1fr;
-			gap: 1rem;
-		}
-
 		.hero {
 			padding: 3rem 1rem 2rem;
 		}
@@ -102,26 +83,5 @@ const upcoming = (zoids ?? []) as Zoid[];
 			font-size: 1.5rem;
 			margin-bottom: 1.25rem;
 		}
-	}
-
-	@keyframes card-fade-in {
-		from {
-			opacity: 0;
-			transform: translateY(30px) scale(0.9);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0) scale(1);
-		}
-	}
-
-	.card-entrance {
-		opacity: 0;
-		animation: card-fade-in 1.2s ease-out forwards;
-		height: 100%;
-	}
-
-	.card-entrance > :global(details) {
-		height: 100%;
 	}
 </style>

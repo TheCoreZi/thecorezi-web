@@ -3,6 +3,7 @@ export type DatePrecision = 'DAY' | 'MONTH' | 'YEAR';
 export interface Zoid {
 	brand: string;
 	description: string;
+	exclusive: string | null;
 	features: string[] | null;
 	id: string;
 	image_url: string | null;
