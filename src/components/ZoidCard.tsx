@@ -1,9 +1,27 @@
 import { useRef, useState } from 'preact/hooks';
 import diamondIcon from '../assets/icons/diamond.svg?raw';
+import brandKotobukiya from '../assets/images/brand/kotobukiya.png';
+import brandTomy from '../assets/images/brand/tomy.png';
+import lineAz from '../assets/images/lines/az.png';
+import lineHmm from '../assets/images/lines/hmm.png';
+import lineRmz from '../assets/images/lines/rmz.png';
+import lineSynergenex from '../assets/images/lines/synergenex.png';
 import type { DatePrecision, Zoid } from '../types/zoid';
 
 const DURATION = 350;
 const EASING = 'ease-in-out';
+
+const brandLogos: Record<string, string> = {
+	Kotobukiya: brandKotobukiya.src,
+	Tomy: brandTomy.src,
+};
+
+const lineLogos: Record<string, string> = {
+	AZ: lineAz.src,
+	HMM: lineHmm.src,
+	RMZ: lineRmz.src,
+	SYNERGENEX: lineSynergenex.src,
+};
 
 const exclusiveShopNames: Record<string, string> = {
 	KOTO_SHOP: 'Kotobukiya Shop',
@@ -111,7 +129,23 @@ export default function ZoidCard({ eager = false, zoid }: Props) {
 					)}
 					<span class="date-label">Lanzamiento: <strong>{formatDate(zoid.launch_date, zoid.launch_date_precission)}</strong></span>
 				</div>
-				<div class="zoid-info">
+				<div class="zoid-summary-logos">
+						{brandLogos[zoid.brand] && (
+							<img src={brandLogos[zoid.brand]} alt={zoid.brand} class="zoid-summary-logo" />
+						)}
+						{lineLogos[zoid.line] && (
+							<img src={lineLogos[zoid.line]} alt={zoid.line} class="zoid-summary-logo" />
+						)}
+					</div>
+					<div class="zoid-detail-logos">
+						{brandLogos[zoid.brand] && (
+							<img src={brandLogos[zoid.brand]} alt={zoid.brand} class="zoid-detail-logo" />
+						)}
+						{lineLogos[zoid.line] && (
+							<img src={lineLogos[zoid.line]} alt={zoid.line} class="zoid-detail-logo" />
+						)}
+					</div>
+					<div class="zoid-info">
 					{zoid.retail_price && zoid.currency && (
 						<p class="zoid-price" data-price={zoid.retail_price} data-currency={zoid.currency}>
 							{zoid.retail_price.toLocaleString('en', { style: 'currency', currency: zoid.currency })}

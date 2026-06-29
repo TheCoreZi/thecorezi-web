@@ -113,16 +113,42 @@
 
 .zoid-scrim,
 .zoid-dates,
-.zoid-info {
+.zoid-detail-logos,
+.zoid-info,
+.zoid-summary-logos {
 	transition: opacity 0.25s ease-in-out;
 }
 
 .zoid-card[open] .exclusive-icon,
 .zoid-card[open] .zoid-scrim,
 .zoid-card[open] .zoid-dates,
-.zoid-card[open] .zoid-info {
+.zoid-card[open] .zoid-info,
+.zoid-card[open] .zoid-summary-logos {
 	opacity: 0;
 	pointer-events: none;
+}
+
+.zoid-detail-logos {
+	position: absolute;
+	bottom: 0.75rem;
+	right: 1.25rem;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	z-index: 1;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.zoid-card[open] .zoid-detail-logos {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.zoid-detail-logo {
+	height: 2rem;
+	width: auto;
+	filter: drop-shadow(0 1px 3px var(--color-shadow));
 }
 
 .zoid-summary {
@@ -236,6 +262,22 @@
 	color: var(--color-accent);
 }
 
+.zoid-summary-logos {
+	position: absolute;
+	bottom: 0.75rem;
+	left: 1.25rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	z-index: 1;
+}
+
+.zoid-summary-logo {
+	height: 0.7rem;
+	width: auto;
+	filter: drop-shadow(0 1px 3px var(--color-shadow));
+}
+
 .zoid-info {
 	position: absolute;
 	bottom: 0;
@@ -321,6 +363,7 @@
 	font-size: 0.95rem;
 }
 
+
 .zoid-description {
 	color: var(--color-text);
 	font-size: 1.05rem;
@@ -371,6 +414,24 @@
 
 	.zoid-info {
 		padding: 0.5rem 0.75rem;
+	}
+
+	.zoid-summary-logos {
+		bottom: 0.5rem;
+		left: 0.75rem;
+	}
+
+	.zoid-summary-logo {
+		height: 0.55rem;
+	}
+
+	.zoid-detail-logos {
+		bottom: 0.5rem;
+		right: 0.75rem;
+	}
+
+	.zoid-detail-logo {
+		height: 1.5rem;
 	}
 
 	.zoid-name {
