@@ -45,6 +45,77 @@ export const sellersByCountry: CountryGroup[] = [
 					'Envían el mismo día del lanzamiento y llega muy rápido, casi siempre por DHL',
 				],
 			},
+			{
+				cons: [
+					'Solo se enfoca en artículos recientes, imposible encontrar artículos más antiguos',
+					'No considera impuestos de importación, así que te toca lidiar con la aduana por tu cuenta',
+					'Los artículos exclusivos de tiendas específicas no están disponibles',
+					'El stock rota rápido y rara vez reponen lo que se agota',
+				],
+				description:
+					'Una de las tiendas de hobby japonesas con más trayectoria en el mercado internacional. Desde model kits hasta figuras y accesorios, HLJ lleva años ayudando a coleccionistas de todo el mundo. Su plataforma es sencilla, su reputación sólida, y si buscas algún lanzamiento reciente, probablemente lo encuentras aquí.',
+				id: 'hlj',
+				image: '/images/sellers/hlj.png',
+				link: 'https://www.hlj.com',
+				name: 'Hobby Link Japan',
+				type: 'store',
+				pros: [
+					'Cobertura amplia de lanzamientos y novedades del mercado japonés',
+					'Sistema de almacén privado por 90 días para acumular pedidos y consolidar envíos',
+					'Múltiples servicios de paquetería internacional a elegir',
+					'Tarifas de envío relativamente bajas',
+				],
+			},
+			{
+				cons: [
+					'Cobran comisión por cada artículo (6% del precio).',
+					'Te hace creer que todo es barato pero entre comisiones y envío, la cuenta final se elevará mucho',
+					'Ni se te ocurra pedir protección extra de empaque, recibirás un paquete del tamaño de un refrigerador con un envío más caro que una casa',
+					'Los impuestos de importación no están incluidos, así que te toca lidiar con la aduana por tu cuenta',
+					'No permite negociar el precio con vendedores de segunda mano',
+				],
+				description:
+					'El intermediario más popular para comprar en tiendas japonesas que no envían al extranjero. Buyee compra por ti, recibe el producto en su almacén en Japón y te lo reenvía a donde estés. Si viste un Zoid que solo se vende en Japón, Buyee es tu solución. Y si tu billetera lo permite, incluso puedes participar en las subastas.',
+				id: 'buyee',
+				image: '/images/sellers/buyee.png',
+				link: 'https://buyee.jp',
+				name: 'Buyee',
+				type: 'store',
+				pros: [
+					'Puede comprar por ti Zoids exclusivos.',
+					'Perfecto para Zoids de segunda mano.',
+					'Acceso a más de 150 tiendas y plataformas japonesas que normalmente no envían fuera de Japón',
+					'Te mandan fotos del Zoid cuando llega a su almacén para que verifiques el estado antes del envío',
+					'Permite consolidar varios pedidos en un solo paquete para ahorrar en envío',
+				],
+			},
+		],
+	},
+	{
+		country: '🇯🇵',
+		sellers: [
+			{
+				cons: [
+					'No puedes comprar directamente desde fuera de Japón, necesitas un servicio de Proxy',
+					'Las subastas pueden volverse impredecibles y terminar pagando mucho más de lo que esperabas, además de que pueden provocar adicción.',
+					'Los vendedores son particulares, así que la calidad y honestidad varían mucho, tienes que revisar los detalles muy bien.',
+					'Todo está en japonés',
+					'Prepárate para una guerra de nervios en los últimos segundos',
+				],
+				description:
+					'Si te sobran billetes y buscas tu santo grial, este es el lugar para ti. El mercado de subastas más grande de Japón, una mina de oro para Zoids vintage y rarezas que no vas a encontrar en ningún otro lado. Aquí aparecen Zoids que fueron premios de concursos, lotes completos de coleccionistas que se retiran y modelos que ni sabías que existían. No es para quienes tienen un presupuesto ajustado, pero si quieres ese Zoid que tanto has buscado, prepara el traductor y la tarjeta de crédito que tarde o temprano aparecerá aquí.',
+				id: 'yahoo-auctions',
+				image: '/images/sellers/yahoo_auctions.png',
+				link: 'https://auctions.yahoo.co.jp/search/search?p=%E3%82%BE%E3%82%A4%E3%83%89',
+				name: 'Yahoo Auctions Japan',
+				type: 'store',
+				pros: [
+					'La mayor selección de Zoids vintage, descontinuados y rarezas que existe en internet',
+					'De cierta forma el precio lo decides tú',
+					'Aparecen piezas, refacciones y lotes completos que no vas a encontrar en ningún otro lado',
+					'Es la forma en la que los coleccionistas más curtidos consiguen sus piezas raras',
+				],
+			},
 		],
 	},
 	{
