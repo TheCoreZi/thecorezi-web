@@ -75,7 +75,33 @@ import '../styles/zoid-card.css';
 		))}
 	</section>
 
-	<section id="zoids-sleeper" class="animate-from-right">
+	<section id="podcast" class="animate-from-right">
+		<div class="podcast-wrapper">
+			<img src="/images/podcast/ep1.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--1" />
+			<img src="/images/podcast/ep2.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--2" />
+			<img src="/images/podcast/ep4.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--3" />
+			<img src="/images/podcast/ep5.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--4" />
+			<img src="/images/podcast/ep6.jpg" alt="" class="podcast-bg-thumb podcast-bg-thumb--5" />
+			<div class="podcast-content">
+				<p class="podcast-tagline">El único podcast de Zoids más allá de la Vía Láctea</p>
+				<h2 class="section-title">El Anali-Zi-s</h2>
+				<p class="podcast-description">Somos nuevos haciendo podcasts, pero llevamos toda la vida en el mundo de los Zoids. Acompáñanos a revivir el universo episodio por episodio: analizamos el anime, debatimos teorías, nos reímos de las decisiones cuestionables de los guionistas y platicamos como lo que somos, fans que crecieron con estas bestias mecánicas.</p>
+				<p class="podcast-catchphrase">Porque si el lore no se explica solo, alguien tiene que hacerlo… o al menos burlarse un rato.</p>
+				<div class="podcast-links">
+			<a href="https://open.spotify.com/show/033kHuneLO4Chrsaq53l1y" target="_blank" rel="noopener noreferrer" class="podcast-link podcast-link--spotify">
+				<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+				Spotify
+			</a>
+			<a href="https://www.youtube.com/playlist?list=PLHwvGswluD1rEIzmp8JI7QRRBMQPBmjV6" target="_blank" rel="noopener noreferrer" class="podcast-link podcast-link--youtube">
+				<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><path fill="var(--color-bg)" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+				YouTube
+				</a>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="zoids-sleeper" class="animate-from-left">
 		<div class="sleeper-hero">
 			<div class="sleeper-bg" style="background-image: url('/images/zoids-sleeper.jpg')"></div>
 			<div class="sleeper-overlay">
@@ -421,6 +447,119 @@ import '../styles/zoid-card.css';
 		line-height: 1.5;
 	}
 
+	#podcast {
+		margin-top: 4rem;
+		text-align: center;
+	}
+
+	.podcast-wrapper {
+		position: relative;
+		padding: 3rem 2rem;
+		overflow: hidden;
+	}
+
+	.podcast-content {
+		position: relative;
+		z-index: 1;
+	}
+
+	.podcast-bg-thumb {
+		position: absolute;
+		width: 200px;
+		border-radius: 8px;
+		opacity: 0.12;
+		pointer-events: none;
+	}
+
+	.podcast-bg-thumb--1 {
+		top: -15px;
+		left: -30px;
+		transform: rotate(-10deg);
+	}
+
+	.podcast-bg-thumb--2 {
+		top: 10px;
+		right: -20px;
+		transform: rotate(7deg);
+	}
+
+	.podcast-bg-thumb--3 {
+		bottom: -10px;
+		left: 5%;
+		transform: rotate(5deg);
+	}
+
+	.podcast-bg-thumb--4 {
+		bottom: -20px;
+		right: 10%;
+		transform: rotate(-6deg);
+	}
+
+	.podcast-bg-thumb--5 {
+		top: 40%;
+		left: 70%;
+		transform: translateY(-50%) rotate(3deg);
+	}
+
+	.podcast-tagline {
+		color: var(--color-accent);
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.15rem;
+		font-style: italic;
+		margin: 0 auto 0.75rem;
+		max-width: 650px;
+	}
+
+	.podcast-catchphrase {
+		color: var(--color-text-muted);
+		font-size: 0.85rem;
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		margin: 0 auto 1.5rem;
+	}
+
+	.podcast-description {
+		color: var(--color-text-muted);
+		font-size: 1rem;
+		line-height: 1.6;
+		max-width: 650px;
+		margin: 0 auto 1.5rem;
+	}
+
+	.podcast-links {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+
+	.podcast-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.65rem 1.5rem;
+		border-radius: 8px;
+		font-weight: 600;
+		font-size: 0.95rem;
+		text-decoration: none;
+		transition: transform 0.2s, box-shadow 0.2s;
+	}
+
+	.podcast-link:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	}
+
+	.podcast-link--spotify {
+		background: #1db954;
+		color: #ffffff;
+	}
+
+	.podcast-link--youtube {
+		background: #ff0000;
+		color: #ffffff;
+	}
+
 	#zoids-sleeper {
 		margin-top: 4rem;
 	}
@@ -550,6 +689,19 @@ import '../styles/zoid-card.css';
 
 		.seller-card {
 			padding: 1rem;
+		}
+
+		#podcast {
+			margin-top: 2rem;
+		}
+
+		.podcast-wrapper {
+			padding: 2rem 1.5rem;
+		}
+
+		.podcast-bg-thumb {
+			width: 120px;
+			opacity: 0.08;
 		}
 
 		#zoids-sleeper {
