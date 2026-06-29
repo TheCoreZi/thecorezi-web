@@ -1,6 +1,7 @@
 export interface Seller {
 	cons: string[];
 	description: string;
+	id: string;
 	image?: string;
 	link: string;
 	name: string;
@@ -24,6 +25,7 @@ export const sellersByCountry: CountryGroup[] = [
 				],
 				description:
 					'Grupo de Facebook dedicado exclusivamente al intercambio y venta de Zoids. Aquí la comunidad se lo toma en serio: nada de publicaciones fuera de tema. Su administrador principal se encarga de mantener el grupo libre de estafas y da seguimiento cuando hay problemas. Cuenta con subastas periódicas y una buena variedad de vendedores. No es el grupo más activo del momento, pero sigue vivo y enfocado en lo que importa.',
+				id: 'zoidianos',
 				image: '/images/sellers/zoidianos.jpg',
 				link: 'https://www.facebook.com/groups/1194809623913908',
 				name: 'Zoidianos: Intercambio, Venta y Más',
@@ -44,6 +46,7 @@ export const sellersByCountry: CountryGroup[] = [
 				],
 				description:
 					'¿Presupuesto ajustado pero ganas de Zoidear? La Isla se adentra en los rincones más oscuros del mercado para rescatar Zoids seminuevos, refacciones y esas piezas que dabas por perdidas. Todo a precios que no duelen. Al grito de ¡CASCAJITOO! La Isla siempre te tiene cubierto.',
+				id: 'la-isla',
 				image: '/images/sellers/la_isla.jpg',
 				link: 'https://www.facebook.com/laisladelcoleccionista',
 				name: 'La Isla del Coleccionista',
@@ -65,6 +68,7 @@ export const sellersByCountry: CountryGroup[] = [
 				],
 				description:
 					'¿Buscas un Zoid vintage o de los próximos lanzamientos y no sabes dónde comprarlo? Zoid Model Kits te lo consigue. Un verdadero apasionado que te guía desde las marcas hasta el lore de cada modelo. ¿Un mini? Lo tiene. ¿Una carta? Es tuya. ¿Una mona encuerable? Será discreto. Si existe, él te lo encuentra.',
+				id: 'zoid-model-kits',
 				image: '/images/sellers/modelkits.jpg',
 				link: 'https://www.facebook.com/ZoidianosDeLasSombras/',
 				name: 'Zoid Model Kits',
@@ -85,6 +89,7 @@ export const sellersByCountry: CountryGroup[] = [
 				],
 				description:
 					'Conocido como Model Kits del norte, este vendedor con varios años de rexperiencia puede ayudarte a conseguir el Zoid que quieras, solo no olvides pagar pues tiene contactos en Sinaloa',
+				id: 'brian-nunez',
 				image: '/images/sellers/brian.jpg',
 				link: 'https://www.facebook.com/brian.nunezgamez',
 				name: 'Brian Nuñez',
@@ -110,6 +115,7 @@ export const sellersByCountry: CountryGroup[] = [
 				],
 				description:
 					'La fuente directa desde Japón. Si no quieres depender de revendedores ni intermediarios, Amazon Japón es tu mejor opción para conseguir los lanzamientos más recientes al precio original. Es la forma más cercana de comprar como si estuvieras en una tienda japonesa, pero desde tu sillón.',
+				id: 'amazon-japon',
 				image: '/images/sellers/amazon.png',
 				link: 'https://www.amazon.co.jp',
 				name: 'Amazon Japón',
