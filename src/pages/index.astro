@@ -13,12 +13,12 @@ import '../styles/zoid-card.css';
 		<p>Zoids corre por nuestras venas. Bienvenido al núcleo.</p>
 	</section>
 
-	<section id="lanzamientos">
+	<section id="lanzamientos" class="animate-from-right">
 		<h2 class="section-title">Próximos Lanzamientos</h2>
 		<ZoidCardList client:visible />
 	</section>
 
-	<section id="donde-comprar">
+	<section id="donde-comprar" class="animate-from-left">
 		<h2 class="section-title">¿Dónde comprar?</h2>
 		<p class="section-description">Encontrar dónde comprar Zoids no es fácil. No es una franquicia que encuentres en cualquier estante, así que la mayoría de vendedores son independientes que se mueven en redes sociales y grupos. Armamos esta lista con vendedores y comunidades donde hemos comprado personalmente. No estamos afiliados a ninguno y, siendo honestos, la mayoría nos cae mal. Aun así, esperamos que esta lista les ayude a conseguir el Zoid que tanto buscan.</p>
 		<div class="country-flags">
@@ -31,39 +31,80 @@ import '../styles/zoid-card.css';
 		{sellersByCountry.map((group, i) => (
 			<div class="country-group" data-country-group={i} hidden>
 				{group.sellers.map((seller) => (
-					<div class="seller-card">
-						{seller.image && (
-							<img src={seller.image} alt={seller.name} class="seller-image" width="160" />
-						)}
-						<div class="seller-header">
-							<h4 class="seller-name">{seller.name}</h4>
-							<a href={seller.link} target="_blank" rel="noopener noreferrer" class="seller-link">
-								Visitar ↗
-							</a>
-						</div>
-						<p class="seller-description">{seller.description}</p>
-						<div class="seller-details">
-							<div class="seller-pros">
-								<h5>Lo bueno</h5>
-								<ul>
-									{seller.pros.map((pro) => (
-										<li>{pro}</li>
-									))}
-								</ul>
+					<div class="seller-card" data-seller-card>
+						<div class="seller-summary" data-seller-toggle>
+							{seller.image && (
+								<img src={seller.image} alt={seller.name} class="seller-image" width="160" />
+							)}
+							<div class="seller-summary-text">
+								<div class="seller-header">
+									<h4 class="seller-name">{seller.name}</h4>
+									<span class="seller-chevron">▸</span>
+								</div>
 							</div>
-							<div class="seller-cons">
-								<h5>Lo malo</h5>
-								<ul>
-									{seller.cons.map((con) => (
-										<li>{con}</li>
-									))}
-								</ul>
+						</div>
+						<div class="seller-body">
+							<div class="seller-body-top">
+								<a href={seller.link} target="_blank" rel="noopener noreferrer" class="seller-link">
+									Visitar ↗
+								</a>
+							</div>
+							<p class="seller-description">{seller.description}</p>
+							<div class="seller-details">
+								<div class="seller-pros">
+									<h5>Lo bueno</h5>
+									<ul>
+										{seller.pros.map((pro) => (
+											<li>{pro}</li>
+										))}
+									</ul>
+								</div>
+								<div class="seller-cons">
+									<h5>Lo malo</h5>
+									<ul>
+										{seller.cons.map((con) => (
+											<li>{con}</li>
+										))}
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>
 				))}
 			</div>
 		))}
+	</section>
+
+	<section id="zoids-sleeper" class="animate-from-right">
+		<div class="sleeper-hero">
+			<div class="sleeper-bg" style="background-image: url('/images/zoids-sleeper.jpg')"></div>
+			<div class="sleeper-overlay">
+				<h2 class="sleeper-title">Zoids Sleeper</h2>
+				<p class="sleeper-tagline">Un juego idle/clicker ambientado en Planet Zi</p>
+				<p class="sleeper-description">Vive las guerras de Planet Zi desde una perspectiva nunca antes contada. Encuentra el origen de la tecnología Sleeper que cambió el curso de las batallas para siempre. Elige tu bando, arma tu ejército y descubre hasta dónde estás dispuesto a llegar por la victoria.</p>
+				<div class="sleeper-features">
+					<div class="sleeper-feature">
+						<span class="sleeper-feature-icon">⚔️</span>
+						<span>Sistema de batallas y duelos con Zoids</span>
+					</div>
+					<div class="sleeper-feature">
+						<span class="sleeper-feature-icon">📖</span>
+						<span>Redescubre tus historias favoritas desde una nueva perspectiva.</span>
+					</div>
+					<div class="sleeper-feature">
+						<span class="sleeper-feature-icon">🏰</span>
+						<span>Multiples facciones, elige tu bando y dale la victoria en la guerra.</span>
+					</div>
+					<div class="sleeper-feature">
+						<span class="sleeper-feature-icon">🦾</span>
+						<span>Colecciona y mejora más de 50 Zoids</span>
+					</div>
+				</div>
+				<a href="https://elawdk.com/ZoidsSleeper/" target="_blank" rel="noopener noreferrer" class="sleeper-cta">
+					Jugar ahora
+				</a>
+			</div>
+		</div>
 	</section>
 
 	<script>
@@ -81,6 +122,30 @@ import '../styles/zoid-card.css';
 					btn.classList.add('active');
 				}
 			});
+		});
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('visible');
+					} else {
+						entry.target.classList.remove('visible');
+					}
+				});
+			},
+			{ threshold: 0.1 },
+		);
+
+		document.querySelectorAll('[data-seller-toggle]').forEach((toggle) => {
+			toggle.addEventListener('click', () => {
+				const card = toggle.closest('[data-seller-card]')!;
+				card.classList.toggle('expanded');
+			});
+		});
+
+		document.querySelectorAll('.animate-from-left, .animate-from-right').forEach((el) => {
+			observer.observe(el);
 		});
 	</script>
 </Layout>
@@ -106,6 +171,7 @@ import '../styles/zoid-card.css';
 	}
 
 	.section-title {
+		font-family: 'Russo One', sans-serif;
 		font-size: 2rem;
 		color: var(--color-accent);
 		margin-bottom: 2rem;
@@ -118,39 +184,71 @@ import '../styles/zoid-card.css';
 
 	#donde-comprar {
 		margin-top: 4rem;
+		padding: 3rem 2rem;
+		border-radius: 16px;
+		background: linear-gradient(135deg, var(--color-surface) 0%, transparent 70%);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	#donde-comprar .section-title {
+		text-align: center;
+		font-size: 2.25rem;
+		position: relative;
+		padding-bottom: 1rem;
+		margin-bottom: 1.5rem;
+	}
+
+	#donde-comprar .section-title::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 80px;
+		height: 3px;
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
 	}
 
 	.section-description {
 		color: var(--color-text-muted);
 		font-size: 1rem;
 		line-height: 1.6;
-		margin-bottom: 2rem;
+		margin-bottom: 2.5rem;
+		text-align: center;
+		max-width: 700px;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	.country-flags {
 		display: flex;
-		gap: 1rem;
+		gap: 1.5rem;
 		justify-content: center;
-		margin-bottom: 2rem;
+		margin-bottom: 2.5rem;
 	}
 
 	.country-flag {
-		font-size: 3rem;
-		background: none;
-		border: 2px solid transparent;
-		border-radius: 12px;
-		padding: 0.5rem 1rem;
+		font-size: 3.5rem;
+		background: var(--color-surface);
+		border: 2px solid rgba(255, 255, 255, 0.08);
+		border-radius: 16px;
+		padding: 0.75rem 1.25rem;
 		cursor: pointer;
-		transition: border-color 0.2s, transform 0.2s;
+		transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 	}
 
 	.country-flag:hover {
 		transform: scale(1.15);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+		border-color: rgba(255, 255, 255, 0.15);
 	}
 
 	.country-flag.active {
 		border-color: var(--color-accent);
 		transform: scale(1.15);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(232, 160, 32, 0.15);
 	}
 
 	.country-group {
@@ -159,31 +257,91 @@ import '../styles/zoid-card.css';
 
 	.seller-card {
 		background-color: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.06);
 		border-radius: 12px;
-		padding: 1.5rem;
 		margin-bottom: 1rem;
 		overflow: hidden;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+		transition: box-shadow 0.3s, border-color 0.3s;
+	}
+
+	.seller-card:hover {
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+	}
+
+	.seller-card.expanded {
+		border-color: var(--color-primary);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	}
+
+	.seller-summary {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 1.5rem;
+		cursor: pointer;
+		transition: background-color 0.2s;
+	}
+
+	.seller-summary:hover {
+		background-color: rgba(255, 255, 255, 0.03);
 	}
 
 	.seller-image {
-		float: left;
-		width: 160px;
-		height: auto;
+		width: 60px;
+		height: 60px;
 		border-radius: 8px;
-		margin: 0 1rem 0.75rem 0;
-		object-fit: cover;
+		object-fit: contain;
+		flex-shrink: 0;
+	}
+
+	.seller-summary-text {
+		flex: 1;
+		min-width: 0;
 	}
 
 	.seller-header {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		gap: 1rem;
-		flex-wrap: wrap;
 	}
 
 	.seller-name {
 		color: var(--color-accent);
-		font-size: 1.5rem;
+		font-size: 1.25rem;
+	}
+
+	.seller-chevron {
+		color: var(--color-text-muted);
+		font-size: 1.25rem;
+		transition: transform 0.3s;
+	}
+
+	.seller-card.expanded .seller-chevron {
+		transform: rotate(90deg);
+	}
+
+	.seller-body {
+		max-height: 0;
+		overflow: hidden;
+		transition: max-height 0.4s ease, padding 0.4s ease;
+		padding: 0 1.5rem;
+	}
+
+	.seller-card.expanded .seller-body {
+		max-height: 800px;
+		padding: 0 1.5rem 1.5rem;
+	}
+
+	.seller-card.expanded .seller-image {
+		width: 160px;
+		height: auto;
+	}
+
+	.seller-body-top {
+		margin-bottom: 0.75rem;
 	}
 
 	.seller-link {
@@ -196,7 +354,6 @@ import '../styles/zoid-card.css';
 		font-size: 0.85rem;
 		font-weight: 600;
 		text-decoration: none;
-		margin: 0;
 		transition: background-color 0.2s, color 0.2s;
 	}
 
@@ -207,7 +364,7 @@ import '../styles/zoid-card.css';
 
 	.seller-description {
 		color: var(--color-text-muted);
-		margin: 0.75rem 0 1rem;
+		margin: 0 0 1rem;
 		line-height: 1.5;
 	}
 
@@ -215,28 +372,35 @@ import '../styles/zoid-card.css';
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 1.5rem;
+		margin-top: 0.5rem;
+		padding-top: 1rem;
+		border-top: 1px solid rgba(255, 255, 255, 0.06);
 	}
 
 	.seller-details h5 {
 		font-size: 0.85rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.75rem;
+		padding-bottom: 0.4rem;
+		border-bottom: 2px solid;
 	}
 
 	.seller-pros h5 {
 		color: var(--color-positive);
+		border-color: var(--color-positive);
 	}
 
 	.seller-cons h5 {
 		color: var(--color-negative);
+		border-color: var(--color-negative);
 	}
 
 	.seller-details ul {
 		list-style: none;
 		display: flex;
 		flex-direction: column;
-		gap: 0.4rem;
+		gap: 0.5rem;
 	}
 
 	.seller-pros li::before {
@@ -254,7 +418,106 @@ import '../styles/zoid-card.css';
 	.seller-details li {
 		font-size: 0.9rem;
 		color: var(--color-text);
-		line-height: 1.4;
+		line-height: 1.5;
+	}
+
+	#zoids-sleeper {
+		margin-top: 4rem;
+	}
+
+	.sleeper-hero {
+		border-radius: 16px;
+		overflow: hidden;
+		position: relative;
+		border: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.sleeper-bg {
+		position: absolute;
+		inset: 0;
+		background-size: cover;
+		background-position: center;
+		opacity: 0.3;
+	}
+
+	.sleeper-overlay {
+		position: relative;
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.6) 100%);
+		padding: 4rem 3rem;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.sleeper-title {
+		font-family: 'Russo One', sans-serif;
+		font-size: 3rem;
+		color: #ffffff;
+		margin-bottom: 0.5rem;
+		color: var(--color-accent);    
+		text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
+	}
+
+	.sleeper-tagline {
+		font-size: 1.15rem;
+		color: var(--color-text-highline);    
+		margin-bottom: 1.5rem;
+		font-style: italic;
+		text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+
+	}
+
+	.sleeper-description {
+		font-size: 1.05rem;
+		color: var(--color-text-contrast);    
+		line-height: 1.7;
+		max-width: 650px;
+		margin-bottom: 2rem;
+		text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+
+	}
+
+	.sleeper-features {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+		margin-bottom: 2.5rem;
+		max-width: 600px;
+		text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
+
+	}
+
+	.sleeper-feature {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		text-align: left;
+		font-size: 0.95rem;
+		color: var(--color-text-contrast); 
+	}
+
+	.sleeper-feature-icon {
+		font-size: 1.5rem;
+		flex-shrink: 0;
+	}
+
+	.sleeper-cta {
+		display: inline-block;
+		background: var(--color-accent);
+		color: var(--color-bg);
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.1rem;
+		text-decoration: none;
+		padding: 0.85rem 2.5rem;
+		border-radius: 8px;
+		transition: transform 0.2s, box-shadow 0.2s;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+	}
+
+	.sleeper-cta:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 160, 32, 0.2);
 	}
 
 	@media (max-width: 550px) {
@@ -288,5 +551,46 @@ import '../styles/zoid-card.css';
 		.seller-card {
 			padding: 1rem;
 		}
+
+		#zoids-sleeper {
+			margin-top: 2rem;
+		}
+
+		.sleeper-overlay {
+			padding: 2.5rem 1.5rem;
+		}
+
+		.sleeper-title {
+			font-size: 2rem;
+		}
+
+		.sleeper-features {
+			grid-template-columns: 1fr;
+		}
+
+		.sleeper-cta {
+			font-size: 1rem;
+			padding: 0.75rem 2rem;
+		}
+	}
+
+	.animate-from-left,
+	.animate-from-right {
+		opacity: 0;
+		transition: opacity 1.2s ease, transform 1.2s ease;
+	}
+
+	.animate-from-left {
+		transform: translateX(-60px);
+	}
+
+	.animate-from-right {
+		transform: translateX(60px);
+	}
+
+	.animate-from-left.visible,
+	.animate-from-right.visible {
+		opacity: 1;
+		transform: translateX(0);
 	}
 </style>

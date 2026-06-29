@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import type { Zoid } from '../types/zoid';
 import ZoidCard from './ZoidCard';
 
-type SortKey = 'brand_line' | 'launch_asc' | 'launch_desc';
+type SortKey = 'brand_line' | 'launch_asc' | 'launch_desc' | 'name';
 
 const INITIAL_COUNT = 3;
 const PAGE_SIZE = 10;
@@ -21,6 +21,8 @@ function applySort(query: any, sort: SortKey) {
 			return query.order('launch_date', { ascending: true, nullsFirst: false });
 		case 'launch_desc':
 			return query.order('launch_date', { ascending: false, nullsFirst: true });
+		case 'name':
+			return query.order('name', { ascending: true });
 	}
 }
 
@@ -85,7 +87,6 @@ export default function ZoidCardList() {
 		setZoids([]);
 		setPhase('recent');
 		setHasMore(true);
-		setActivated(false);
 		offsetRef.current = 0;
 	}
 
@@ -94,7 +95,7 @@ export default function ZoidCardList() {
 			initialRef.current = false;
 			return;
 		}
-		loadMore(INITIAL_COUNT);
+		loadMore(activated ? PAGE_SIZE : INITIAL_COUNT);
 	}, [sort]);
 
 	function handleVerMas() {
@@ -125,6 +126,7 @@ export default function ZoidCardList() {
 					<option value="launch_asc">Lanzamiento (más próximos primero)</option>
 					<option value="launch_desc">Lanzamiento (más lejanos primero)</option>
 					<option value="brand_line">Marca y Línea</option>
+					<option value="name">Nombre (A-Z)</option>
 				</select>
 			</div>
 			<div class="grid">

@@ -33,6 +33,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		<meta name="description" content={description} />
 		<meta name="theme-color" content="#0b1a2e" />
 		<link rel="canonical" href={canonicalUrl} />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet" />
 
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={fullTitle} />
@@ -51,6 +54,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 	<body>
 		<nav class="navbar" id="navbar">
 			<ul class="navbar-links">
+				<li><a href="/">Inicio</a></li>
 				<li><a href="#lanzamientos">Lanzamientos</a></li>
 			</ul>
 			<a href="/" class="navbar-brand" id="navbar-brand">
@@ -58,6 +62,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 			</a>
 			<ul class="navbar-links">
 				<li><a href="#donde-comprar">¿Dónde comprar?</a></li>
+				<li><a href="#zoids-sleeper">Zoids Sleeper</a></li>
 			</ul>
 		</nav>
 		<main>
@@ -130,7 +135,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 	}
 
 	:global(body) {
-		font-family: system-ui, -apple-system, sans-serif;
+		font-family: 'Rajdhani', system-ui, -apple-system, sans-serif;
+		font-weight: 500;
 		background-color: var(--color-bg);
 		color: var(--color-text);
 		min-height: 100vh;
@@ -183,8 +189,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		color: var(--color-text);
 		text-decoration: none;
 		text-transform: uppercase;
-		font-size: 0.85rem;
-		font-weight: 600;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.75rem;
+		font-weight: 500;
 		letter-spacing: 0.05em;
 		transition: color 0.2s;
 	}

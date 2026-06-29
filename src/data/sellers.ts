@@ -58,7 +58,7 @@ export const sellersByCountry: CountryGroup[] = [
 				cons: [
 					'No garantiza incrementos de precio por parte de las marcas',
 					'Requiere anticipo para apartar',
-					'Sus mensajes pueden son dificiles de entender',
+					'Sus mensajes son dificiles de entender',
 					'Tiene una obsesión insana con las cabinas y cajas',
 					'Tiene un excel para todo',
 					'Lidera una mafia de vendedores que planean controlar todo Facebook'
