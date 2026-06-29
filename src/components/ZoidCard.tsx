@@ -159,7 +159,6 @@ export default function ZoidCard({ eager = false, zoid }: Props) {
 			<div class="zoid-detail">
 				{zoid.model_code && <span class="zoid-detail-code">{zoid.model_code}</span>}
 				<h3 class="zoid-detail-name">{zoid.name}</h3>
-				<p class="zoid-meta">{zoid.brand} &mdash; {zoid.line}</p>
 
 				{zoid.retail_price && zoid.currency && (
 					<p class="zoid-detail-price" data-price={zoid.retail_price} data-currency={zoid.currency}>

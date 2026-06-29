@@ -4,14 +4,34 @@ import { supabase } from '../lib/supabase';
 import type { Zoid } from '../types/zoid';
 import ZoidCard from './ZoidCard';
 
+type SortKey = 'brand_line' | 'launch_asc' | 'launch_desc';
+
 const INITIAL_COUNT = 3;
 const PAGE_SIZE = 10;
+
+const threeMonthsAgo = new Date();
+threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+const CUTOFF = threeMonthsAgo.getTime();
+
+function applySort(query: any, sort: SortKey) {
+	switch (sort) {
+		case 'brand_line':
+			return query.order('brand').order('line').order('launch_date', { ascending: true, nullsFirst: false });
+		case 'launch_asc':
+			return query.order('launch_date', { ascending: true, nullsFirst: false });
+		case 'launch_desc':
+			return query.order('launch_date', { ascending: false, nullsFirst: true });
+	}
+}
 
 export default function ZoidCardList() {
 	const [activated, setActivated] = useState(false);
 	const [hasMore, setHasMore] = useState(true);
 	const [loading, setLoading] = useState(false);
+	const [phase, setPhase] = useState<'old' | 'recent'>('recent');
+	const [sort, setSort] = useState<SortKey>('launch_asc');
 	const [zoids, setZoids] = useState<Zoid[]>([]);
+	const initialRef = useRef(true);
 	const offsetRef = useRef(0);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -22,19 +42,30 @@ export default function ZoidCardList() {
 		const from = offsetRef.current;
 		const to = from + count - 1;
 
-		const { data } = await supabase
-			.from('Zoids Releases')
-			.select('*')
-			.order('launch_date', { ascending: true, nullsFirst: false })
-			.range(from, to);
+		let query = supabase.from('Zoids Releases').select('*');
+		if (phase === 'recent') {
+			query = query.or(`launch_date.is.null,launch_date.gt.${CUTOFF}`);
+		} else {
+			query = query.lte('launch_date', CUTOFF);
+		}
+		query = applySort(query, sort);
+		query = query.range(from, to);
 
+		const { data } = await query;
 		const newZoids = (data ?? []) as Zoid[];
+
 		if (newZoids.length > 0) {
 			setZoids((prev) => [...prev, ...newZoids]);
 			offsetRef.current += newZoids.length;
 		}
+
 		if (newZoids.length < count) {
-			setHasMore(false);
+			if (phase === 'recent') {
+				setPhase('old');
+				offsetRef.current = 0;
+			} else {
+				setHasMore(false);
+			}
 		}
 
 		setLoading(false);
@@ -43,6 +74,28 @@ export default function ZoidCardList() {
 	useEffect(() => {
 		loadMore(INITIAL_COUNT);
 	}, []);
+
+	useEffect(() => {
+		if (phase === 'old') loadMore();
+	}, [phase]);
+
+	function handleSortChange(e: Event) {
+		const newSort = (e.target as HTMLSelectElement).value as SortKey;
+		setSort(newSort);
+		setZoids([]);
+		setPhase('recent');
+		setHasMore(true);
+		setActivated(false);
+		offsetRef.current = 0;
+	}
+
+	useEffect(() => {
+		if (initialRef.current) {
+			initialRef.current = false;
+			return;
+		}
+		loadMore(INITIAL_COUNT);
+	}, [sort]);
 
 	function handleVerMas() {
 		setActivated(true);
@@ -66,6 +119,14 @@ export default function ZoidCardList() {
 
 	return (
 		<>
+			<div class="sort-controls">
+				<label for="sort-select">Ordenar por</label>
+				<select id="sort-select" value={sort} onChange={handleSortChange}>
+					<option value="launch_asc">Lanzamiento (más próximos primero)</option>
+					<option value="launch_desc">Lanzamiento (más lejanos primero)</option>
+					<option value="brand_line">Marca y Línea</option>
+				</select>
+			</div>
 			<div class="grid">
 				{zoids.map((zoid, i) => (
 					<div
