@@ -64,7 +64,8 @@ export const sellersByCountry: CountryGroup[] = [
 					'Sus mensajes son dificiles de entender',
 					'Tiene una obsesión insana con las cabinas y cajas',
 					'Tiene un excel para todo',
-					'Lidera una mafia de vendedores que planean controlar todo Facebook'
+					'Lidera una mafia de vendedores que planean controlar todo Facebook',
+					'Se enoja cuando está comiendo pechuga de pollo.'
 				],
 				description:
 					'¿Buscas un Zoid vintage o de los próximos lanzamientos y no sabes dónde comprarlo? Zoid Model Kits te lo consigue. Un verdadero apasionado que te guía desde las marcas hasta el lore de cada modelo. ¿Un mini? Lo tiene. ¿Una carta? Es tuya. ¿Una mona encuerable? Será discreto. Si existe, él te lo encuentra.',
