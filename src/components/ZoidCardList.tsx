@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import loadingLogo from '../assets/images/lines/thecorezi_center.png';
 import { supabase } from '../lib/supabase';
 import type { Zoid } from '../types/zoid';
 import ZoidCard from './ZoidCard';
@@ -6,24 +7,20 @@ import ZoidCard from './ZoidCard';
 const INITIAL_COUNT = 3;
 const PAGE_SIZE = 10;
 
-interface Props {
-	initialZoids: Zoid[];
-}
-
-export default function ZoidCardList({ initialZoids }: Props) {
+export default function ZoidCardList() {
 	const [activated, setActivated] = useState(false);
-	const [hasMore, setHasMore] = useState(initialZoids.length >= INITIAL_COUNT);
+	const [hasMore, setHasMore] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const [zoids, setZoids] = useState<Zoid[]>(initialZoids);
-	const offsetRef = useRef(INITIAL_COUNT);
+	const [zoids, setZoids] = useState<Zoid[]>([]);
+	const offsetRef = useRef(0);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 
-	async function loadMore() {
+	async function loadMore(count = PAGE_SIZE) {
 		if (loading || !hasMore) return;
 		setLoading(true);
 
 		const from = offsetRef.current;
-		const to = from + PAGE_SIZE - 1;
+		const to = from + count - 1;
 
 		const { data } = await supabase
 			.from('Zoids Releases')
@@ -36,12 +33,16 @@ export default function ZoidCardList({ initialZoids }: Props) {
 			setZoids((prev) => [...prev, ...newZoids]);
 			offsetRef.current += newZoids.length;
 		}
-		if (newZoids.length < PAGE_SIZE) {
+		if (newZoids.length < count) {
 			setHasMore(false);
 		}
 
 		setLoading(false);
 	}
+
+	useEffect(() => {
+		loadMore(INITIAL_COUNT);
+	}, []);
 
 	function handleVerMas() {
 		setActivated(true);
@@ -76,14 +77,20 @@ export default function ZoidCardList({ initialZoids }: Props) {
 					</div>
 				))}
 			</div>
-			{!activated && hasMore && (
+			{!loading && zoids.length === 0 && (
+				<p class="empty">No hay lanzamientos registrados aún.</p>
+			)}
+			{!activated && hasMore && zoids.length > 0 && (
 				<button class="load-more-btn" onClick={handleVerMas}>Ver más</button>
 			)}
 			{activated && hasMore && (
 				<div ref={sentinelRef} aria-hidden="true" style="height: 1px" />
 			)}
 			{loading && (
-				<p class="load-status">Cargando...</p>
+				<div class="load-indicator">
+					<img src={loadingLogo.src} alt="Cargando..." />
+					<span class="load-indicator-text">CARGANDO...</span>
+				</div>
 			)}
 		</>
 	);

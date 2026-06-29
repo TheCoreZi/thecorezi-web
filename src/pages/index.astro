@@ -2,20 +2,8 @@
 import { Image } from 'astro:assets';
 import ZoidCardList from '../components/ZoidCardList';
 import Layout from '../layouts/Layout.astro';
-import { supabase } from '../lib/supabase';
-import type { Zoid } from '../types/zoid';
 import logo from '../assets/images/thecorezi.png';
 import '../styles/zoid-card.css';
-
-const INITIAL_COUNT = 3;
-
-const { data: zoids } = await supabase
-	.from('Zoids Releases')
-	.select('*')
-	.order('launch_date', { ascending: true, nullsFirst: false })
-	.range(0, INITIAL_COUNT - 1);
-
-const initialZoids = (zoids ?? []) as Zoid[];
 ---
 
 <Layout title="Inicio">
@@ -26,11 +14,7 @@ const initialZoids = (zoids ?? []) as Zoid[];
 
 	<section id="lanzamientos">
 		<h2 class="section-title">Próximos Lanzamientos</h2>
-		{initialZoids.length === 0 ? (
-			<p class="empty">No hay lanzamientos registrados aún.</p>
-		) : (
-			<ZoidCardList client:visible initialZoids={initialZoids} />
-		)}
+		<ZoidCardList client:visible />
 	</section>
 </Layout>
 
