@@ -280,9 +280,14 @@
 		width: 45px;
 	}
 
+	.seller-header {
+		flex-wrap: nowrap;
+	}
+
 	.seller-vote-buttons {
-		flex-direction: column;
+		flex-direction: row;
 		gap: 0.2rem;
+		margin-left: auto;
 	}
 
 	.seller-header .seller-vote-btn {
@@ -308,8 +313,30 @@
 		font-size: 1.25rem;
 	}
 
+	.seller-detail-info {
+		width: 100%;
+	}
+
+	.seller-detail-actions {
+		gap: 0.5rem;
+	}
+
+	.seller-detail-actions .seller-vote-buttons {
+		flex-direction: row;
+		margin-left: auto;
+	}
+
+	.seller-detail-description {
+		font-size: 0.9rem;
+		margin-bottom: 1.5rem;
+	}
+
 	.seller-details {
 		gap: 1rem;
 		grid-template-columns: 1fr;
+	}
+
+	.seller-details li {
+		font-size: 0.85rem;
 	}
 }
