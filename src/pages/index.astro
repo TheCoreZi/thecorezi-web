@@ -55,9 +55,21 @@ import '../styles/zoid-card.css';
 		</section>
 
 		<section id="archivo-zi-cta" class="animate-from-left">
-			<h2 class="cta-headline">Archivo Zi</h2>
-			<p class="cta-subtitle">¿Quieres entender el lore de Zoids desde el principio? Estamos construyendo una enciclopedia en español con la historia completa, traducciones de libros y curiosidades del universo Zoids.</p>
-			<a href="/archivo/" class="cta-btn">Explorar el Archivo</a>
+			<div class="terminal">
+				<div class="terminal-header">
+					<span class="terminal-dot terminal-dot--red"></span>
+					<span class="terminal-dot terminal-dot--yellow"></span>
+					<span class="terminal-dot terminal-dot--green"></span>
+					<span class="terminal-title">the_core_zi — archivo</span>
+				</div>
+				<div class="terminal-body">
+					<p class="terminal-line"><span class="terminal-prompt">&gt;</span> <span class="terminal-cmd">cargando ARCHIVO_ZI</span></p>
+					<p class="terminal-line"><span class="terminal-prompt">&gt;</span> Conectando con la base de datos de Planet Zi...</p>
+					<p class="terminal-line terminal-success"><span class="terminal-prompt">&gt;</span> Conexión establecida.</p>
+					<p class="terminal-output">¿Quieres entender el lore de Zoids desde el principio? Estamos construyendo una enciclopedia en español con la historia completa, traducciones de libros y curiosidades del universo Zoids.</p>
+					<a href="/archivo/" class="terminal-btn"><span class="terminal-prompt">&gt;</span> explorar_archivo<span class="terminal-cursor">_</span></a>
+				</div>
+			</div>
 		</section>
 
 		<section id="zoids-sleeper" class="animate-from-right">
@@ -408,6 +420,7 @@ import '../styles/zoid-card.css';
 		display: inline-block;
 		background: var(--color-accent);
 		color: var(--color-bg);
+		text-decoration: none;
 		font-family: 'Russo One', sans-serif;
 		font-size: 1.1rem;
 		padding: 0.85rem 2.5rem;
@@ -644,17 +657,106 @@ import '../styles/zoid-card.css';
 		color: #ffffff;
 	}
 
-	/* Archivo Zi CTA */
+	/* Archivo Zi CTA — Terminal */
 	#archivo-zi-cta {
 		margin-top: 4rem;
-		padding: 4rem 2rem;
-		border-radius: 16px;
-		background: linear-gradient(135deg, var(--color-surface) 0%, transparent 70%);
-		border: 1px solid rgba(255, 255, 255, 0.05);
-		text-align: center;
+	}
+
+	.terminal {
+		border: 1px solid var(--color-surface);
+		border-radius: 12px;
+		overflow: hidden;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+	}
+
+	.terminal-header {
+		background: var(--color-surface);
+		padding: 0.6rem 1rem;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
+		gap: 0.5rem;
+		border-bottom: 1px solid var(--color-surface);
+	}
+
+	.terminal-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+	}
+
+	.terminal-dot--green { background: var(--color-positive); }
+	.terminal-dot--red { background: var(--color-negative); }
+	.terminal-dot--yellow { background: var(--color-highlight); }
+
+	.terminal-title {
+		color: var(--color-text-muted);
+		font-family: 'Courier New', monospace;
+		font-size: 0.75rem;
+		margin-left: 0.5rem;
+	}
+
+	.terminal-body {
+		background: var(--color-bg);
+		padding: 1.5rem;
+		font-family: 'Courier New', monospace;
+		font-size: 0.9rem;
+		line-height: 1.8;
+	}
+
+	.terminal-line {
+		color: var(--color-text-muted);
+	}
+
+	.terminal-prompt {
+		color: var(--color-highlight);
+		margin-right: 0.25rem;
+	}
+
+	.terminal-cmd {
+		color: var(--color-text);
+	}
+
+	.terminal-success {
+		color: var(--color-accent);
+	}
+
+	.terminal-output {
+		color: var(--color-text-muted);
+		margin: 1rem 0;
+		padding-left: 1rem;
+		border-left: 2px solid var(--color-surface);
+		line-height: 1.6;
+	}
+
+	.terminal-btn {
+		display: inline-block;
+		margin-top: 1rem;
+		padding: 0.6rem 1.5rem;
+		border: 1px solid var(--color-highlight);
+		border-radius: 6px;
+		color: var(--color-highlight);
+		text-decoration: none;
+		font-family: 'Courier New', monospace;
+		font-size: 0.9rem;
+		transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+	}
+
+	.terminal-btn:hover {
+		background: var(--color-highlight);
+		color: var(--color-bg);
+		box-shadow: 0 0 15px color-mix(in srgb, var(--color-highlight) 30%, transparent);
+	}
+
+	.terminal-btn .terminal-prompt {
+		margin-right: 0.4rem;
+	}
+
+	.terminal-cursor {
+		animation: blink 1s step-end infinite;
+	}
+
+	@keyframes blink {
+		50% { opacity: 0; }
 	}
 
 	/* Zoids Sleeper */
@@ -801,7 +903,11 @@ import '../styles/zoid-card.css';
 
 		#archivo-zi-cta {
 			margin-top: 2rem;
-			padding: 2.5rem 1.5rem;
+		}
+
+		.terminal-body {
+			padding: 1rem;
+			font-size: 0.8rem;
 		}
 
 		#podcast {

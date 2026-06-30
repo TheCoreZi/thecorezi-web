@@ -1,6 +1,12 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { sources, timelineByEra } from '../../../data/timeline';
+import iconBook from '../../../assets/icons/source-book.svg';
+import iconBox from '../../../assets/icons/source-box.svg';
+import iconMagazine from '../../../assets/icons/source-magazine.svg';
+import iconWeb from '../../../assets/icons/source-web.svg';
+
+const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: iconWeb } as const;
 ---
 
 <Layout title="Battle Story" description="Conoce el Battle Story de Zoids: la narrativa que conecta los model kits con décadas de guerras en el Planeta Zi.">
@@ -73,7 +79,7 @@ import { sources, timelineByEra } from '../../../data/timeline';
 			<summary class="sources-summary">Ver fuentes originales</summary>
 			<ul class="sources-list">
 				{sources.map((s) => (
-					<li><strong>{s.code}</strong> — {s.description}</li>
+					<li><span class="source-icon" style={`-webkit-mask-image: url(${iconMap[s.icon].src}); mask-image: url(${iconMap[s.icon].src})`}></span>{s.url ? <a href={s.url} target="_blank" rel="noopener noreferrer">{s.description}</a> : s.description}</li>
 				))}
 			</ul>
 		</details>
@@ -443,10 +449,30 @@ import { sources, timelineByEra } from '../../../data/timeline';
 		padding: 0.5rem 0.75rem;
 		background: rgba(255, 255, 255, 0.02);
 		border-radius: 6px;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
-	.sources-list li strong {
+	.source-icon {
+		background-color: var(--color-accent);
+		display: inline-block;
+		flex-shrink: 0;
+		height: 16px;
+		mask-repeat: no-repeat;
+		mask-size: contain;
+		width: 16px;
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-size: contain;
+	}
+
+	.sources-list li a {
 		color: var(--color-text);
+		text-decoration: none;
+	}
+
+	.sources-list li a:hover {
+		text-decoration: underline;
 	}
 
 	/* Mobile */
