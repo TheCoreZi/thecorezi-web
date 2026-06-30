@@ -1,0 +1,528 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { sources, timelineByEra } from '../../../data/timeline';
+---
+
+<Layout title="Battle Story" description="Conoce el Battle Story de Zoids: la narrativa que conecta los model kits con décadas de guerras en el Planeta Zi.">
+	<a href="/archivo/" class="back-btn">← Volver al Archivo</a>
+
+	<section class="bs-hero">
+		<h1 class="bs-title">Battle Story</h1>
+		<p class="bs-subtitle">La historia detrás de los model kits</p>
+	</section>
+
+	<section class="bs-intro">
+		<p>El <strong>Battle Story</strong> es la narrativa oficial que acompaña a los modelos de Zoids desde 1983. A diferencia de los animes, que cuentan historias independientes, la Battle Story es una saga continua que conecta cada kit lanzado por TOMY con las guerras en el Planeta Zi.</p>
+		<p>La historia se contaba a través de las cajas de los Zoids, manuales de instrucciones, libros complementarios como los <em>Zoids Battle Story</em> de Shogakukan, revistas como <em>Dengeki Hobby</em>, y publicaciones oficiales como los <em>Fan Books</em>. Cada nuevo Zoid lanzado al mercado tenía un papel en la narrativa: su origen, su primer despliegue en batalla y su impacto en la guerra.</p>
+		<p>La Battle Story abarca miles de años de historia, desde la formación del Planeta Zi y la evolución de las primeras formas de vida metálicas, pasando por las guerras entre la <strong>República de Helic</strong> y el <strong>Imperio de Zenebas</strong>, la intervención del <strong>Imperio de Guylos</strong>, la devastadora <strong>Gran Catástrofe</strong>, hasta el surgimiento del <strong>Imperio de Neo Zenebas</strong> y las batallas del futuro lejano.</p>
+		<p>Es una historia de guerra, política, traición y tecnología — contada modelo a modelo durante décadas y que aún sigue en desarrollo.</p>
+	</section>
+
+	<section class="timeline-section">
+		<h2 class="timeline-heading">Línea del Tiempo</h2>
+		<p class="timeline-note">Todas las fechas están en el calendario de Planet Zi, "ZAC" (Zi Anno Civitas).</p>
+
+		<nav class="era-nav">
+			{timelineByEra.map((era) => (
+				<a href={`#era-${era.era}`} class="era-nav-item" style={`--era-color: ${era.color}`}>
+					<span class="era-nav-dot"></span>
+					<span class="era-nav-label">{era.label} <span class="era-nav-range">({era.yearRange})</span></span>
+				</a>
+			))}
+		</nav>
+
+		<div class="timeline">
+			{timelineByEra.map((era) => (
+				<>
+					<div class="era-separator" id={`era-${era.era}`} style={`--era-color: ${era.color}`}>
+						<div class="era-separator-line"></div>
+						<div class="era-separator-content">
+							<h3 class="era-separator-title">{era.label}</h3>
+						</div>
+						<div class="era-separator-line"></div>
+					</div>
+
+					{era.events.map((event, i) => (
+						<div class={`timeline-item ${i % 2 === 0 ? 'timeline-item--left' : 'timeline-item--right'}`} style={`--era-color: ${era.color}`}>
+							<div class="timeline-dot"></div>
+							<div class="timeline-content">
+								<span class="timeline-date">{event.date}</span>
+								<h4 class="timeline-event-title">{event.title}</h4>
+								<p class="timeline-event-desc">{event.description}</p>
+								{event.newZoids && event.newZoids.length > 0 && (
+									<div class="timeline-zoids">
+										<span class="timeline-zoids-label">Zoids destacados:</span>
+										{event.newZoids.map((z) => (
+											<span class="timeline-zoid-tag">{z}</span>
+										))}
+									</div>
+								)}
+							</div>
+						</div>
+					))}
+				</>
+			))}
+		</div>
+	</section>
+
+	<section class="credits">
+		<h2 class="credits-title">Créditos</h2>
+		<p class="credits-text">Esta línea del tiempo está basada en el trabajo de <strong>Falcarius</strong>, publicada originalmente en <a href="http://zoidsathenaeum.890m.com/databanks/timeline.htm" target="_blank" rel="noopener noreferrer">Zoids Athenaeum</a>. Traducida y adaptada al español por The Core Zi.</p>
+
+		<details class="sources-details">
+			<summary class="sources-summary">Ver fuentes originales</summary>
+			<ul class="sources-list">
+				{sources.map((s) => (
+					<li><strong>{s.code}</strong> — {s.description}</li>
+				))}
+			</ul>
+		</details>
+	</section>
+</Layout>
+
+<style>
+	.back-btn {
+		display: inline-block;
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		color: var(--color-text);
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.85rem;
+		padding: 0.5rem 1rem;
+		text-decoration: none;
+		transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+	}
+
+	.back-btn:hover {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-bg);
+	}
+
+	/* Hero */
+	.bs-hero {
+		text-align: center;
+		padding: 3rem 1rem 1rem;
+	}
+
+	.bs-title {
+		font-family: 'Russo One', sans-serif;
+		font-size: 3rem;
+		color: var(--color-accent);
+		margin-bottom: 0.25rem;
+	}
+
+	.bs-subtitle {
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.1rem;
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+	}
+
+	/* Intro */
+	.bs-intro {
+		max-width: 750px;
+		margin: 2rem auto 0;
+	}
+
+	.bs-intro p {
+		color: var(--color-text-muted);
+		font-size: 1rem;
+		line-height: 1.7;
+		margin-bottom: 1rem;
+	}
+
+	.bs-intro strong {
+		color: var(--color-text);
+	}
+
+	.bs-intro em {
+		color: var(--color-accent);
+		font-style: italic;
+	}
+
+	/* Timeline section */
+	.timeline-section {
+		margin-top: 4rem;
+	}
+
+	.timeline-heading {
+		font-family: 'Russo One', sans-serif;
+		font-size: 2rem;
+		color: var(--color-accent);
+		text-align: center;
+		margin-bottom: 0.5rem;
+		position: relative;
+		padding-bottom: 0.75rem;
+	}
+
+	.timeline-heading::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 80px;
+		height: 3px;
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
+	}
+
+	.timeline-note {
+		color: var(--color-text-muted);
+		font-size: 0.85rem;
+		font-style: italic;
+		opacity: 0.7;
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	/* Era navigation */
+	.era-nav {
+		display: flex;
+		justify-content: center;
+		gap: 1.5rem;
+		margin-bottom: 3rem;
+		flex-wrap: wrap;
+	}
+
+	.era-nav-item {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		text-decoration: none;
+		color: var(--color-text-muted);
+		font-size: 0.85rem;
+		transition: color 0.2s;
+	}
+
+	.era-nav-item:hover {
+		color: var(--color-text);
+	}
+
+	.era-nav-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--era-color);
+		flex-shrink: 0;
+	}
+
+	.era-nav-range {
+		opacity: 0.6;
+		font-size: 0.75rem;
+	}
+
+	/* Timeline */
+	.timeline {
+		position: relative;
+		max-width: 900px;
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
+
+	.timeline::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		background: var(--color-text-muted);
+		opacity: 0.2;
+	}
+
+	/* Era separator */
+	.era-separator {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		margin: 3rem 0 2rem;
+		position: relative;
+		z-index: 1;
+		scroll-margin-top: 100px;
+	}
+
+	.era-separator:first-child {
+		margin-top: 0;
+	}
+
+	.era-separator-line {
+		flex: 1;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, var(--era-color), transparent);
+	}
+
+	.era-separator-content {
+		text-align: center;
+		flex-shrink: 0;
+	}
+
+	.era-separator-title {
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.25rem;
+		color: var(--era-color);
+		margin-bottom: 0.15rem;
+	}
+
+	.era-separator-range {
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+	}
+
+	/* Timeline items */
+	.timeline-item {
+		position: relative;
+		width: 50%;
+		padding: 0 2.5rem 2rem;
+	}
+
+	.timeline-item--left {
+		left: 0;
+		padding-right: 2.5rem;
+		text-align: right;
+	}
+
+	.timeline-item--right {
+		left: 50%;
+		padding-left: 2.5rem;
+		text-align: left;
+	}
+
+	.timeline-dot {
+		position: absolute;
+		top: 0.5rem;
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background: var(--era-color);
+		border: 2px solid var(--color-bg);
+		z-index: 2;
+	}
+
+	.timeline-item--left .timeline-dot {
+		right: -6px;
+	}
+
+	.timeline-item--right .timeline-dot {
+		left: -6px;
+	}
+
+	.timeline-content {
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+		border-radius: 12px;
+		padding: 1.25rem;
+		transition: border-color 0.2s;
+	}
+
+	.timeline-content:hover {
+		border-color: var(--era-color);
+	}
+
+	.timeline-date {
+		display: inline-block;
+		background: var(--era-color);
+		color: #000;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.7rem;
+		padding: 0.2rem 0.6rem;
+		border-radius: 4px;
+		margin-bottom: 0.5rem;
+		letter-spacing: 0.03em;
+	}
+
+	.timeline-event-title {
+		font-family: 'Russo One', sans-serif;
+		font-size: 1rem;
+		color: var(--color-text);
+		margin-bottom: 0.5rem;
+	}
+
+	.timeline-event-desc {
+		color: var(--color-text-muted);
+		font-size: 0.9rem;
+		line-height: 1.6;
+	}
+
+	.timeline-zoids {
+		margin-top: 0.75rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		align-items: center;
+	}
+
+	.timeline-item--left .timeline-zoids {
+		justify-content: flex-end;
+	}
+
+	.timeline-zoids-label {
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+		font-weight: 600;
+	}
+
+	.timeline-zoid-tag {
+		font-size: 0.7rem;
+		background: rgba(255, 255, 255, 0.06);
+		color: var(--color-text);
+		padding: 0.15rem 0.5rem;
+		border-radius: 4px;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	/* Credits */
+	.credits {
+		max-width: 700px;
+		margin: 4rem auto 0;
+		text-align: center;
+		padding: 2rem;
+		background: var(--color-surface);
+		border-radius: 16px;
+		border: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.credits-title {
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.25rem;
+		color: var(--color-accent);
+		margin-bottom: 1rem;
+	}
+
+	.credits-text {
+		color: var(--color-text-muted);
+		font-size: 0.95rem;
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+	}
+
+	.credits-text a {
+		color: var(--color-accent);
+		text-decoration: none;
+	}
+
+	.credits-text a:hover {
+		text-decoration: underline;
+	}
+
+	.sources-details {
+		text-align: left;
+	}
+
+	.sources-summary {
+		color: var(--color-accent);
+		cursor: pointer;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.85rem;
+		text-align: center;
+		padding: 0.5rem;
+		transition: color 0.2s;
+	}
+
+	.sources-summary:hover {
+		color: var(--color-text);
+	}
+
+	.sources-list {
+		list-style: none;
+		margin-top: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.sources-list li {
+		color: var(--color-text-muted);
+		font-size: 0.8rem;
+		line-height: 1.4;
+		padding: 0.5rem 0.75rem;
+		background: rgba(255, 255, 255, 0.02);
+		border-radius: 6px;
+	}
+
+	.sources-list li strong {
+		color: var(--color-text);
+	}
+
+	/* Mobile */
+	@media (max-width: 768px) {
+		.bs-hero {
+			padding: 2rem 1rem 0.5rem;
+		}
+
+		.bs-title {
+			font-size: 2rem;
+		}
+
+		.bs-intro {
+			margin-top: 1.5rem;
+		}
+
+		.timeline-section {
+			margin-top: 2rem;
+		}
+
+		.timeline-heading {
+			font-size: 1.5rem;
+		}
+
+		.era-nav {
+			gap: 0.75rem;
+		}
+
+		.era-nav-item {
+			font-size: 0.75rem;
+		}
+
+		.timeline::before {
+			left: 20px;
+			transform: none;
+		}
+
+		.timeline-item,
+		.timeline-item--left,
+		.timeline-item--right {
+			width: 100%;
+			left: 0;
+			padding: 0 0 1.5rem 50px;
+			text-align: left;
+		}
+
+		.timeline-item--left .timeline-dot,
+		.timeline-item--right .timeline-dot {
+			left: 14px;
+			right: auto;
+		}
+
+		.timeline-item--left .timeline-zoids {
+			justify-content: flex-start;
+		}
+
+		.era-separator {
+			margin: 2rem 0 1.5rem;
+			padding-left: 50px;
+		}
+
+		.era-separator-line:first-child {
+			display: none;
+		}
+
+		.era-separator-content {
+			text-align: left;
+		}
+
+		.timeline-content {
+			padding: 1rem;
+		}
+
+		.credits {
+			margin-top: 2rem;
+			padding: 1.5rem 1rem;
+		}
+	}
+</style>

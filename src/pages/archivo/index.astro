@@ -1,0 +1,145 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Archivo Zi" description="Enciclopedia del universo Zoids: línea del tiempo, libros traducidos y curiosidades de la franquicia.">
+	<section class="archivo-hero">
+		<h1 class="archivo-title">Archivo Zi</h1>
+		<p class="archivo-subtitle">Tu enciclopedia del universo Zoids. Lore, historia, traducciones y curiosidades — todo lo que necesitas para entender Planet Zi.</p>
+	</section>
+
+	<div class="archivo-grid">
+		<a href="/archivo/battle-story/" class="archivo-card">
+			<span class="archivo-card-icon">⚔️</span>
+			<h2 class="archivo-card-title">Battle Story</h2>
+			<p class="archivo-card-desc">La historia oficial detrás de los model kits: décadas de guerras en el Planeta Zi contadas modelo a modelo.</p>
+		</a>
+
+		<div class="archivo-card archivo-card--disabled">
+			<span class="archivo-card-icon">📖</span>
+			<span class="archivo-card-badge">Próximamente</span>
+			<h2 class="archivo-card-title">Libros</h2>
+			<p class="archivo-card-desc">Traducciones al español de los libros oficiales del Battle Story y otros materiales impresos.</p>
+		</div>
+
+		<div class="archivo-card archivo-card--disabled">
+			<span class="archivo-card-icon">💡</span>
+			<span class="archivo-card-badge">Próximamente</span>
+			<h2 class="archivo-card-title">Curiosidades</h2>
+			<p class="archivo-card-desc">Datos curiosos, easter eggs y detalles poco conocidos del universo Zoids.</p>
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.archivo-hero {
+		text-align: center;
+		padding: 4rem 1rem 2rem;
+	}
+
+	.archivo-title {
+		font-family: 'Russo One', sans-serif;
+		font-size: 3rem;
+		color: var(--color-accent);
+		margin-bottom: 1rem;
+		position: relative;
+		padding-bottom: 1rem;
+	}
+
+	.archivo-title::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 80px;
+		height: 3px;
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
+	}
+
+	.archivo-subtitle {
+		color: var(--color-text-muted);
+		font-size: 1.1rem;
+		line-height: 1.6;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+
+	.archivo-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 1.5rem;
+		margin-top: 2rem;
+	}
+
+	.archivo-card {
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+		border-radius: 16px;
+		padding: 2rem 1.5rem;
+		text-align: center;
+		text-decoration: none;
+		color: inherit;
+		transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+		position: relative;
+	}
+
+	a.archivo-card:hover {
+		transform: translateY(-4px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		border-color: var(--color-accent);
+	}
+
+	.archivo-card--disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+
+	.archivo-card-icon {
+		font-size: 2.5rem;
+		display: block;
+		margin-bottom: 1rem;
+	}
+
+	.archivo-card-badge {
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		background: var(--color-accent);
+		color: var(--color-bg);
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.65rem;
+		padding: 0.25rem 0.6rem;
+		border-radius: 4px;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	.archivo-card-title {
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.25rem;
+		color: var(--color-accent);
+		margin-bottom: 0.75rem;
+	}
+
+	.archivo-card-desc {
+		color: var(--color-text-muted);
+		font-size: 0.95rem;
+		line-height: 1.5;
+	}
+
+	@media (max-width: 768px) {
+		.archivo-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.archivo-title {
+			font-size: 2rem;
+		}
+
+		.archivo-hero {
+			padding: 2rem 1rem 1rem;
+		}
+	}
+</style>

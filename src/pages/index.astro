@@ -54,7 +54,13 @@ import '../styles/zoid-card.css';
 			</div>
 		</section>
 
-		<section id="zoids-sleeper" class="animate-from-left">
+		<section id="archivo-zi-cta" class="animate-from-left">
+			<h2 class="cta-headline">Archivo Zi</h2>
+			<p class="cta-subtitle">¿Quieres entender el lore de Zoids desde el principio? Estamos construyendo una enciclopedia en español con la historia completa, traducciones de libros y curiosidades del universo Zoids.</p>
+			<a href="/archivo/" class="cta-btn">Explorar el Archivo</a>
+		</section>
+
+		<section id="zoids-sleeper" class="animate-from-right">
 			<div class="sleeper-hero">
 				<div class="sleeper-bg" style="background-image: url('/images/zoids-sleeper.jpg')"></div>
 				<div class="sleeper-overlay">
@@ -638,6 +644,19 @@ import '../styles/zoid-card.css';
 		color: #ffffff;
 	}
 
+	/* Archivo Zi CTA */
+	#archivo-zi-cta {
+		margin-top: 4rem;
+		padding: 4rem 2rem;
+		border-radius: 16px;
+		background: linear-gradient(135deg, var(--color-surface) 0%, transparent 70%);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
 	/* Zoids Sleeper */
 	#zoids-sleeper {
 		margin-top: 4rem;
@@ -778,6 +797,11 @@ import '../styles/zoid-card.css';
 
 		.sellers-back-btn {
 			top: 50px;
+		}
+
+		#archivo-zi-cta {
+			margin-top: 2rem;
+			padding: 2.5rem 1.5rem;
 		}
 
 		#podcast {
