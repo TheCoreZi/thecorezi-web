@@ -148,6 +148,7 @@ export const sellersByCountry: CountryGroup[] = [
 					'A veces se deja el bigote y puede dar miedo si no lo conoces',
 					'Una vez una señora se lo quiso llevar a su casa para "armar Zoids"',
 					'Sus envíos a Puebla no son los mejores',
+					'Se enoja cuando está comiendo pechuga de pollo.'
 				],
 				description:
 					'¿Presupuesto ajustado pero ganas de Zoidear? La Isla se adentra en los rincones más oscuros del mercado para rescatar Zoids seminuevos, refacciones y esas piezas que dabas por perdidas. Todo a precios que no duelen. Al grito de ¡CASCAJITOO! La Isla siempre te tiene cubierto.',
@@ -171,7 +172,6 @@ export const sellersByCountry: CountryGroup[] = [
 					'Tiene una obsesión insana con las cabinas y cajas',
 					'Tiene un excel para todo',
 					'Lidera una mafia de vendedores que planean controlar todo Facebook',
-					'Se enoja cuando está comiendo pechuga de pollo.'
 				],
 				description:
 					'¿Buscas un Zoid vintage o de los próximos lanzamientos y no sabes dónde comprarlo? Zoid Model Kits te lo consigue. Un verdadero apasionado que te guía desde las marcas hasta el lore de cada modelo. ¿Un mini? Lo tiene. ¿Una carta? Es tuya. ¿Una mona encuerable? Será discreto. Si existe, él te lo encuentra.',
