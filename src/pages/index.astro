@@ -1,12 +1,14 @@
 ---
 import { Image } from 'astro:assets';
 import { sellersByCountry } from '../data/sellers';
+import SellerFeedbackDynamic from '../components/SellerFeedbackDynamic';
 import SellerList from '../components/SellerList';
 import SellerVoteButtonsDynamic from '../components/SellerVoteButtonsDynamic';
 import ZoidCardList from '../components/ZoidCardList';
 import Layout from '../layouts/Layout.astro';
 import logo from '../assets/images/thecorezi.png';
 import '../styles/seller-card.css';
+import '../styles/seller-feedback.css';
 import '../styles/zoid-card.css';
 ---
 
@@ -150,6 +152,7 @@ import '../styles/zoid-card.css';
 				<ul id="seller-detail-cons"></ul>
 			</div>
 		</div>
+		<SellerFeedbackDynamic client:idle />
 	</div>
 
 	<script>
