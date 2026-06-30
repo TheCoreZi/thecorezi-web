@@ -1,6 +1,8 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { sources, timelineByEra } from '../../../data/timeline';
+import arrowDownFill from '../../../assets/icons/arrow-down-fill.svg';
+import chevronRight from '../../../assets/icons/chevron-right.svg';
 import iconBook from '../../../assets/icons/source-book.svg';
 import iconBox from '../../../assets/icons/source-box.svg';
 import iconMagazine from '../../../assets/icons/source-magazine.svg';
@@ -28,46 +30,89 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 		<h2 class="timeline-heading">Línea del Tiempo</h2>
 		<p class="timeline-note">Todas las fechas están en el calendario de Planet Zi, "ZAC" (Zi Anno Civitas).</p>
 
-		<nav class="era-nav">
-			{timelineByEra.map((era) => (
-				<a href={`#era-${era.era}`} class="era-nav-item" style={`--era-color: ${era.color}`}>
-					<span class="era-nav-dot"></span>
-					<span class="era-nav-label">{era.label} <span class="era-nav-range">({era.yearRange})</span></span>
-				</a>
-			))}
-		</nav>
-
-		<div class="timeline">
-			{timelineByEra.map((era) => (
-				<>
-					<div class="era-separator" id={`era-${era.era}`} style={`--era-color: ${era.color}`}>
-						<div class="era-separator-line"></div>
-						<div class="era-separator-content">
-							<h3 class="era-separator-title">{era.label}</h3>
+		<div id="era-selector">
+			<div class="era-selector-timeline">
+				{timelineByEra.map((era, i) => (
+					<button class={`era-selector-node ${i % 2 === 0 ? 'era-selector-node--left' : 'era-selector-node--right'}`} data-era-select={i} data-era-key={era.era} style={`--era-color: ${era.color}; --pulse-delay: ${(Math.random() * 2).toFixed(2)}s`} type="button">
+						<span class="era-selector-dot"></span>
+						<div class="era-selector-info">
+							<span class="era-selector-label">{era.label}</span>
+							<span class="era-selector-range">{era.yearRange}</span>
 						</div>
-						<div class="era-separator-line"></div>
-					</div>
+					</button>
+				))}
+			</div>
+		</div>
 
+		<div id="era-detail" hidden>
+			<nav class="era-nav">
+				{timelineByEra.map((era, i) => (
+					<a href={`#era-${era.era}`} class="era-nav-item" style={`--era-color: ${era.color}`}>
+						<span class="era-nav-dot"></span>
+						<span class="era-nav-label">{era.label} <span class="era-nav-range">({era.yearRange})</span></span>
+					</a>
+				))}
+			</nav>
+
+		{timelineByEra.map((era, eraIndex) => (
+			<div class="era-page" data-era-page={eraIndex} hidden={eraIndex !== 0}>
+				<div class="era-separator" style={`--era-color: ${era.color}`}>
+					<div class="era-separator-line"></div>
+					<div class="era-separator-content">
+						<h3 class="era-separator-title">{era.label}</h3>
+						<span class="era-separator-range">{era.yearRange}</span>
+					</div>
+					<div class="era-separator-line"></div>
+				</div>
+
+				{eraIndex > 0 && (
+					<div class="era-nav-buttons">
+						<button class="era-arrow era-arrow--prev" data-direction="prev" data-era-index={eraIndex} type="button" style={`--next-era-color: ${timelineByEra[eraIndex - 1].color}`}>
+							<span class="era-arrow-tip era-arrow-tip--up" style={`-webkit-mask-image: url(${arrowDownFill.src}); mask-image: url(${arrowDownFill.src})`}></span>
+							<span class="era-arrow-label">{timelineByEra[eraIndex - 1].label}</span>
+						</button>
+					</div>
+				)}
+
+				<button class="era-back-btn" data-era-back type="button">← Eras</button>
+				<div class="timeline" style={`--era-color: ${era.color}`}>
 					{era.events.map((event, i) => (
-						<div class={`timeline-item ${i % 2 === 0 ? 'timeline-item--left' : 'timeline-item--right'}`} style={`--era-color: ${era.color}`}>
-							<div class="timeline-dot"></div>
-							<div class="timeline-content">
-								<span class="timeline-date">{event.date}</span>
-								<h4 class="timeline-event-title">{event.title}</h4>
-								<p class="timeline-event-desc">{event.description}</p>
-								{event.newZoids && event.newZoids.length > 0 && (
-									<div class="timeline-zoids">
-										<span class="timeline-zoids-label">Zoids destacados:</span>
-										{event.newZoids.map((z) => (
-											<span class="timeline-zoid-tag">{z}</span>
-										))}
+						<div class={`timeline-item ${i % 2 === 0 ? 'timeline-item--left' : 'timeline-item--right'}`}>
+							<div class="timeline-dot" style={`--pulse-delay: ${(Math.random() * 2).toFixed(2)}s`}></div>
+							<div class="timeline-content" data-collapsible>
+								<div class="timeline-header">
+									<span class="timeline-date">{event.date}</span>
+									<h4 class="timeline-event-title">{event.title}</h4>
+									<span class="timeline-chevron" style={`-webkit-mask-image: url(${chevronRight.src}); mask-image: url(${chevronRight.src})`}></span>
+								</div>
+								<div class="timeline-details">
+									<div class="timeline-details-inner">
+										<p class="timeline-event-desc">{event.description}</p>
+										{event.newZoids && event.newZoids.length > 0 && (
+											<div class="timeline-zoids">
+												<span class="timeline-zoids-label">Zoids destacados:</span>
+												{event.newZoids.map((z) => (
+													<span class="timeline-zoid-tag">{z}</span>
+												))}
+											</div>
+										)}
 									</div>
-								)}
+								</div>
 							</div>
 						</div>
 					))}
-				</>
-			))}
+				</div>
+
+				{eraIndex < timelineByEra.length - 1 && (
+					<div class="era-nav-buttons">
+						<button class="era-arrow" data-direction="next" data-era-index={eraIndex} type="button" style={`--next-era-color: ${timelineByEra[eraIndex + 1].color}`}>
+							<span class="era-arrow-tip" style={`-webkit-mask-image: url(${arrowDownFill.src}); mask-image: url(${arrowDownFill.src})`}></span>
+							<span class="era-arrow-label">{timelineByEra[eraIndex + 1].label}</span>
+						</button>
+					</div>
+				)}
+			</div>
+		))}
 		</div>
 	</section>
 
@@ -86,7 +131,83 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 	</section>
 </Layout>
 
-<style>
+<script>
+	const eraSelector = document.getElementById('era-selector')!;
+	const eraDetail = document.getElementById('era-detail')!;
+	const eraBackBtns = document.querySelectorAll('[data-era-back]');
+	const eraPages = document.querySelectorAll('.era-page');
+	const eraNavItems = document.querySelectorAll('.era-nav-item');
+
+	const eraKeys = Array.from(document.querySelectorAll('[data-era-key]')).map(
+		(node) => (node as HTMLElement).dataset.eraKey!,
+	);
+
+	function showSelector() {
+		eraDetail.hidden = true;
+		eraSelector.hidden = false;
+		history.replaceState(null, '', window.location.pathname);
+		document.querySelector('.timeline-section')?.scrollIntoView({ behavior: 'smooth' });
+	}
+
+	function showEra(index: number, scroll = true) {
+		document.querySelectorAll('.timeline-content--open').forEach((c) => c.classList.remove('timeline-content--open'));
+		eraSelector.hidden = true;
+		eraDetail.hidden = false;
+		eraPages.forEach((g, i) => {
+			(g as HTMLElement).hidden = i !== index;
+		});
+		eraNavItems.forEach((item, i) => {
+			item.classList.toggle('era-nav-item--active', i === index);
+		});
+		history.replaceState(null, '', `#${eraKeys[index]}`);
+		if (scroll) {
+			document.querySelector('.timeline-section')?.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
+
+	document.querySelectorAll('.era-selector-node').forEach((node) => {
+		node.addEventListener('click', () => {
+			showEra(Number((node as HTMLElement).dataset.eraSelect));
+		});
+	});
+
+	eraBackBtns.forEach((btn) => btn.addEventListener('click', showSelector));
+
+	eraNavItems.forEach((item, i) => {
+		item.addEventListener('click', (e) => {
+			e.preventDefault();
+			showEra(i);
+		});
+	});
+
+	document.querySelectorAll('.era-arrow').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			const currentIndex = Number((btn as HTMLElement).dataset.eraIndex);
+			const direction = (btn as HTMLElement).dataset.direction;
+			showEra(direction === 'next' ? currentIndex + 1 : currentIndex - 1);
+		});
+	});
+
+	document.querySelectorAll('.timeline-content[data-collapsible]').forEach((card) => {
+		card.addEventListener('click', () => {
+			const isOpen = card.classList.contains('timeline-content--open');
+			document.querySelectorAll('.timeline-content--open').forEach((c) => c.classList.remove('timeline-content--open'));
+			if (!isOpen) {
+				card.classList.add('timeline-content--open');
+			}
+		});
+	});
+
+	const hash = window.location.hash.slice(1);
+	if (hash) {
+		const eraIndex = eraKeys.indexOf(hash);
+		if (eraIndex !== -1) {
+			showEra(eraIndex, false);
+		}
+	}
+</script>
+
+<style is:global>
 	.back-btn {
 		display: inline-block;
 		background: var(--color-surface);
@@ -186,6 +307,139 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 		margin-bottom: 2rem;
 	}
 
+	/* Era selector */
+	.era-selector-timeline {
+		position: relative;
+		max-width: 700px;
+		margin: 0 auto;
+		padding: 2rem 0;
+	}
+
+	.era-selector-timeline::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		background: var(--color-text-muted);
+		opacity: 0.2;
+	}
+
+	.era-selector-node {
+		background: none;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1.25rem 0;
+		position: relative;
+		width: 100%;
+		transition: transform 0.2s;
+	}
+
+	.era-selector-node:hover {
+		transform: scale(1.03);
+	}
+
+	.era-selector-node:hover .era-selector-label {
+		color: var(--era-color);
+	}
+
+	.era-selector-node--left {
+		flex-direction: row-reverse;
+		text-align: right;
+	}
+
+	.era-selector-node--right {
+		text-align: left;
+	}
+
+	.era-selector-dot {
+		background: var(--era-color);
+		border: 2px solid var(--color-bg);
+		border-radius: 50%;
+		flex-shrink: 0;
+		height: 16px;
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 16px;
+		z-index: 2;
+	}
+
+	.era-selector-dot::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		border: 2px solid var(--era-color);
+		animation: radar-pulse 2s ease-out infinite;
+		animation-delay: var(--pulse-delay, 0s);
+	}
+
+	.era-selector-info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	.era-selector-node--left .era-selector-info {
+		margin-right: calc(50% + 1.5rem);
+		align-items: flex-end;
+	}
+
+	.era-selector-node--right .era-selector-info {
+		margin-left: calc(50% + 1.5rem);
+		align-items: flex-start;
+	}
+
+	.era-selector-label {
+		color: var(--color-text);
+		font-family: 'Russo One', sans-serif;
+		font-size: 1rem;
+		transition: color 0.2s;
+	}
+
+	.era-selector-range {
+		color: var(--color-text-muted);
+		font-size: 0.75rem;
+	}
+
+	/* Era back button */
+	.era-page {
+		position: relative;
+	}
+
+	.era-back-btn {
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		color: var(--color-text);
+		cursor: pointer;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.75rem;
+		left: 0rem;
+		padding: 0.4rem 0.75rem;
+		position: absolute;
+		top: 4rem;
+		transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+		z-index: 10;
+	}
+
+	.era-back-btn:hover {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-bg);
+	}
+
 	/* Era navigation */
 	.era-nav {
 		display: flex;
@@ -207,6 +461,15 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 
 	.era-nav-item:hover {
 		color: var(--color-text);
+	}
+
+	.era-nav-item--active {
+		color: var(--color-text);
+	}
+
+	.era-nav-item--active .era-nav-dot {
+		box-shadow: 0 0 8px var(--era-color);
+		transform: scale(1.3);
 	}
 
 	.era-nav-dot {
@@ -310,6 +573,25 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 		z-index: 2;
 	}
 
+	.timeline-dot::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		border: 2px solid var(--era-color);
+		animation: radar-pulse 2s ease-out infinite;
+		animation-delay: var(--pulse-delay, 0s);
+	}
+
+	@keyframes radar-pulse {
+		0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+		100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+	}
+
 	.timeline-item--left .timeline-dot {
 		right: -6px;
 	}
@@ -319,35 +601,122 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 	}
 
 	.timeline-content {
-		background: var(--color-surface);
-		border: 1px solid rgba(255, 255, 255, 0.05);
+		background: color-mix(in srgb, var(--color-bg) 99%, transparent);
+		border: 1px solid transparent;
 		border-radius: 12px;
-		padding: 1.25rem;
-		transition: border-color 0.2s;
+		cursor: pointer;
+		padding: 0.75rem;
+		transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 	}
 
-	.timeline-content:hover {
+	.timeline-content:hover .timeline-date,
+	.timeline-content:hover .timeline-event-title {
+		transform: scale(1.03);
+	}
+
+	.timeline-content:hover .timeline-date {
+		box-shadow: 0 0 8px color-mix(in srgb, var(--era-color) 40%, transparent);
+	}
+
+	.timeline-content--open {
+		background: var(--color-surface);
 		border-color: var(--era-color);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	}
+
+	.timeline-header {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		grid-template-rows: auto auto;
+		gap: 0.25rem;
+	}
+
+	.timeline-chevron {
+		background-color: var(--color-accent);
+		display: inline-block;
+		grid-column: 2;
+		grid-row: 1 / -1;
+		align-self: center;
+		height: 14px;
+		mask-repeat: no-repeat;
+		mask-size: contain;
+		opacity: 0;
+		transition: transform 0.2s, opacity 0.2s;
+		width: 14px;
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-size: contain;
+	}
+
+	.timeline-content--open .timeline-chevron {
+		opacity: 1;
+	}
+
+	.timeline-item--left .timeline-header {
+		grid-template-columns: auto 1fr;
+	}
+
+	.timeline-item--left .timeline-date {
+		grid-column: 2;
+		justify-self: end;
+	}
+
+	.timeline-item--left .timeline-event-title {
+		grid-column: 2;
+		text-align: right;
+	}
+
+	.timeline-item--left .timeline-chevron {
+		grid-column: 1;
+		transform: rotate(180deg);
+	}
+
+	.timeline-content--open .timeline-chevron {
+		transform: rotate(90deg);
+	}
+
+	.timeline-item--left .timeline-content--open .timeline-chevron {
+		transform: rotate(90deg);
+	}
+
+	.timeline-details {
+		display: grid;
+		grid-template-rows: 0fr;
+		opacity: 0;
+		transition: grid-template-rows 0.3s ease, opacity 0.3s ease;
+	}
+
+	.timeline-details-inner {
+		overflow: hidden;
+	}
+
+	.timeline-content--open .timeline-details {
+		grid-template-rows: 1fr;
+		opacity: 1;
+	}
+
+	.timeline-content--open .timeline-details-inner {
+		padding-top: 0.75rem;
 	}
 
 	.timeline-date {
-		display: inline-block;
 		background: var(--era-color);
 		color: #000;
 		font-family: 'Russo One', sans-serif;
 		font-size: 0.7rem;
 		padding: 0.2rem 0.6rem;
 		border-radius: 4px;
-		margin-bottom: 0.5rem;
 		letter-spacing: 0.03em;
+		transition: transform 0.2s, box-shadow 0.2s;
+		width: fit-content;
 	}
 
 	.timeline-event-title {
 		font-family: 'Russo One', sans-serif;
 		font-size: 1rem;
 		color: var(--color-text);
-		margin-bottom: 0.5rem;
+		transition: transform 0.2s;
 	}
+
 
 	.timeline-event-desc {
 		color: var(--color-text-muted);
@@ -380,6 +749,60 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 		padding: 0.15rem 0.5rem;
 		border-radius: 4px;
 		border: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	/* Era navigation arrows */
+	.era-nav-buttons {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1.5rem;
+		margin-top: -1rem;
+		position: relative;
+		z-index: 1;
+	}
+
+	.era-arrow {
+		background: none;
+		border: none;
+		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.5rem;
+		transition: transform 0.2s;
+	}
+
+	.era-arrow:hover {
+		transform: scale(1.1);
+	}
+
+	.era-arrow--prev {
+		flex-direction: column-reverse;
+	}
+
+	.era-arrow-tip {
+		background-color: var(--next-era-color);
+		display: inline-block;
+		height: 44px;
+		mask-repeat: no-repeat;
+		mask-size: contain;
+		width: 44px;
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-size: contain;
+	}
+
+	.era-arrow-tip--up {
+		transform: rotate(180deg);
+	}
+
+	.era-arrow-label {
+		color: var(--next-era-color);
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	/* Credits */
@@ -477,6 +900,37 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 
 	/* Mobile */
 	@media (max-width: 768px) {
+		.era-selector-timeline::before {
+			left: 20px;
+			transform: none;
+		}
+
+		.era-selector-node,
+		.era-selector-node--left,
+		.era-selector-node--right {
+			text-align: left;
+		}
+
+		.era-selector-node--left {
+			flex-direction: row;
+		}
+
+		.era-selector-dot {
+			left: 12px;
+			transform: none;
+		}
+
+		.era-selector-node--left .era-selector-info,
+		.era-selector-node--right .era-selector-info {
+			margin-left: calc(20px + 1.5rem);
+			margin-right: 0;
+			align-items: flex-start;
+		}
+
+		.era-selector-label {
+			font-size: 0.85rem;
+		}
+
 		.bs-hero {
 			padding: 2rem 1rem 0.5rem;
 		}
@@ -505,6 +959,10 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 			font-size: 0.75rem;
 		}
 
+		.timeline {
+			padding: 0;
+		}
+
 		.timeline::before {
 			left: 20px;
 			transform: none;
@@ -529,17 +987,66 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 			justify-content: flex-start;
 		}
 
-		.era-separator {
-			margin: 2rem 0 1.5rem;
-			padding-left: 50px;
+		.timeline-item--left .timeline-header {
+			grid-template-columns: 1fr auto;
 		}
 
-		.era-separator-line:first-child {
-			display: none;
+		.timeline-item--left .timeline-date {
+			grid-column: 1;
+			justify-self: start;
+		}
+
+		.timeline-item--left .timeline-event-title {
+			grid-column: 1;
+			text-align: left;
+		}
+
+		.timeline-item--left .timeline-chevron {
+			grid-column: 2;
+			transform: none;
+		}
+
+		.timeline-item--left .timeline-content--open .timeline-chevron {
+			transform: rotate(90deg);
+		}
+
+		.era-separator {
+			margin: 1.5rem 0 1rem;
+			padding: 0 0.5rem;
 		}
 
 		.era-separator-content {
-			text-align: left;
+			text-align: center;
+			max-width: 60%;
+		}
+
+		.era-back-btn {
+			position: absolute;
+			left: auto;
+			right: 0rem;
+			top: 4rem;
+			display: block;
+		}
+
+		.era-nav {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 0.5rem;
+		}
+
+		.era-nav-buttons {
+			align-items: flex-start;
+			margin-top: 0;
+		}
+
+		.era-arrow {
+			align-items: flex-start;
+			padding-left: 0;
+			padding:0
+		}
+
+		.era-arrow-label {
+			padding-left: 10px;
 		}
 
 		.timeline-content {
