@@ -123,6 +123,7 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 					value={honeypot}
 				/>
 				{errorMsg && <p class="feedback-error">{errorMsg}</p>}
+				<p class="feedback-disclaimer">Al enviar, aceptas que almacenemos tu nombre y correo para gestionar tu comentario. Tu correo no sera visible publicamente ni compartido con terceros.</p>
 				<button class="feedback-submit-btn" disabled={state === 'submitting'} type="submit">
 					{state === 'submitting' ? 'Enviando...' : 'Enviar comentario'}
 				</button>
