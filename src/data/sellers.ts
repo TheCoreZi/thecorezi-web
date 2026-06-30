@@ -210,4 +210,69 @@ export const sellersByCountry: CountryGroup[] = [
 			},
 		],
 	},
+	{
+		country: '🇵🇪',
+		sellers: [
+			{
+				cons: [
+					'No es una tienda específica de Zoids',
+					'Solo vende figuras nuevas, no maneja segunda mano',
+				],
+				description:
+					'Si buscas ese Zoid que ya nadie tiene, GERAL es tu mejor aliado en Perú. Especializado en franquicias como Zoids, Gundam y Sentai, este vendedor se mueve entre catálogos y contactos para rastrear esos kits que el tiempo ya se llevó. No importa qué tan difícil sea de encontrar, si existe, GERAL lo busca.',
+				id: 'geral-modelkits-store',
+				image: '/images/sellers/geral.jpg',
+				link: 'https://www.facebook.com/geralmodelkitstore/',
+				name: 'GERAL Modelkits Store',
+				pros: [
+					'Puede conseguir kits escasos o descontinuados en muy buenas condiciones',
+					'Amplia variedad de franquicias mecha',
+					'Mantiene informados a sus clientes sobre el estado de sus pedidos',
+					'Buen servicio en la entrega de los kits',
+				],
+				type: 'store',
+			},
+			{
+				cons: [
+					'No es una tienda específica de Zoids',
+					'Solo vende figuras nuevas, no maneja segunda mano',
+					'No sabemos que signifique su nombre',
+				],
+				description:
+					'Una opción versátil para el coleccionista peruano. R&R no se limita a una sola franquicia: si es anime y viene en kit, probablemente lo pueden traer. Para quienes prefieren ver antes de comprar, tienen un espacio físico donde puedes ir a curiosear. Y si eres de los que quiere estar al tanto de cada novedad, su canal de WhatsApp te mantiene informado.',
+				id: 'r-and-r-coleccionables',
+				image: '/images/sellers/ryr.jpg',
+				link: 'https://www.facebook.com/ryrcoleccionables/',
+				name: 'R&R Coleccionables',
+				pros: [
+					'Kits de distintas líneas de anime',
+					'También consigue herramientas para el hobby',
+					'Cuenta con tienda física',
+					'Canal de noticias en WhatsApp para estar al tanto de novedades',
+					'Su logo está bueno',
+				],
+				type: 'store',
+			},
+			{
+				cons: [
+					'En su mayoría son preventas, hay que esperar por los kits',
+					'Solo vende figuras nuevas, no maneja segunda mano',
+					'No es una tienda específica de Zoids',
+				],
+				description:
+					'El punto de entrada ideal si estás en Perú y quieres empezar a coleccionar Zoids sin que tu billetera sufra demasiado. Zerox & Zig se especializa en preventas, lo que significa que puedes asegurar tu kit antes del lanzamiento a precios que difícilmente encontrarás después. Si te gustan los Zoids aquí vas a sentirte como en casa.',
+				id: 'zerox-and-zig',
+				image: '/images/sellers/zerox.jpg',
+				link: 'https://www.facebook.com/ZeroXandZig/',
+				name: 'Zerox & Zig',
+				pros: [
+					'Preventas a muy buen precio',
+					'Buen servicio en la entrega de los kits',
+					'Mantiene informados a sus clientes sobre el estado de sus pedidos',
+					'El nombre suena bien',
+				],
+				type: 'store',
+			},
+		],
+	},
 ];
