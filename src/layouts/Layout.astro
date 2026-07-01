@@ -54,9 +54,9 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 	<body>
 		<nav class="navbar" id="navbar">
 			<ul class="navbar-links navbar-links--desktop">
+				<li><a href="/#noticias">Noticias</a></li>
 				<li><a href="/#lanzamientos">Lanzamientos</a></li>
 				<li><a href="/#donde-comprar">¿Dónde comprar?</a></li>
-				<li><a href="/#zoids-sleeper">Zoids Sleeper</a></li>
 			</ul>
 			<a href="/" class="navbar-brand" id="navbar-brand">
 				<Image src={logo} alt="The Core Zi" height={48} loading="eager" />
@@ -64,6 +64,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 			<ul class="navbar-links navbar-links--desktop">
 				<li><a href="/#podcast">Podcast</a></li>
 				<li><a href="/archivo/">Archivo Zi</a></li>
+				<li><a href="/#zoids-sleeper">Zoids Sleeper</a></li>
 			</ul>
 			<button class="navbar-hamburger" id="navbar-hamburger" type="button" aria-label="Menú">
 				<span class="hamburger-line"></span>
@@ -71,6 +72,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 				<span class="hamburger-line"></span>
 			</button>
 			<div class="navbar-mobile-menu" id="navbar-mobile-menu" hidden>
+				<a href="/#noticias">Noticias</a>
 				<a href="/#lanzamientos">Lanzamientos</a>
 				<a href="/#donde-comprar">¿Dónde comprar?</a>
 				<a href="/#podcast">Podcast</a>

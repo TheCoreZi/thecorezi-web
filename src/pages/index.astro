@@ -1,12 +1,14 @@
 ---
 import { Image } from 'astro:assets';
 import { sellersByCountry } from '../data/sellers';
+import NewsCarousel from '../components/NewsCarousel';
 import SellerFeedbackDynamic from '../components/SellerFeedbackDynamic';
 import SellerList from '../components/SellerList';
 import SellerVoteButtonsDynamic from '../components/SellerVoteButtonsDynamic';
 import ZoidCardList from '../components/ZoidCardList';
 import Layout from '../layouts/Layout.astro';
 import logo from '../assets/images/thecorezi.png';
+import '../styles/news.css';
 import '../styles/seller-card.css';
 import '../styles/seller-feedback.css';
 import '../styles/zoid-card.css';
@@ -17,6 +19,11 @@ import '../styles/zoid-card.css';
 		<section class="hero">
 			<Image src={logo} alt="The Core Zi" class="hero-logo" height={200} loading="eager" />
 			<p>Zoids corre por nuestras venas. Bienvenido al núcleo.</p>
+		</section>
+
+		<section id="noticias" class="animate-from-left">
+			<h2 class="section-title">Noticias</h2>
+			<NewsCarousel client:visible />
 		</section>
 
 		<section id="lanzamientos" class="animate-from-right">
@@ -365,6 +372,10 @@ import '../styles/zoid-card.css';
 		color: var(--color-text-muted);
 	}
 
+	#main-view > section + section {
+		margin-top: 4rem;
+	}
+
 	.section-title {
 		font-family: 'Russo One', sans-serif;
 		font-size: 2rem;
@@ -379,7 +390,6 @@ import '../styles/zoid-card.css';
 
 	/* CTA teaser */
 	#donde-comprar-cta {
-		margin-top: 4rem;
 		padding: 4rem 2rem;
 		border-radius: 16px;
 		background: linear-gradient(135deg, var(--color-surface) 0%, transparent 70%);
@@ -548,7 +558,6 @@ import '../styles/zoid-card.css';
 
 	/* Podcast */
 	#podcast {
-		margin-top: 4rem;
 		text-align: center;
 	}
 
@@ -661,10 +670,6 @@ import '../styles/zoid-card.css';
 	}
 
 	/* Archivo Zi CTA — Terminal */
-	#archivo-zi-cta {
-		margin-top: 4rem;
-	}
-
 	.terminal {
 		border: 1px solid var(--color-surface);
 		border-radius: 12px;
@@ -763,10 +768,6 @@ import '../styles/zoid-card.css';
 	}
 
 	/* Zoids Sleeper */
-	#zoids-sleeper {
-		margin-top: 4rem;
-	}
-
 	.sleeper-hero {
 		border-radius: 16px;
 		overflow: hidden;
@@ -882,8 +883,11 @@ import '../styles/zoid-card.css';
 			margin-bottom: 1.25rem;
 		}
 
+		#main-view > section + section {
+			margin-top: 2.5rem;
+		}
+
 		#donde-comprar-cta {
-			margin-top: 2rem;
 			padding: 2.5rem 1.5rem;
 		}
 
@@ -929,17 +933,9 @@ import '../styles/zoid-card.css';
 			margin-bottom: 1.5rem;
 		}
 
-		#archivo-zi-cta {
-			margin-top: 2rem;
-		}
-
 		.terminal-body {
 			padding: 1rem;
 			font-size: 0.8rem;
-		}
-
-		#podcast {
-			margin-top: 2rem;
 		}
 
 		.podcast-wrapper {
@@ -949,10 +945,6 @@ import '../styles/zoid-card.css';
 		.podcast-bg-thumb {
 			width: 120px;
 			opacity: 0.08;
-		}
-
-		#zoids-sleeper {
-			margin-top: 2rem;
 		}
 
 		.sleeper-overlay {
