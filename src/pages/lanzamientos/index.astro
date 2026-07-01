@@ -1,0 +1,40 @@
+---
+import ZoidCardListFull from '../../components/ZoidCardListFull';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/zoid-card.css';
+---
+
+<Layout title="Lanzamientos de Zoids">
+	<h1 class="lanzamientos-page-title">Lanzamientos</h1>
+	<ZoidCardListFull client:load />
+</Layout>
+
+<style>
+	.lanzamientos-page-title {
+		color: var(--color-accent);
+		font-family: 'Russo One', sans-serif;
+		font-size: 2.5rem;
+		margin-bottom: 2rem;
+		position: relative;
+		padding-bottom: 1rem;
+		text-align: center;
+	}
+
+	.lanzamientos-page-title::after {
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
+		bottom: 0;
+		content: '';
+		height: 3px;
+		left: 50%;
+		position: absolute;
+		transform: translateX(-50%);
+		width: 80px;
+	}
+
+	@media (max-width: 550px) {
+		.lanzamientos-page-title {
+			font-size: 1.75rem;
+		}
+	}
+</style>

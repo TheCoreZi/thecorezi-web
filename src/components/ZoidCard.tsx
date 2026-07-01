@@ -1,4 +1,4 @@
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import diamondIcon from '../assets/icons/diamond.svg?raw';
 import brandKotobukiya from '../assets/images/brand/kotobukiya.png';
 import brandTomy from '../assets/images/brand/tomy.png';
@@ -44,14 +44,36 @@ function formatDate(date: number | null, precision: DatePrecision): string {
 
 
 interface Props {
+	defaultOpen?: boolean;
 	eager?: boolean;
+	onSelect?: () => void;
+	onToggle?: (open: boolean) => void;
 	zoid: Zoid;
 }
 
-export default function ZoidCard({ eager = false, zoid }: Props) {
+export default function ZoidCard({ defaultOpen = false, eager = false, onSelect, onToggle, zoid }: Props) {
 	const [open, setOpen] = useState(false);
 	const cardRef = useRef<HTMLDetailsElement>(null);
 	const loading = eager ? 'eager' : 'lazy';
+
+	useEffect(() => {
+		if (!defaultOpen) return;
+		const card = cardRef.current;
+		if (!card) return;
+		const wrapper = card.parentElement ?? card;
+		const fromRect = wrapper.getBoundingClientRect();
+		setOpen(true);
+		requestAnimationFrame(() => {
+			const toRect = wrapper.getBoundingClientRect();
+			card.style.overflow = 'hidden';
+			wrapper.animate(
+				{ height: [`${fromRect.height}px`, `${toRect.height}px`] },
+				{ duration: DURATION, easing: EASING },
+			).onfinish = () => {
+				card.style.overflow = '';
+			};
+		});
+	}, []);
 
 	const threeMonthsAgo = new Date();
 	threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -59,6 +81,12 @@ export default function ZoidCard({ eager = false, zoid }: Props) {
 
 	function handleClick(e: Event) {
 		e.preventDefault();
+
+		if (onSelect) {
+			onSelect();
+			return;
+		}
+
 		const card = cardRef.current;
 		if (!card) return;
 		const wrapper = card.parentElement ?? card;
@@ -78,6 +106,7 @@ export default function ZoidCard({ eager = false, zoid }: Props) {
 				{ duration: DURATION, easing: EASING },
 			).onfinish = () => {
 				setOpen(false);
+				onToggle?.(false);
 				wrapper.style.gridColumn = '';
 				wrapper.style.order = '';
 				card.style.overflow = '';
@@ -96,6 +125,7 @@ export default function ZoidCard({ eager = false, zoid }: Props) {
 
 		const fromRect = wrapper.getBoundingClientRect();
 		setOpen(true);
+		onToggle?.(true);
 		requestAnimationFrame(() => {
 			wrapper.style.gridColumn = '1 / -1';
 			if (!window.matchMedia('(max-width: 550px)').matches) {
