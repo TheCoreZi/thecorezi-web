@@ -219,16 +219,36 @@ export const sellersByCountry: CountryGroup[] = [
 					'Solo vende figuras nuevas, no maneja segunda mano',
 				],
 				description:
-					'Si buscas ese Zoid que ya nadie tiene, GERAL es tu mejor aliado en Perú. Especializado en franquicias como Zoids, Gundam y Sentai, este vendedor se mueve entre catálogos y contactos para rastrear esos kits que el tiempo ya se llevó. No importa qué tan difícil sea de encontrar, si existe, GERAL lo busca.',
+					'Si buscas ese Zoid que ya nadie tiene, GERAL es tu mejor aliado en Perú.  Además de las líneas actuales de Zoids, se especializa en rastrear Zoids antiguos motorizados (OJR, NJR) y kits de Supernova, este vendedor se mueve entre catálogos y contactos para rastrear esos kits que el tiempo ya se llevó. No importa qué tan difícil sea de encontrar, si existe, GERAL lo busca.',
 				id: 'geral-modelkits-store',
 				image: '/images/sellers/geral.jpg',
 				link: 'https://www.facebook.com/geralmodelkitstore/',
 				name: 'GERAL Modelkits Store',
 				pros: [
 					'Puede conseguir kits escasos o descontinuados en muy buenas condiciones',
+					'Vende piezas de repuesto',
 					'Amplia variedad de franquicias mecha',
 					'Mantiene informados a sus clientes sobre el estado de sus pedidos',
 					'Buen servicio en la entrega de los kits',
+					'Envíos a todo el Perú',
+				],
+				type: 'store',
+			},
+			{
+				cons: [
+					'No es una tienda específica de Zoids',
+					'Solo vende figuras nuevas, no maneja segunda mano',
+				],
+				description:
+					'MPJ es una tienda peruana que maneja los nuevos lanzamientos de Zoids, además de kits de otras franquicias. También vende herramientas y pinturas para el hobby, así que puedes armar tu pedido completo en un solo lugar.',
+				id: 'mpj-pe',
+				image: '/images/sellers/mpj.jpg',
+				link: 'https://www.facebook.com/MPJ.PE/',
+				name: 'MechaPremium J',
+				pros: [
+					'Amplia variedad de kits de otras franquicias',
+					'Vende herramientas y pinturas para el hobby',
+					'Envíos a todo el Perú',
 				],
 				type: 'store',
 			},
