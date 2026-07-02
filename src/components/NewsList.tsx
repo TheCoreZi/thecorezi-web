@@ -2,6 +2,7 @@ import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { supabase } from '../lib/supabase';
 import type { NewsItem } from '../types/news';
+import ImageLightbox from './ImageLightbox';
 
 const PAGE_SIZE = 10;
 
@@ -97,6 +98,8 @@ export default function NewsList() {
 		return <NewsDetail id={selectedId} onBack={closeDetail} />;
 	}
 
+	const contentRef = useRef<HTMLDivElement>(null);
+
 	if (selectedNews) {
 		return (
 			<div class="news-detail">
@@ -105,11 +108,12 @@ export default function NewsList() {
 				<h1 class="news-detail-title">{selectedNews.title}</h1>
 				<div class="news-detail-body">
 					<img alt="" class="news-detail-image" src={selectedNews.image_url} />
-					<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedNews.content) }} />
+					<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedNews.content) }} ref={contentRef} />
 				</div>
 				{selectedNews.link && (
 					<a class="news-detail-link" href={normalizeLink(selectedNews.link)}>Ver más →</a>
 				)}
+				<ImageLightbox containerRef={contentRef} />
 			</div>
 		);
 	}
@@ -136,6 +140,7 @@ export default function NewsList() {
 
 function NewsDetail({ id, onBack }: { id: string; onBack: () => void }) {
 	const [item, setItem] = useState<NewsItem | null>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		supabase
@@ -155,11 +160,12 @@ function NewsDetail({ id, onBack }: { id: string; onBack: () => void }) {
 			<h1 class="news-detail-title">{item.title}</h1>
 			<div class="news-detail-body">
 				<img alt="" class="news-detail-image" src={item.image_url} />
-				<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} />
+				<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} ref={contentRef} />
 			</div>
 			{item.link && (
 				<a class="news-detail-link" href={normalizeLink(item.link)}>Ver más →</a>
 			)}
+			<ImageLightbox containerRef={contentRef} />
 		</div>
 	);
 }

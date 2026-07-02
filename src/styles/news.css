@@ -302,12 +302,44 @@
 	line-height: 1.8;
 }
 
+.news-detail-content figure {
+	margin: 1rem 0;
+	max-width: 50%;
+}
+
+.news-detail-content figure:nth-of-type(odd) {
+	float: right;
+	margin-left: 1.5rem;
+}
+
+.news-detail-content figure:nth-of-type(even) {
+	float: left;
+	margin-right: 1.5rem;
+}
+
+.news-detail-content figure img {
+	border-radius: 8px;
+	max-width: 100%;
+}
+
+.news-detail-content figure figcaption {
+	color: var(--color-text-muted);
+	font-size: 0.85rem;
+	margin-top: 0.5rem;
+	text-align: center;
+}
+
 .news-detail-content h1,
 .news-detail-content h2,
 .news-detail-content h3 {
+	clear: both;
 	color: var(--color-accent);
 	font-family: 'Russo One', sans-serif;
 	margin: 1.5rem 0 0.75rem;
+}
+
+.news-detail-content p {
+	margin: 0.75rem 0;
 }
 
 .news-detail-content a {
@@ -328,7 +360,9 @@
 
 .news-detail-content img {
 	border-radius: 8px;
-	max-width: 100%;
+	display: block;
+	margin: 0 auto;
+	max-width: 50%;
 }
 
 .news-detail-content ul,
@@ -361,6 +395,76 @@
 .news-detail-link:hover {
 	background-color: transparent;
 	color: var(--color-accent);
+}
+
+/* Lightbox */
+.lightbox-overlay {
+	align-items: center;
+	background: rgba(0, 0, 0, 0.9);
+	bottom: 0;
+	cursor: zoom-out;
+	display: flex;
+	justify-content: center;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 1000;
+}
+
+.lightbox-image {
+	border-radius: 8px;
+	cursor: default;
+	max-height: 90vh;
+	max-width: 90vw;
+	object-fit: contain;
+}
+
+.lightbox-close {
+	background: rgba(255, 255, 255, 0.1);
+	border: none;
+	border-radius: 50%;
+	color: #fff;
+	cursor: pointer;
+	font-size: 1.5rem;
+	height: 44px;
+	position: absolute;
+	right: 1.5rem;
+	top: 1.5rem;
+	transition: background-color 0.2s;
+	width: 44px;
+	z-index: 1001;
+}
+
+.lightbox-close:hover {
+	background: rgba(255, 255, 255, 0.25);
+}
+
+.news-detail-content img {
+	cursor: zoom-in;
+}
+
+/* Curiosidades page title */
+.curiosidades-page-title {
+	color: var(--color-accent);
+	font-family: 'Russo One', sans-serif;
+	font-size: 2.5rem;
+	margin-bottom: 2rem;
+	padding-bottom: 1rem;
+	position: relative;
+	text-align: center;
+}
+
+.curiosidades-page-title::after {
+	background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+	border-radius: 2px;
+	bottom: 0;
+	content: '';
+	height: 3px;
+	left: 50%;
+	position: absolute;
+	transform: translateX(-50%);
+	width: 80px;
 }
 
 /* Loading */
@@ -396,6 +500,12 @@
 		height: 32px;
 		width: 32px;
 		font-size: 1rem;
+	}
+
+	.news-detail-content figure {
+		float: none;
+		margin: 1rem 0;
+		max-width: 100%;
 	}
 
 	.news-detail-image {
@@ -437,6 +547,10 @@
 
 	.news-detail-title {
 		font-size: 1.25rem;
+	}
+
+	.curiosidades-page-title {
+		font-size: 1.75rem;
 	}
 
 	.news-detail-content {

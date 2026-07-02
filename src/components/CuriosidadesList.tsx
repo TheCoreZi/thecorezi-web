@@ -2,6 +2,7 @@ import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { supabase } from '../lib/supabase';
 import type { CuriosidadItem } from '../types/curiosidad';
+import ImageLightbox from './ImageLightbox';
 
 const PAGE_SIZE = 10;
 
@@ -95,6 +96,8 @@ export default function CuriosidadesList() {
 		return <CuriosidadDetail hashKey={selectedSlug} onBack={closeDetail} />;
 	}
 
+	const contentRef = useRef<HTMLDivElement>(null);
+
 	if (selected) {
 		return (
 			<div class="news-detail">
@@ -103,14 +106,16 @@ export default function CuriosidadesList() {
 				<h1 class="news-detail-title">{selected.title}</h1>
 				<div class="news-detail-body">
 					<img alt="" class="news-detail-image" src={selected.image_url} />
-					<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(selected.content) }} />
+					<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(selected.content) }} ref={contentRef} />
 				</div>
+				<ImageLightbox containerRef={contentRef} />
 			</div>
 		);
 	}
 
 	return (
 		<>
+			<h1 class="curiosidades-page-title">Curiosidades</h1>
 			<div class="news-list-grid">
 				{curiosidades.map((item) => (
 					<article class="news-card" key={item.slug} onClick={() => openDetail(item.slug)}>
@@ -131,6 +136,7 @@ export default function CuriosidadesList() {
 
 function CuriosidadDetail({ hashKey, onBack }: { hashKey: string; onBack: () => void }) {
 	const [item, setItem] = useState<CuriosidadItem | null>(null);
+	const contentRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		supabase
@@ -158,8 +164,9 @@ function CuriosidadDetail({ hashKey, onBack }: { hashKey: string; onBack: () => 
 			<h1 class="news-detail-title">{item.title}</h1>
 			<div class="news-detail-body">
 				<img alt="" class="news-detail-image" src={item.image_url} />
-				<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} />
+				<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} ref={contentRef} />
 			</div>
+			<ImageLightbox containerRef={contentRef} />
 		</div>
 	);
 }
