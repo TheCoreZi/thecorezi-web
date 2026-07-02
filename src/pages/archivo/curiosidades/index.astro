@@ -1,0 +1,61 @@
+---
+import CuriosidadesList from '../../../components/CuriosidadesList';
+import Layout from '../../../layouts/Layout.astro';
+import '../../../styles/news.css';
+---
+
+<Layout title="Curiosidades de Zoids" description="Datos curiosos, easter eggs y detalles poco conocidos del universo Zoids.">
+	<a href="/archivo/" class="back-btn">← Volver al Archivo</a>
+	<h1 class="curiosidades-page-title">Curiosidades</h1>
+	<CuriosidadesList client:load />
+</Layout>
+
+<style>
+	.curiosidades-page-title {
+		color: var(--color-accent);
+		font-family: 'Russo One', sans-serif;
+		font-size: 2.5rem;
+		margin-bottom: 2rem;
+		padding-bottom: 1rem;
+		position: relative;
+		text-align: center;
+	}
+
+	.curiosidades-page-title::after {
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
+		bottom: 0;
+		content: '';
+		height: 3px;
+		left: 50%;
+		position: absolute;
+		transform: translateX(-50%);
+		width: 80px;
+	}
+
+	.back-btn {
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		color: var(--color-text);
+		display: inline-block;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.85rem;
+		padding: 0.5rem 1rem;
+		text-decoration: none;
+		transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+	}
+
+	.back-btn:hover {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-bg);
+	}
+
+	@media (max-width: 550px) {
+		.curiosidades-page-title {
+			font-size: 1.75rem;
+		}
+	}
+</style>
