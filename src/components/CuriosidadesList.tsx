@@ -19,7 +19,7 @@ export default function CuriosidadesList() {
 	const [curiosidades, setCuriosidades] = useState<CuriosidadItem[]>([]);
 	const [hasMore, setHasMore] = useState(true);
 	const [loading, setLoading] = useState(false);
-	const [selectedId, setSelectedId] = useState<string | null>(null);
+	const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 	const offsetRef = useRef(0);
 	const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -64,33 +64,35 @@ export default function CuriosidadesList() {
 
 	useEffect(() => {
 		const hash = window.location.hash.slice(1);
-		if (hash) setSelectedId(hash);
+		if (hash) setSelectedSlug(hash);
 	}, []);
 
-	function openDetail(id: string) {
-		setSelectedId(id);
+	function openDetail(slug: string) {
+		setSelectedSlug(slug);
 		window.scrollTo(0, 0);
-		history.pushState(null, '', `/archivo/curiosidades/#${id}`);
+		history.pushState(null, '', `/archivo/curiosidades/#${slug}`);
 	}
 
 	function closeDetail() {
-		setSelectedId(null);
+		setSelectedSlug(null);
 		history.pushState(null, '', '/archivo/curiosidades/');
 	}
 
 	useEffect(() => {
 		function onPopState() {
 			const hash = window.location.hash.slice(1);
-			setSelectedId(hash || null);
+			setSelectedSlug(hash || null);
 		}
 		window.addEventListener('popstate', onPopState);
 		return () => window.removeEventListener('popstate', onPopState);
 	}, []);
 
-	const selected = selectedId ? curiosidades.find((c) => c.id === selectedId) : null;
+	const selected = selectedSlug
+		? curiosidades.find((c) => c.slug === selectedSlug || c.id === selectedSlug)
+		: null;
 
-	if (selectedId && !selected && curiosidades.length > 0) {
-		return <CuriosidadDetail id={selectedId} onBack={closeDetail} />;
+	if (selectedSlug && !selected && curiosidades.length > 0) {
+		return <CuriosidadDetail hashKey={selectedSlug} onBack={closeDetail} />;
 	}
 
 	if (selected) {
@@ -111,7 +113,7 @@ export default function CuriosidadesList() {
 		<>
 			<div class="news-list-grid">
 				{curiosidades.map((item) => (
-					<article class="news-card" key={item.id} onClick={() => openDetail(item.id)}>
+					<article class="news-card" key={item.slug} onClick={() => openDetail(item.slug)}>
 						<img alt="" class="news-card-image" loading="lazy" src={item.image_url} />
 						<div class="news-card-body">
 							<p class="news-card-date">{formatDate(item.published_at)}</p>
@@ -127,17 +129,25 @@ export default function CuriosidadesList() {
 	);
 }
 
-function CuriosidadDetail({ id, onBack }: { id: string; onBack: () => void }) {
+function CuriosidadDetail({ hashKey, onBack }: { hashKey: string; onBack: () => void }) {
 	const [item, setItem] = useState<CuriosidadItem | null>(null);
 
 	useEffect(() => {
 		supabase
 			.from('Curiosidades')
 			.select('*')
-			.eq('id', id)
+			.eq('slug', hashKey)
 			.single()
-			.then(({ data }) => { if (data) setItem(data as CuriosidadItem); });
-	}, [id]);
+			.then(({ data }) => {
+				if (data) return setItem(data as CuriosidadItem);
+				supabase
+					.from('Curiosidades')
+					.select('*')
+					.eq('id', hashKey)
+					.single()
+					.then(({ data: fallback }) => { if (fallback) setItem(fallback as CuriosidadItem); });
+			});
+	}, [hashKey]);
 
 	if (!item) return <div class="news-loading">Cargando...</div>;
 
