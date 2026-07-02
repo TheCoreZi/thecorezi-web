@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
-import { fetchFeedback, type Feedback } from '../lib/sellerFeedback';
+import { fetchComments, type CuriosidadComment } from '../lib/curiosidadComments';
 
 interface Props {
-	sellerId: string;
+	curiosidadId: string;
 }
 
 function formatRelativeDate(dateStr: string): string {
@@ -22,35 +22,34 @@ function formatRelativeDate(dateStr: string): string {
 	return `hace ${diffYears} anos`;
 }
 
-export default function SellerFeedbackList({ sellerId }: Props) {
-	const [feedback, setFeedback] = useState<Feedback[]>([]);
+export default function CuriosidadCommentList({ curiosidadId }: Props) {
+	const [comments, setComments] = useState<CuriosidadComment[]>([]);
 	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
 		setLoaded(false);
-		fetchFeedback(sellerId).then((data) => {
-			setFeedback(data);
+		fetchComments(curiosidadId).then((data) => {
+			setComments(data);
 			setLoaded(true);
 		});
-	}, [sellerId]);
+	}, [curiosidadId]);
 
 	if (!loaded) return null;
 
 	return (
 		<div class="comments-section">
-			<h4 class="comments-title">Comentarios de la comunidad</h4>
-			{feedback.length === 0 ? (
+			<h4 class="comments-title">Comentarios</h4>
+			{comments.length === 0 ? (
 				<p class="comments-empty">Aun no hay comentarios. Se el primero en opinar.</p>
 			) : (
 				<div class="comments-list">
-					{feedback.map((f, i) => (
+					{comments.map((c, i) => (
 						<div class="comment-item" key={i}>
 							<div class="comment-item-header">
-								<span class="comment-item-author">{f.name}</span>
-								<span class="comment-item-date">{formatRelativeDate(f.created_at)}</span>
+								<span class="comment-item-author">{c.name}</span>
+								<span class="comment-item-date">{formatRelativeDate(c.created_at)}</span>
 							</div>
-							<p class="comment-item-model">Compro: {f.model}</p>
-							<p class="comment-item-text">{f.comment}</p>
+							<p class="comment-item-text">{c.comment}</p>
 						</div>
 					))}
 				</div>

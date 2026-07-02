@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { hasSubmittedFeedback, submitFeedback } from '../lib/sellerFeedback';
+import { hasSubmittedComment, submitComment } from '../lib/curiosidadComments';
 
 declare global {
 	interface Window {
@@ -12,7 +12,7 @@ declare global {
 }
 
 interface Props {
-	sellerId: string;
+	curiosidadId: string;
 }
 
 type FormState = 'error' | 'idle' | 'submitting' | 'success';
@@ -33,13 +33,12 @@ function loadTurnstileScript(): Promise<void> {
 	return turnstilePromise;
 }
 
-export default function SellerFeedbackForm({ sellerId }: Props) {
+export default function CuriosidadCommentForm({ curiosidadId }: Props) {
 	const [alreadySubmitted, setAlreadySubmitted] = useState(true);
 	const [comment, setComment] = useState('');
 	const [email, setEmail] = useState('');
 	const [errorMsg, setErrorMsg] = useState('');
 	const [honeypot, setHoneypot] = useState('');
-	const [model, setModel] = useState('');
 	const [name, setName] = useState('');
 	const [state, setState] = useState<FormState>('idle');
 	const [turnstileToken, setTurnstileToken] = useState('');
@@ -47,13 +46,12 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 	const widgetIdRef = useRef<string | null>(null);
 
 	useEffect(() => {
-		setAlreadySubmitted(hasSubmittedFeedback(sellerId));
+		setAlreadySubmitted(hasSubmittedComment(curiosidadId));
 		setComment('');
 		setErrorMsg('');
-		setModel('');
 		setName('');
 		setState('idle');
-	}, [sellerId]);
+	}, [curiosidadId]);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -82,7 +80,7 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 				widgetIdRef.current = null;
 			}
 		};
-	}, [sellerId]);
+	}, [curiosidadId]);
 
 	if (alreadySubmitted || state === 'success') {
 		if (state === 'success') {
@@ -107,12 +105,11 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 		setState('submitting');
 		setErrorMsg('');
 
-		const result = await submitFeedback({
+		const result = await submitComment({
 			comment: comment.trim(),
+			curiosidad_id: curiosidadId,
 			email: email.trim().toLowerCase(),
-			model: model.trim(),
 			name: name.trim(),
-			seller_id: sellerId,
 		});
 
 		if (result.error) {
@@ -132,9 +129,9 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 			<form onSubmit={handleSubmit}>
 				<div class="feedback-form-row">
 					<div class="feedback-field">
-						<label for="feedback-name">Nombre o alias</label>
+						<label for="comment-name">Nombre o alias</label>
 						<input
-							id="feedback-name"
+							id="comment-name"
 							maxLength={50}
 							onInput={(e) => setName((e.target as HTMLInputElement).value)}
 							required
@@ -143,9 +140,9 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 						/>
 					</div>
 					<div class="feedback-field">
-						<label for="feedback-email">Email (no se mostrara publicamente)</label>
+						<label for="comment-email">Email (no se mostrara publicamente)</label>
 						<input
-							id="feedback-email"
+							id="comment-email"
 							onInput={(e) => setEmail((e.target as HTMLInputElement).value)}
 							required
 							type="email"
@@ -154,21 +151,9 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 					</div>
 				</div>
 				<div class="feedback-field">
-					<label for="feedback-model">Modelo que compraste</label>
-					<input
-						id="feedback-model"
-						maxLength={100}
-						onInput={(e) => setModel((e.target as HTMLInputElement).value)}
-						placeholder="Ej: Liger Zero, Shield Liger DCS-J..."
-						required
-						type="text"
-						value={model}
-					/>
-				</div>
-				<div class="feedback-field">
-					<label for="feedback-comment">Comentario</label>
+					<label for="comment-text">Comentario</label>
 					<textarea
-						id="feedback-comment"
+						id="comment-text"
 						maxLength={500}
 						minLength={10}
 						onInput={(e) => setComment((e.target as HTMLTextAreaElement).value)}

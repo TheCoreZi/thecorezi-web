@@ -166,6 +166,10 @@
 	position: absolute;
 }
 
+.feedback-turnstile {
+	margin-top: 0.25rem;
+}
+
 @media (max-width: 768px) {
 	.feedback-form-row {
 		grid-template-columns: 1fr;

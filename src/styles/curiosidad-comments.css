@@ -1,0 +1,72 @@
+/* Comments section */
+.comments-section {
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+}
+
+.comments-title {
+	color: var(--color-accent);
+	font-family: 'Russo One', sans-serif;
+	font-size: 1.1rem;
+	margin-bottom: 1rem;
+}
+
+.comments-empty {
+	color: var(--color-text-muted);
+	font-size: 0.85rem;
+	font-style: italic;
+}
+
+/* Chat bubble comments */
+.comments-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.comment-item {
+	background: rgba(255, 255, 255, 0.08);
+	border-left: 3px solid var(--color-accent);
+	border-radius: 0 12px 12px 0;
+	max-width: 75%;
+	padding: 0.5rem 0.75rem;
+	width: fit-content;
+}
+
+.comment-item-header {
+	align-items: baseline;
+	display: flex;
+	gap: 0.4rem;
+	margin-bottom: 0.2rem;
+}
+
+.comment-item-author {
+	color: var(--color-accent);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.comment-item-date {
+	color: var(--color-text-muted);
+	font-size: 0.65rem;
+}
+
+.comment-item-model {
+	color: var(--color-text-muted);
+	font-size: 0.75rem;
+	margin-bottom: 0.15rem;
+}
+
+.comment-item-text {
+	color: var(--color-text);
+	font-size: 0.85rem;
+	line-height: 1.4;
+	margin: 0;
+}
+
+@media (max-width: 768px) {
+	.comment-item {
+		max-width: 90%;
+	}
+}

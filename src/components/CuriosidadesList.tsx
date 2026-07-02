@@ -2,6 +2,8 @@ import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { supabase } from '../lib/supabase';
 import type { CuriosidadItem } from '../types/curiosidad';
+import CuriosidadCommentForm from './CuriosidadCommentForm';
+import CuriosidadCommentList from './CuriosidadCommentList';
 import ImageLightbox from './ImageLightbox';
 
 const PAGE_SIZE = 10;
@@ -109,6 +111,8 @@ export default function CuriosidadesList() {
 					<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(selected.content) }} ref={contentRef} />
 				</div>
 				<ImageLightbox containerRef={contentRef} />
+				<CuriosidadCommentList curiosidadId={selected.id} />
+				<CuriosidadCommentForm curiosidadId={selected.id} />
 			</div>
 		);
 	}
@@ -167,6 +171,8 @@ function CuriosidadDetail({ hashKey, onBack }: { hashKey: string; onBack: () => 
 				<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} ref={contentRef} />
 			</div>
 			<ImageLightbox containerRef={contentRef} />
+			<CuriosidadCommentList curiosidadId={item.id} />
+			<CuriosidadCommentForm curiosidadId={item.id} />
 		</div>
 	);
 }
