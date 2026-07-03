@@ -31,7 +31,7 @@ function showApp() {
 function switchTab(tab) {
 	currentTab = tab;
 	$$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-	['dashboard', 'feedback', 'comments'].forEach((t) => {
+	['dashboard', 'feedback', 'comments', 'curiosidades', 'noticias'].forEach((t) => {
 		$(`#tab-${t}`).classList.toggle('hidden', t !== tab);
 	});
 
@@ -172,6 +172,121 @@ $('#logout-btn').addEventListener('click', async () => {
 // Tabs
 $$('.tab').forEach((tab) => {
 	tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+// Preview helpers
+function renderPreview(title, summary, image, content) {
+	let html = '';
+	if (title) html += `<h1 class="news-detail-title">${title}</h1>`;
+	if (summary) html += `<p class="preview-summary">${summary}</p>`;
+	if (image) html += `<img class="news-detail-image" src="${image}" alt="" />`;
+	if (content) html += `<div class="news-detail-content">${marked.parse(content)}</div>`;
+	return html || '<p style="color:var(--color-text-muted)">Escribe algo para ver el preview...</p>';
+}
+
+function updateCuriosidadPreview() {
+	$('#cur-preview').innerHTML = renderPreview(
+		$('#cur-title').value, $('#cur-summary').value, $('#cur-image').value, $('#cur-content').value
+	);
+}
+
+function updateNoticiaPreview() {
+	$('#news-preview').innerHTML = renderPreview(
+		$('#news-title').value, $('#news-summary').value, $('#news-image').value, $('#news-content').value
+	);
+}
+
+// Curiosidad live preview
+['#cur-title', '#cur-summary', '#cur-image', '#cur-content'].forEach((sel) => {
+	$(sel).addEventListener('input', updateCuriosidadPreview);
+});
+
+// Noticia live preview
+['#news-title', '#news-summary', '#news-image', '#news-content'].forEach((sel) => {
+	$(sel).addEventListener('input', updateNoticiaPreview);
+});
+
+// Slug auto-generation
+$('#cur-title').addEventListener('input', (e) => {
+	const slug = e.target.value
+		.toLowerCase()
+		.normalize('NFD')
+		.replace(/[̀-ͯ]/g, '')
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-|-$/g, '');
+	$('#cur-slug').value = slug;
+});
+
+// Publish curiosidad
+$('#cur-publish').addEventListener('click', async () => {
+	const msgEl = $('#curiosidad-msg');
+	const btn = $('#cur-publish');
+	const fields = {
+		content: $('#cur-content').value,
+		image_url: $('#cur-image').value,
+		slug: $('#cur-slug').value,
+		summary: $('#cur-summary').value,
+		title: $('#cur-title').value,
+	};
+
+	if (!fields.title || !fields.summary || !fields.image_url || !fields.content) {
+		msgEl.innerHTML = '<div class="create-error">Todos los campos son obligatorios.</div>';
+		return;
+	}
+
+	btn.disabled = true;
+	const data = await api('curiosidades', { method: 'POST', body: fields });
+	btn.disabled = false;
+
+	if (!data) return;
+	if (data.error) {
+		msgEl.innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+
+	msgEl.innerHTML = '<div class="create-success">Curiosidad publicada correctamente.</div>';
+	$('#cur-title').value = '';
+	$('#cur-slug').value = '';
+	$('#cur-summary').value = '';
+	$('#cur-image').value = '';
+	$('#cur-content').value = '';
+	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
+});
+
+// Publish noticia
+$('#news-publish').addEventListener('click', async () => {
+	const msgEl = $('#noticia-msg');
+	const btn = $('#news-publish');
+	const fields = {
+		content: $('#news-content').value,
+		image_url: $('#news-image').value,
+		link: $('#news-link').value,
+		summary: $('#news-summary').value,
+		title: $('#news-title').value,
+	};
+
+	if (!fields.title || !fields.summary || !fields.image_url || !fields.content) {
+		msgEl.innerHTML = '<div class="create-error">Todos los campos son obligatorios (link es opcional).</div>';
+		return;
+	}
+
+	btn.disabled = true;
+	const data = await api('noticias', { method: 'POST', body: fields });
+	btn.disabled = false;
+
+	if (!data) return;
+	if (data.error) {
+		msgEl.innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+
+	msgEl.innerHTML = '<div class="create-success">Noticia publicada correctamente.</div>';
+	$('#news-title').value = '';
+	$('#news-summary').value = '';
+	$('#news-image').value = '';
+	$('#news-link').value = '';
+	$('#news-content').value = '';
+	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
 });
 
 // Init

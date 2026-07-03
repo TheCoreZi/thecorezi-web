@@ -6,6 +6,7 @@
 	<title>Admin - The Core Zi</title>
 	<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&family=Russo+One&display=swap" rel="stylesheet" />
 	<link href="/style.css" rel="stylesheet" />
+	<link href="/news.css" rel="stylesheet" />
 </head>
 <body>
 	<!-- Login -->
@@ -34,6 +35,8 @@
 			<button class="tab active" data-tab="dashboard" type="button">Dashboard</button>
 			<button class="tab" data-tab="feedback" type="button">Feedback</button>
 			<button class="tab" data-tab="comments" type="button">Comentarios</button>
+			<button class="tab" data-tab="curiosidades" type="button">+ Curiosidad</button>
+			<button class="tab" data-tab="noticias" type="button">+ Noticia</button>
 		</div>
 
 		<!-- Dashboard -->
@@ -59,8 +62,79 @@
 		<section id="tab-comments" class="hidden">
 			<div id="comments-content"></div>
 		</section>
+
+		<!-- Nueva Curiosidad -->
+		<section id="tab-curiosidades" class="hidden">
+			<div id="curiosidad-msg"></div>
+			<div class="create-layout">
+				<div class="create-form">
+					<h2 class="create-form-title">Nueva Curiosidad</h2>
+					<label class="create-field">
+						<span>Titulo</span>
+						<input id="cur-title" type="text" placeholder="Que son los X-Zoids?" />
+					</label>
+					<label class="create-field">
+						<span>Slug</span>
+						<input id="cur-slug" type="text" placeholder="que-son-los-x-zoids" />
+					</label>
+					<label class="create-field">
+						<span>Summary</span>
+						<input id="cur-summary" type="text" placeholder="Breve descripcion para el listado" />
+					</label>
+					<label class="create-field">
+						<span>Imagen URL</span>
+						<input id="cur-image" type="text" placeholder="https://..." />
+					</label>
+					<label class="create-field">
+						<span>Contenido (Markdown)</span>
+						<textarea id="cur-content" class="create-textarea" placeholder="Escribe el contenido en markdown..."></textarea>
+					</label>
+					<button class="btn btn-primary create-publish" id="cur-publish" type="button">Publicar</button>
+				</div>
+				<div class="create-preview">
+					<div class="create-preview-label">Preview</div>
+					<div id="cur-preview" class="create-preview-content"></div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Nueva Noticia -->
+		<section id="tab-noticias" class="hidden">
+			<div id="noticia-msg"></div>
+			<div class="create-layout">
+				<div class="create-form">
+					<h2 class="create-form-title">Nueva Noticia</h2>
+					<label class="create-field">
+						<span>Titulo</span>
+						<input id="news-title" type="text" placeholder="Nuevo lanzamiento de Zoids" />
+					</label>
+					<label class="create-field">
+						<span>Summary</span>
+						<input id="news-summary" type="text" placeholder="Breve descripcion para el listado" />
+					</label>
+					<label class="create-field">
+						<span>Imagen URL</span>
+						<input id="news-image" type="text" placeholder="https://..." />
+					</label>
+					<label class="create-field">
+						<span>Link (opcional)</span>
+						<input id="news-link" type="text" placeholder="https://..." />
+					</label>
+					<label class="create-field">
+						<span>Contenido (Markdown)</span>
+						<textarea id="news-content" class="create-textarea" placeholder="Escribe el contenido en markdown..."></textarea>
+					</label>
+					<button class="btn btn-primary create-publish" id="news-publish" type="button">Publicar</button>
+				</div>
+				<div class="create-preview">
+					<div class="create-preview-label">Preview</div>
+					<div id="news-preview" class="create-preview-content"></div>
+				</div>
+			</div>
+		</section>
 	</div>
 
+	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	<script src="/app.js"></script>
 </body>
 </html>
