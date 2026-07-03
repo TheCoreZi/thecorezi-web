@@ -39,7 +39,7 @@ module.exports = async function handler(req, res) {
 	}
 
 	if (req.method === 'POST') {
-		const { content, image_url, slug, summary, title } = req.body || {};
+		const { content, image_url, is_published, slug, summary, title } = req.body || {};
 
 		if (!content || !image_url || !summary || !title) {
 			return res.status(400).json({ error: 'Todos los campos son obligatorios' });
@@ -49,21 +49,21 @@ module.exports = async function handler(req, res) {
 
 		const { error } = await supabase
 			.from('Curiosidades')
-			.insert({ content, image_url, slug: finalSlug, summary, title });
+			.insert({ content, image_url, is_published: is_published ?? false, slug: finalSlug, summary, title });
 
 		if (error) return res.status(400).json({ error: error.message });
 		return res.json({ ok: true });
 	}
 
 	if (req.method === 'PUT') {
-		const { content, id, image_url, slug, summary, title } = req.body || {};
+		const { content, id, image_url, is_published, slug, summary, title } = req.body || {};
 		if (!id) return res.status(400).json({ error: 'ID es obligatorio' });
 
 		const finalSlug = slug || toSlug(title);
 
 		const { error } = await supabase
 			.from('Curiosidades')
-			.update({ content, image_url, slug: finalSlug, summary, title })
+			.update({ content, image_url, is_published: is_published ?? false, slug: finalSlug, summary, title })
 			.eq('id', id);
 
 		if (error) return res.status(400).json({ error: error.message });

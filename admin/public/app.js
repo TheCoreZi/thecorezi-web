@@ -317,13 +317,15 @@ async function loadCuriosidades(page) {
 		return;
 	}
 
-	const header = '<th>Titulo</th><th>Summary</th><th>Fecha</th>';
+	const header = '<th>Titulo</th><th>Summary</th><th>Estado</th><th>Fecha</th>';
 	const rows = data.items.map((c) => {
 		const date = c.published_at ? new Date(c.published_at).toLocaleDateString('es') : '-';
 		const summary = (c.summary || '').length > 80 ? c.summary.substring(0, 80) + '...' : (c.summary || '');
+		const estado = c.is_published ? '<span class="badge badge-published">Publicado</span>' : '<span class="badge badge-draft">Borrador</span>';
 		return `<tr class="clickable-row" data-id="${c.id}">
 			<td data-label="Titulo">${c.title}</td>
 			<td class="cell-comment" data-label="Summary">${summary}</td>
+			<td data-label="Estado">${estado}</td>
 			<td class="cell-date" data-label="Fecha">${date}</td>
 		</tr>`;
 	}).join('');
@@ -351,6 +353,7 @@ function showCurForm(item) {
 		editingCurId = item.id;
 		$('#cur-form-title').textContent = `Editar: ${item.title}`;
 		$('#cur-delete').classList.remove('hidden');
+		$('#cur-draft').classList[item.is_published ? 'add' : 'remove']('hidden');
 		$('#cur-title').value = item.title;
 		$('#cur-slug').value = item.slug || '';
 		$('#cur-summary').value = item.summary || '';
@@ -360,6 +363,7 @@ function showCurForm(item) {
 		editingCurId = null;
 		$('#cur-form-title').textContent = 'Nueva Curiosidad';
 		$('#cur-delete').classList.add('hidden');
+		$('#cur-draft').classList.remove('hidden');
 		$('#cur-title').value = '';
 		$('#cur-slug').value = '';
 		$('#cur-summary').value = '';
@@ -384,12 +388,12 @@ $('#cur-search').addEventListener('input', () => {
 	curSearchTimeout = setTimeout(() => loadCuriosidades(0), 300);
 });
 
-$('#cur-publish').addEventListener('click', async () => {
+async function saveCuriosidad(isPublished) {
 	const msgEl = $('#curiosidad-msg');
-	const btn = $('#cur-publish');
 	const fields = {
 		content: $('#cur-content').value,
 		image_url: $('#cur-image').value,
+		is_published: isPublished,
 		slug: $('#cur-slug').value,
 		summary: $('#cur-summary').value,
 		title: $('#cur-title').value,
@@ -400,12 +404,14 @@ $('#cur-publish').addEventListener('click', async () => {
 		return;
 	}
 
-	btn.disabled = true;
+	$('#cur-publish').disabled = true;
+	$('#cur-draft').disabled = true;
 	const method = editingCurId ? 'PUT' : 'POST';
 	if (editingCurId) fields.id = editingCurId;
 
 	const data = await api('curiosidades', { method, body: fields });
-	btn.disabled = false;
+	$('#cur-publish').disabled = false;
+	$('#cur-draft').disabled = false;
 
 	if (!data) return;
 	if (data.error) {
@@ -413,11 +419,15 @@ $('#cur-publish').addEventListener('click', async () => {
 		return;
 	}
 
-	msgEl.innerHTML = `<div class="create-success">${editingCurId ? 'Curiosidad actualizada' : 'Curiosidad publicada'} correctamente.</div>`;
+	const label = isPublished ? 'Curiosidad publicada' : 'Borrador guardado';
+	msgEl.innerHTML = `<div class="create-success">${editingCurId ? 'Curiosidad actualizada' : label} correctamente.</div>`;
 	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
 
 	if (!editingCurId) showCurList();
-});
+}
+
+$('#cur-draft').addEventListener('click', () => saveCuriosidad(false));
+$('#cur-publish').addEventListener('click', () => saveCuriosidad(true));
 
 $('#cur-delete').addEventListener('click', async () => {
 	if (!editingCurId) return;

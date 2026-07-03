@@ -225,6 +225,35 @@ tr:hover td {
 	color: #fff;
 }
 
+.btn-secondary {
+	background: transparent;
+	border: 1px solid var(--color-accent);
+	color: var(--color-accent);
+	font-size: 0.9rem;
+	padding: 0.5rem 1.5rem;
+	width: 100%;
+}
+
+.btn-secondary:hover { background: rgba(255, 255, 255, 0.05); }
+
+.badge {
+	border-radius: 4px;
+	display: inline-block;
+	font-size: 0.75rem;
+	font-weight: 600;
+	padding: 0.15rem 0.5rem;
+}
+
+.badge-draft {
+	background: rgba(255, 193, 7, 0.15);
+	color: #ffc107;
+}
+
+.badge-published {
+	background: rgba(76, 175, 80, 0.15);
+	color: #4caf50;
+}
+
 .btn-logout {
 	background: none;
 	border: 1px solid rgba(255, 255, 255, 0.1);

@@ -36,6 +36,7 @@ export default function CuriosidadesList() {
 		const { data } = await supabase
 			.from('Curiosidades')
 			.select('*')
+			.eq('is_published', true)
 			.order('published_at', { ascending: false })
 			.range(from, to);
 
@@ -147,6 +148,7 @@ function CuriosidadDetail({ hashKey, onBack }: { hashKey: string; onBack: () => 
 			.from('Curiosidades')
 			.select('*')
 			.eq('slug', hashKey)
+			.eq('is_published', true)
 			.single()
 			.then(({ data }) => {
 				if (data) return setItem(data as CuriosidadItem);
@@ -154,6 +156,7 @@ function CuriosidadDetail({ hashKey, onBack }: { hashKey: string; onBack: () => 
 					.from('Curiosidades')
 					.select('*')
 					.eq('id', hashKey)
+					.eq('is_published', true)
 					.single()
 					.then(({ data: fallback }) => { if (fallback) setItem(fallback as CuriosidadItem); });
 			});
