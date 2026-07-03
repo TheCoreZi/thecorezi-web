@@ -1,6 +1,6 @@
-import { clearCookie, setCookie, signToken } from './_lib/auth.js';
+const { clearCookie, setCookie, signToken } = require('./_lib/auth');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
 	if (req.method === 'DELETE') {
 		res.setHeader('Set-Cookie', clearCookie());
 		return res.json({ ok: true });
@@ -19,4 +19,4 @@ export default function handler(req, res) {
 	const token = signToken(username);
 	res.setHeader('Set-Cookie', setCookie(token));
 	res.json({ ok: true });
-}
+};

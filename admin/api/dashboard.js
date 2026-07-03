@@ -1,7 +1,7 @@
-import { requireAuth } from './_lib/auth.js';
-import { supabase } from './_lib/supabase.js';
+const { requireAuth } = require('./_lib/auth');
+const { supabase } = require('./_lib/supabase');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
 	if (!requireAuth(req)) {
 		return res.status(401).json({ error: 'No autorizado' });
 	}
@@ -15,4 +15,4 @@ export default async function handler(req, res) {
 		commentsCount: comments.count ?? 0,
 		feedbackCount: feedback.count ?? 0,
 	});
-}
+};
