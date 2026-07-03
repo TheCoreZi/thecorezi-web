@@ -122,7 +122,7 @@ async function loadDashboard() {
 	$('#comments-count').textContent = data.commentsCount;
 }
 
-function renderTable(items, columns, actions) {
+function renderTable(items, columns, extraButtons) {
 	if (items.length === 0) return '<div class="empty">No hay items pendientes.</div>';
 
 	const header = columns.map((c) => `<th>${c.label}</th>`).join('') + '<th>Acciones</th>';
@@ -132,9 +132,11 @@ function renderTable(items, columns, actions) {
 			const cls = c.class ? ` class="${c.class}"` : '';
 			return `<td${cls} data-label="${c.label}">${val}</td>`;
 		}).join('');
+		const extra = extraButtons ? extraButtons(item) : '';
 		const btns = `<td class="actions">
 			<button class="btn btn-approve" data-id="${item.id}" data-action="approve">Aprobar</button>
 			<button class="btn btn-delete" data-id="${item.id}" data-action="delete">Eliminar</button>
+			${extra}
 		</td>`;
 		return `<tr>${cells}${btns}</tr>`;
 	}).join('');
@@ -168,10 +170,15 @@ async function loadFeedback(page) {
 		{ key: 'comment', label: 'Comentario', class: 'cell-comment' },
 	];
 
-	container.innerHTML = renderTable(data.items, columns) + renderPagination(page, data.total, 25);
+	const proofBtn = (item) => `<button class="btn btn-proof" data-email="${item.email}" data-name="${item.name}" data-comment="${(item.comment || '').replace(/"/g, '&quot;')}" data-model="${item.model || ''}" data-seller="${item.seller_id || ''}">Pedir Pruebas</button>`;
+
+	container.innerHTML = renderTable(data.items, columns, proofBtn) + renderPagination(page, data.total, 25);
 
 	container.querySelectorAll('.btn-approve, .btn-delete').forEach((btn) => {
 		btn.addEventListener('click', () => handleAction('feedback', btn));
+	});
+	container.querySelectorAll('.btn-proof').forEach((btn) => {
+		btn.addEventListener('click', () => openProofModal(btn));
 	});
 	container.querySelectorAll('.pagination button:not([disabled])').forEach((btn) => {
 		btn.addEventListener('click', () => loadFeedback(parseInt(btn.dataset.page)));
@@ -213,6 +220,51 @@ async function handleAction(type, btn) {
 	row.remove();
 	loadDashboard();
 }
+
+// Proof modal
+let proofEmail = '';
+
+function openProofModal(btn) {
+	proofEmail = btn.dataset.email;
+	$('#proof-first-name').value = btn.dataset.name || '';
+	$('#proof-topic').value = btn.dataset.model || '';
+	$('#proof-context').value = btn.dataset.seller || '';
+	$('#proof-comment').value = btn.dataset.comment || '';
+	$('#proof-msg').innerHTML = '';
+	$('#proof-modal').classList.remove('hidden');
+}
+
+$('#proof-cancel').addEventListener('click', () => {
+	$('#proof-modal').classList.add('hidden');
+});
+
+$('#proof-send').addEventListener('click', async () => {
+	const fields = {
+		comment: $('#proof-comment').value,
+		context: $('#proof-context').value,
+		email: proofEmail,
+		first_name: $('#proof-first-name').value,
+		topic: $('#proof-topic').value,
+	};
+
+	if (!fields.first_name || !fields.topic || !fields.context || !fields.comment) {
+		$('#proof-msg').innerHTML = '<div class="create-error">Todos los campos son obligatorios.</div>';
+		return;
+	}
+
+	$('#proof-send').disabled = true;
+	const data = await api('request-proof', { method: 'POST', body: fields });
+	$('#proof-send').disabled = false;
+
+	if (!data) return;
+	if (data.error) {
+		$('#proof-msg').innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+
+	$('#proof-msg').innerHTML = '<div class="create-success">Correo enviado correctamente.</div>';
+	setTimeout(() => { $('#proof-modal').classList.add('hidden'); }, 1500);
+});
 
 // Login form
 $('#login-form').addEventListener('submit', async (e) => {

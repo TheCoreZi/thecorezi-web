@@ -359,6 +359,34 @@
 		</section>
 	</div>
 
+	<!-- Modal Pedir Pruebas -->
+	<div class="modal-overlay hidden" id="proof-modal">
+		<div class="modal">
+			<h2 class="modal-title">Pedir Pruebas</h2>
+			<div id="proof-msg"></div>
+			<label class="create-field">
+				<span>Nombre</span>
+				<input id="proof-first-name" type="text" />
+			</label>
+			<label class="create-field">
+				<span>Tema</span>
+				<input id="proof-topic" type="text" />
+			</label>
+			<label class="create-field">
+				<span>Contexto</span>
+				<textarea id="proof-context" rows="3"></textarea>
+			</label>
+			<label class="create-field">
+				<span>Comentario</span>
+				<textarea id="proof-comment" rows="3"></textarea>
+			</label>
+			<div class="modal-actions">
+				<button class="btn btn-secondary" id="proof-cancel" type="button">Cancelar</button>
+				<button class="btn btn-primary" id="proof-send" type="button">Enviar</button>
+			</div>
+		</div>
+	</div>
+
 	<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 	<script src="/app.js"></script>
 </body>
