@@ -67,8 +67,16 @@ document.addEventListener('click', (e) => {
 });
 
 let currentTab = 'dashboard';
-let feedbackPage = 0;
 let commentsPage = 0;
+let curSearchTimeout = null;
+let editingCurId = null;
+let editingLanzId = null;
+let editingNewsId = null;
+let feedbackPage = 0;
+let lanzFeatures = [];
+let lanzPage = 0;
+let lanzSearchTimeout = null;
+let newsSearchTimeout = null;
 
 async function api(path, opts = {}) {
 	const res = await fetch(`/api/${path}`, {
@@ -96,12 +104,15 @@ function showApp() {
 function switchTab(tab) {
 	currentTab = tab;
 	$$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-	['dashboard', 'feedback', 'comments', 'curiosidades', 'noticias'].forEach((t) => {
+	['dashboard', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias'].forEach((t) => {
 		$(`#tab-${t}`).classList.toggle('hidden', t !== tab);
 	});
 
+	if (tab === 'curiosidades') showCurList();
 	if (tab === 'feedback') loadFeedback(0);
 	if (tab === 'comments') loadComments(0);
+	if (tab === 'lanzamientos') showLanzList();
+	if (tab === 'noticias') showNewsList();
 }
 
 async function loadDashboard() {
@@ -119,7 +130,7 @@ function renderTable(items, columns, actions) {
 		const cells = columns.map((c) => {
 			const val = item[c.key] ?? '';
 			const cls = c.class ? ` class="${c.class}"` : '';
-			return `<td${cls}>${val}</td>`;
+			return `<td${cls} data-label="${c.label}">${val}</td>`;
 		}).join('');
 		const btns = `<td class="actions">
 			<button class="btn btn-approve" data-id="${item.id}" data-action="approve">Aprobar</button>
@@ -271,18 +282,108 @@ function updateNoticiaPreview() {
 	$(sel).addEventListener('input', updateNoticiaPreview);
 });
 
-// Slug auto-generation
-$('#cur-title').addEventListener('input', (e) => {
-	const slug = e.target.value
+function toSlug(text) {
+	return text
 		.toLowerCase()
 		.normalize('NFD')
 		.replace(/[̀-ͯ]/g, '')
 		.replace(/[^a-z0-9]+/g, '-')
 		.replace(/^-|-$/g, '');
-	$('#cur-slug').value = slug;
+}
+
+// Slug auto-generation (only when creating)
+$('#cur-title').addEventListener('input', (e) => {
+	if (!editingCurId) {
+		$('#cur-slug').value = toSlug(e.target.value);
+	}
 });
 
-// Publish curiosidad
+// Curiosidades list
+let curItems = [];
+
+async function loadCuriosidades(page) {
+	const container = $('#cur-list-content');
+	container.innerHTML = '<div class="loading">Cargando...</div>';
+
+	const search = $('#cur-search').value;
+	const params = `page=${page}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+	const data = await api(`curiosidades?${params}`);
+	if (!data) return;
+
+	curItems = data.items;
+
+	if (data.items.length === 0) {
+		container.innerHTML = '<div class="empty">No hay curiosidades.</div>';
+		return;
+	}
+
+	const header = '<th>Titulo</th><th>Summary</th><th>Fecha</th>';
+	const rows = data.items.map((c) => {
+		const date = c.published_at ? new Date(c.published_at).toLocaleDateString('es') : '-';
+		const summary = (c.summary || '').length > 80 ? c.summary.substring(0, 80) + '...' : (c.summary || '');
+		return `<tr class="clickable-row" data-id="${c.id}">
+			<td data-label="Titulo">${c.title}</td>
+			<td class="cell-comment" data-label="Summary">${summary}</td>
+			<td class="cell-date" data-label="Fecha">${date}</td>
+		</tr>`;
+	}).join('');
+
+	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
+		+ renderPagination(page, data.total, 25);
+
+	container.querySelectorAll('.clickable-row').forEach((row) => {
+		row.addEventListener('click', () => {
+			const item = curItems.find((c) => c.id === row.dataset.id);
+			if (item) showCurForm(item);
+		});
+	});
+	container.querySelectorAll('.pagination button:not([disabled])').forEach((btn) => {
+		btn.addEventListener('click', () => loadCuriosidades(parseInt(btn.dataset.page)));
+	});
+}
+
+function showCurForm(item) {
+	$('#cur-list-view').classList.add('hidden');
+	$('#cur-form-view').classList.remove('hidden');
+	$('#curiosidad-msg').innerHTML = '';
+
+	if (item) {
+		editingCurId = item.id;
+		$('#cur-form-title').textContent = `Editar: ${item.title}`;
+		$('#cur-delete').classList.remove('hidden');
+		$('#cur-title').value = item.title;
+		$('#cur-slug').value = item.slug || '';
+		$('#cur-summary').value = item.summary || '';
+		$('#cur-image').value = item.image_url || '';
+		$('#cur-content').value = item.content || '';
+	} else {
+		editingCurId = null;
+		$('#cur-form-title').textContent = 'Nueva Curiosidad';
+		$('#cur-delete').classList.add('hidden');
+		$('#cur-title').value = '';
+		$('#cur-slug').value = '';
+		$('#cur-summary').value = '';
+		$('#cur-image').value = '';
+		$('#cur-content').value = '';
+	}
+	$('#cur-preview').innerHTML = '';
+	updateCuriosidadPreview();
+}
+
+function showCurList() {
+	$('#cur-form-view').classList.add('hidden');
+	$('#cur-list-view').classList.remove('hidden');
+	loadCuriosidades(0);
+}
+
+$('#cur-new-btn').addEventListener('click', () => showCurForm(null));
+$('#cur-back-btn').addEventListener('click', showCurList);
+
+$('#cur-search').addEventListener('input', () => {
+	clearTimeout(curSearchTimeout);
+	curSearchTimeout = setTimeout(() => loadCuriosidades(0), 300);
+});
+
 $('#cur-publish').addEventListener('click', async () => {
 	const msgEl = $('#curiosidad-msg');
 	const btn = $('#cur-publish');
@@ -300,7 +401,10 @@ $('#cur-publish').addEventListener('click', async () => {
 	}
 
 	btn.disabled = true;
-	const data = await api('curiosidades', { method: 'POST', body: fields });
+	const method = editingCurId ? 'PUT' : 'POST';
+	if (editingCurId) fields.id = editingCurId;
+
+	const data = await api('curiosidades', { method, body: fields });
 	btn.disabled = false;
 
 	if (!data) return;
@@ -309,16 +413,111 @@ $('#cur-publish').addEventListener('click', async () => {
 		return;
 	}
 
-	msgEl.innerHTML = '<div class="create-success">Curiosidad publicada correctamente.</div>';
-	$('#cur-title').value = '';
-	$('#cur-slug').value = '';
-	$('#cur-summary').value = '';
-	$('#cur-image').value = '';
-	$('#cur-content').value = '';
+	msgEl.innerHTML = `<div class="create-success">${editingCurId ? 'Curiosidad actualizada' : 'Curiosidad publicada'} correctamente.</div>`;
 	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
+
+	if (!editingCurId) showCurList();
 });
 
-// Publish noticia
+$('#cur-delete').addEventListener('click', async () => {
+	if (!editingCurId) return;
+	if (!confirm('Seguro que quieres eliminar esta curiosidad?')) return;
+
+	const data = await api('curiosidades', { method: 'DELETE', body: { id: editingCurId } });
+	if (!data) return;
+	if (data.error) {
+		$('#curiosidad-msg').innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+	showCurList();
+});
+
+// Noticias list
+let newsItems = [];
+
+async function loadNoticias(page) {
+	const container = $('#news-list-content');
+	container.innerHTML = '<div class="loading">Cargando...</div>';
+
+	const search = $('#news-search').value;
+	const params = `page=${page}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+	const data = await api(`noticias?${params}`);
+	if (!data) return;
+
+	newsItems = data.items;
+
+	if (data.items.length === 0) {
+		container.innerHTML = '<div class="empty">No hay noticias.</div>';
+		return;
+	}
+
+	const header = '<th>Titulo</th><th>Summary</th><th>Fecha</th>';
+	const rows = data.items.map((n) => {
+		const date = n.published_at ? new Date(n.published_at).toLocaleDateString('es') : '-';
+		const summary = (n.summary || '').length > 80 ? n.summary.substring(0, 80) + '...' : (n.summary || '');
+		return `<tr class="clickable-row" data-id="${n.id}">
+			<td data-label="Titulo">${n.title}</td>
+			<td class="cell-comment" data-label="Summary">${summary}</td>
+			<td class="cell-date" data-label="Fecha">${date}</td>
+		</tr>`;
+	}).join('');
+
+	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
+		+ renderPagination(page, data.total, 25);
+
+	container.querySelectorAll('.clickable-row').forEach((row) => {
+		row.addEventListener('click', () => {
+			const item = newsItems.find((n) => n.id === row.dataset.id);
+			if (item) showNewsForm(item);
+		});
+	});
+	container.querySelectorAll('.pagination button:not([disabled])').forEach((btn) => {
+		btn.addEventListener('click', () => loadNoticias(parseInt(btn.dataset.page)));
+	});
+}
+
+function showNewsForm(item) {
+	$('#news-list-view').classList.add('hidden');
+	$('#news-form-view').classList.remove('hidden');
+	$('#noticia-msg').innerHTML = '';
+
+	if (item) {
+		editingNewsId = item.id;
+		$('#news-form-title').textContent = `Editar: ${item.title}`;
+		$('#news-delete').classList.remove('hidden');
+		$('#news-title').value = item.title;
+		$('#news-summary').value = item.summary || '';
+		$('#news-image').value = item.image_url || '';
+		$('#news-link').value = item.link || '';
+		$('#news-content').value = item.content || '';
+	} else {
+		editingNewsId = null;
+		$('#news-form-title').textContent = 'Nueva Noticia';
+		$('#news-delete').classList.add('hidden');
+		$('#news-title').value = '';
+		$('#news-summary').value = '';
+		$('#news-image').value = '';
+		$('#news-link').value = '';
+		$('#news-content').value = '';
+	}
+	$('#news-preview').innerHTML = '';
+	updateNoticiaPreview();
+}
+
+function showNewsList() {
+	$('#news-form-view').classList.add('hidden');
+	$('#news-list-view').classList.remove('hidden');
+	loadNoticias(0);
+}
+
+$('#news-new-btn').addEventListener('click', () => showNewsForm(null));
+$('#news-back-btn').addEventListener('click', showNewsList);
+
+$('#news-search').addEventListener('input', () => {
+	clearTimeout(newsSearchTimeout);
+	newsSearchTimeout = setTimeout(() => loadNoticias(0), 300);
+});
+
 $('#news-publish').addEventListener('click', async () => {
 	const msgEl = $('#noticia-msg');
 	const btn = $('#news-publish');
@@ -336,7 +535,10 @@ $('#news-publish').addEventListener('click', async () => {
 	}
 
 	btn.disabled = true;
-	const data = await api('noticias', { method: 'POST', body: fields });
+	const method = editingNewsId ? 'PUT' : 'POST';
+	if (editingNewsId) fields.id = editingNewsId;
+
+	const data = await api('noticias', { method, body: fields });
 	btn.disabled = false;
 
 	if (!data) return;
@@ -345,13 +547,329 @@ $('#news-publish').addEventListener('click', async () => {
 		return;
 	}
 
-	msgEl.innerHTML = '<div class="create-success">Noticia publicada correctamente.</div>';
-	$('#news-title').value = '';
-	$('#news-summary').value = '';
-	$('#news-image').value = '';
-	$('#news-link').value = '';
-	$('#news-content').value = '';
+	msgEl.innerHTML = `<div class="create-success">${editingNewsId ? 'Noticia actualizada' : 'Noticia publicada'} correctamente.</div>`;
 	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
+
+	if (!editingNewsId) showNewsList();
+});
+
+$('#news-delete').addEventListener('click', async () => {
+	if (!editingNewsId) return;
+	if (!confirm('Seguro que quieres eliminar esta noticia?')) return;
+
+	const data = await api('noticias', { method: 'DELETE', body: { id: editingNewsId } });
+	if (!data) return;
+	if (data.error) {
+		$('#noticia-msg').innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+	showNewsList();
+});
+
+// Lanzamientos helpers
+function dateToTimestamp(dateStr) {
+	if (!dateStr) return null;
+	return new Date(dateStr + 'T00:00:00Z').getTime();
+}
+
+function timestampToDateStr(ts) {
+	if (!ts) return '';
+	return new Date(ts).toISOString().split('T')[0];
+}
+
+function formatLanzDate(ts, precision) {
+	if (!ts) return 'TBA';
+	const d = new Date(ts);
+	const opts = { timeZone: 'UTC' };
+	if (precision === 'YEAR') return d.toLocaleDateString('es', { ...opts, year: 'numeric' });
+	if (precision === 'MONTH') return d.toLocaleDateString('es', { ...opts, year: 'numeric', month: 'short' });
+	return d.toLocaleDateString('es', { ...opts, year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function formatLanzPrice(price, currency) {
+	if (!price || !currency) return '-';
+	return price.toLocaleString('en', { style: 'currency', currency });
+}
+
+// Lanzamientos list
+let lanzItems = [];
+
+async function loadLanzamientos(page) {
+	lanzPage = page;
+	const container = $('#lanz-list-content');
+	container.innerHTML = '<div class="loading">Cargando...</div>';
+
+	const search = $('#lanz-search').value;
+	const params = `page=${page}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+	const data = await api(`lanzamientos?${params}`);
+	if (!data) return;
+
+	lanzItems = data.items;
+
+	if (data.items.length === 0) {
+		container.innerHTML = '<div class="empty">No hay lanzamientos.</div>';
+		return;
+	}
+
+	const header = '<th>Nombre</th><th>Marca</th><th>Linea</th><th>Lanzamiento</th><th>Precio</th>';
+	const rows = data.items.map((z) => {
+		const date = formatLanzDate(z.launch_date, z.launch_date_precission);
+		const price = formatLanzPrice(z.retail_price, z.currency);
+		return `<tr class="clickable-row" data-id="${z.id}">
+			<td data-label="Nombre">${z.name}</td>
+			<td data-label="Marca">${z.brand}</td>
+			<td data-label="Linea">${z.line}</td>
+			<td class="cell-date" data-label="Lanzamiento">${date}</td>
+			<td class="cell-price" data-label="Precio">${price}</td>
+		</tr>`;
+	}).join('');
+
+	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
+		+ renderPagination(page, data.total, 25);
+
+	container.querySelectorAll('.clickable-row').forEach((row) => {
+		row.addEventListener('click', () => {
+			const zoid = lanzItems.find((z) => z.id === row.dataset.id);
+			if (zoid) showLanzForm(zoid);
+		});
+	});
+	container.querySelectorAll('.pagination button:not([disabled])').forEach((btn) => {
+		btn.addEventListener('click', () => loadLanzamientos(parseInt(btn.dataset.page)));
+	});
+}
+
+// Lanzamientos form
+function showLanzForm(zoid) {
+	$('#lanz-list-view').classList.add('hidden');
+	$('#lanz-form-view').classList.remove('hidden');
+	$('#lanz-msg').innerHTML = '';
+
+	if (zoid) {
+		editingLanzId = zoid.id;
+		$('#lanz-form-title').textContent = `Editar: ${zoid.name}`;
+		$('#lanz-delete').classList.remove('hidden');
+
+		$('#lanz-name').value = zoid.name;
+		setSelectOrCustom('lanz-brand', zoid.brand);
+		setSelectOrCustom('lanz-line', zoid.line);
+		$('#lanz-model-code').value = zoid.model_code || '';
+		$('#lanz-scale').value = zoid.scale || '';
+		$('#lanz-launch-date').value = timestampToDateStr(zoid.launch_date);
+		$('#lanz-launch-precision').value = zoid.launch_date_precission || 'MONTH';
+		$('#lanz-reserve-date').value = timestampToDateStr(zoid.reserve_date);
+		$('#lanz-reserve-precision').value = zoid.reserve_date_precision || 'MONTH';
+		$('#lanz-price').value = zoid.retail_price ?? '';
+		$('#lanz-currency').value = zoid.currency || '';
+		setSelectOrCustom('lanz-exclusive', zoid.exclusive || '');
+		$('#lanz-image').value = zoid.image_url || '';
+		updateImagePreview(zoid.image_url);
+		$('#lanz-link').value = zoid.official_link || '';
+		$('#lanz-description').value = zoid.description || '';
+		lanzFeatures = zoid.features ? [...zoid.features] : [];
+	} else {
+		editingLanzId = null;
+		$('#lanz-form-title').textContent = 'Nuevo Lanzamiento';
+		$('#lanz-delete').classList.add('hidden');
+
+		$('#lanz-id').value = '';
+		$('#lanz-name').value = '';
+		$('#lanz-brand').value = '';
+		$('#lanz-brand-custom').value = '';
+		$('#lanz-brand-custom-wrap').classList.add('hidden');
+		$('#lanz-line').value = '';
+		$('#lanz-line-custom').value = '';
+		$('#lanz-line-custom-wrap').classList.add('hidden');
+		$('#lanz-model-code').value = '';
+		$('#lanz-scale').value = '';
+		$('#lanz-launch-date').value = '';
+		$('#lanz-launch-precision').value = 'MONTH';
+		$('#lanz-reserve-date').value = '';
+		$('#lanz-reserve-precision').value = 'MONTH';
+		$('#lanz-price').value = '';
+		$('#lanz-currency').value = '';
+		$('#lanz-exclusive').value = '';
+		$('#lanz-exclusive-custom').value = '';
+		$('#lanz-exclusive-custom-wrap').classList.add('hidden');
+		$('#lanz-image').value = '';
+		updateImagePreview(null);
+		$('#lanz-link').value = '';
+		$('#lanz-description').value = '';
+		lanzFeatures = [];
+	}
+	renderFeatures();
+}
+
+function setSelectOrCustom(selectId, value) {
+	const sel = $(`#${selectId}`);
+	const customWrap = $(`#${selectId}-custom-wrap`);
+	const customInput = $(`#${selectId}-custom`);
+
+	const option = [...sel.options].find((o) => o.value === value);
+	if (option && value !== '__custom') {
+		sel.value = value;
+		if (customWrap) customWrap.classList.add('hidden');
+		if (customInput) customInput.value = '';
+	} else if (value) {
+		sel.value = '__custom';
+		if (customWrap) customWrap.classList.remove('hidden');
+		if (customInput) customInput.value = value;
+	} else {
+		sel.value = '';
+		if (customWrap) customWrap.classList.add('hidden');
+		if (customInput) customInput.value = '';
+	}
+}
+
+function getSelectOrCustom(selectId) {
+	const sel = $(`#${selectId}`);
+	if (sel.value === '__custom') {
+		return $(`#${selectId}-custom`).value.trim();
+	}
+	return sel.value;
+}
+
+function showLanzList() {
+	$('#lanz-form-view').classList.add('hidden');
+	$('#lanz-list-view').classList.remove('hidden');
+	loadLanzamientos(0);
+}
+
+// Features
+function renderFeatures() {
+	const container = $('#lanz-features-list');
+	container.innerHTML = lanzFeatures.map((f, i) =>
+		`<span class="lanz-feature-tag">${f} <button data-idx="${i}" class="btn-remove-feature">&times;</button></span>`
+	).join('');
+	container.querySelectorAll('.btn-remove-feature').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			lanzFeatures.splice(parseInt(btn.dataset.idx), 1);
+			renderFeatures();
+		});
+	});
+}
+
+function addFeature() {
+	const input = $('#lanz-feature-input');
+	const val = input.value.trim();
+	if (!val) return;
+	lanzFeatures.push(val);
+	input.value = '';
+	renderFeatures();
+}
+
+$('#lanz-add-feature').addEventListener('click', addFeature);
+$('#lanz-feature-input').addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') {
+		e.preventDefault();
+		addFeature();
+	}
+});
+
+// Image preview
+function updateImagePreview(url) {
+	const preview = $('#lanz-image-preview');
+	const img = $('#lanz-image-preview-img');
+	if (url) {
+		img.src = url;
+		preview.classList.remove('hidden');
+	} else {
+		img.src = '';
+		preview.classList.add('hidden');
+	}
+}
+
+$('#lanz-image').addEventListener('input', (e) => {
+	updateImagePreview(e.target.value.trim());
+});
+
+$('#lanz-image-preview-img').addEventListener('error', () => {
+	$('#lanz-image-preview').classList.add('hidden');
+});
+
+// Custom select toggles
+['lanz-brand', 'lanz-line', 'lanz-exclusive'].forEach((id) => {
+	$(`#${id}`).addEventListener('change', (e) => {
+		const wrap = $(`#${id}-custom-wrap`);
+		if (wrap) wrap.classList.toggle('hidden', e.target.value !== '__custom');
+	});
+});
+
+// Search
+$('#lanz-search').addEventListener('input', () => {
+	clearTimeout(lanzSearchTimeout);
+	lanzSearchTimeout = setTimeout(() => loadLanzamientos(0), 300);
+});
+
+// New button
+$('#lanz-new-btn').addEventListener('click', () => showLanzForm(null));
+
+// Back button
+$('#lanz-back-btn').addEventListener('click', showLanzList);
+
+// Save
+$('#lanz-save').addEventListener('click', async () => {
+	const msgEl = $('#lanz-msg');
+	const btn = $('#lanz-save');
+
+	const brand = getSelectOrCustom('lanz-brand');
+	const line = getSelectOrCustom('lanz-line');
+	const exclusive = getSelectOrCustom('lanz-exclusive');
+
+	const fields = {
+		brand,
+		currency: $('#lanz-currency').value || null,
+		description: $('#lanz-description').value,
+		exclusive: exclusive || null,
+		features: lanzFeatures.length ? lanzFeatures : null,
+		image_url: $('#lanz-image').value || null,
+		launch_date: dateToTimestamp($('#lanz-launch-date').value),
+		launch_date_precission: $('#lanz-launch-precision').value,
+		line,
+		model_code: $('#lanz-model-code').value || null,
+		name: $('#lanz-name').value,
+		official_link: $('#lanz-link').value || null,
+		reserve_date: dateToTimestamp($('#lanz-reserve-date').value),
+		reserve_date_precision: $('#lanz-reserve-precision').value,
+		retail_price: $('#lanz-price').value ? parseFloat($('#lanz-price').value) : null,
+		scale: $('#lanz-scale').value || null,
+	};
+
+	if (!fields.name || !fields.brand || !fields.line || !fields.description) {
+		msgEl.innerHTML = '<div class="create-error">Nombre, Marca, Linea y Descripcion son obligatorios.</div>';
+		return;
+	}
+
+	btn.disabled = true;
+	const method = editingLanzId ? 'PUT' : 'POST';
+	if (editingLanzId) fields.id = editingLanzId;
+
+	const data = await api('lanzamientos', { method, body: fields });
+	btn.disabled = false;
+
+	if (!data) return;
+	if (data.error) {
+		msgEl.innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+
+	msgEl.innerHTML = `<div class="create-success">${editingLanzId ? 'Lanzamiento actualizado' : 'Lanzamiento creado'} correctamente.</div>`;
+	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
+
+	if (!editingLanzId) showLanzList();
+});
+
+// Delete
+$('#lanz-delete').addEventListener('click', async () => {
+	if (!editingLanzId) return;
+	if (!confirm('Seguro que quieres eliminar este lanzamiento?')) return;
+
+	const data = await api('lanzamientos', { method: 'DELETE', body: { id: editingLanzId } });
+	if (!data) return;
+	if (data.error) {
+		$('#lanz-msg').innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+	showLanzList();
 });
 
 // Init

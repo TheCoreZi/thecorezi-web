@@ -332,7 +332,6 @@
 .news-detail-content h1,
 .news-detail-content h2,
 .news-detail-content h3 {
-	clear: both;
 	color: var(--color-accent);
 	font-family: 'Russo One', sans-serif;
 	margin: 1.5rem 0 0.75rem;

@@ -51,8 +51,9 @@
 			<button class="tab active" data-tab="dashboard" type="button">Dashboard</button>
 			<button class="tab" data-tab="feedback" type="button">Feedback</button>
 			<button class="tab" data-tab="comments" type="button">Comentarios</button>
-			<button class="tab" data-tab="curiosidades" type="button">+ Curiosidad</button>
-			<button class="tab" data-tab="noticias" type="button">+ Noticia</button>
+			<button class="tab" data-tab="curiosidades" type="button">Curiosidades</button>
+			<button class="tab" data-tab="noticias" type="button">Noticias</button>
+			<button class="tab" data-tab="lanzamientos" type="button">Lanzamientos</button>
 		</div>
 
 		<!-- Dashboard -->
@@ -79,72 +80,279 @@
 			<div id="comments-content"></div>
 		</section>
 
-		<!-- Nueva Curiosidad -->
+		<!-- Curiosidades -->
 		<section id="tab-curiosidades" class="hidden">
 			<div id="curiosidad-msg"></div>
-			<div class="create-layout">
-				<div class="create-form">
-					<h2 class="create-form-title">Nueva Curiosidad</h2>
-					<label class="create-field">
-						<span>Titulo</span>
-						<input id="cur-title" type="text" placeholder="Que son los X-Zoids?" />
-					</label>
-					<label class="create-field">
-						<span>Slug</span>
-						<input id="cur-slug" type="text" placeholder="que-son-los-x-zoids" />
-					</label>
-					<label class="create-field">
-						<span>Summary</span>
-						<input id="cur-summary" type="text" placeholder="Breve descripcion para el listado" />
-					</label>
-					<label class="create-field">
-						<span>Imagen URL</span>
-						<input id="cur-image" type="text" placeholder="https://..." />
-					</label>
-					<label class="create-field">
-						<span>Contenido (Markdown)</span>
-						<textarea id="cur-content" class="create-textarea" placeholder="Escribe el contenido en markdown..."></textarea>
-					</label>
-					<button class="btn btn-primary create-publish" id="cur-publish" type="button">Publicar</button>
+
+			<!-- List sub-view -->
+			<div id="cur-list-view">
+				<div class="lanz-toolbar">
+					<input id="cur-search" type="text" placeholder="Buscar por titulo o summary..." />
+					<button class="btn btn-primary lanz-toolbar-btn" id="cur-new-btn" type="button">+ Nueva Curiosidad</button>
 				</div>
-				<div class="create-preview">
-					<div class="create-preview-label">Preview</div>
-					<div id="cur-preview" class="create-preview-content"></div>
+				<div id="cur-list-content"></div>
+			</div>
+
+			<!-- Form sub-view -->
+			<div id="cur-form-view" class="hidden">
+				<div class="lanz-form-header">
+					<button class="btn btn-back" id="cur-back-btn" type="button">&larr; Volver</button>
+					<h2 class="create-form-title" id="cur-form-title">Nueva Curiosidad</h2>
+				</div>
+				<div class="create-layout">
+					<div class="create-form">
+						<label class="create-field">
+							<span>Titulo *</span>
+							<input id="cur-title" type="text" placeholder="Que son los X-Zoids?" />
+						</label>
+						<label class="create-field">
+							<span>Slug</span>
+							<input id="cur-slug" type="text" placeholder="que-son-los-x-zoids" />
+						</label>
+						<label class="create-field">
+							<span>Summary *</span>
+							<input id="cur-summary" type="text" placeholder="Breve descripcion para el listado" />
+						</label>
+						<label class="create-field">
+							<span>Imagen URL *</span>
+							<input id="cur-image" type="text" placeholder="https://..." />
+						</label>
+						<label class="create-field">
+							<span>Contenido (Markdown) *</span>
+							<textarea id="cur-content" class="create-textarea" placeholder="Escribe el contenido en markdown..."></textarea>
+						</label>
+						<div class="lanz-form-actions">
+							<button class="btn btn-primary create-publish" id="cur-publish" type="button">Guardar</button>
+							<button class="btn btn-delete lanz-delete-btn hidden" id="cur-delete" type="button">Eliminar</button>
+						</div>
+					</div>
+					<div class="create-preview">
+						<div class="create-preview-label">Preview</div>
+						<div id="cur-preview" class="create-preview-content"></div>
+					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- Nueva Noticia -->
+		<!-- Noticias -->
 		<section id="tab-noticias" class="hidden">
 			<div id="noticia-msg"></div>
-			<div class="create-layout">
-				<div class="create-form">
-					<h2 class="create-form-title">Nueva Noticia</h2>
-					<label class="create-field">
-						<span>Titulo</span>
-						<input id="news-title" type="text" placeholder="Nuevo lanzamiento de Zoids" />
-					</label>
-					<label class="create-field">
-						<span>Summary</span>
-						<input id="news-summary" type="text" placeholder="Breve descripcion para el listado" />
-					</label>
-					<label class="create-field">
-						<span>Imagen URL</span>
-						<input id="news-image" type="text" placeholder="https://..." />
-					</label>
-					<label class="create-field">
-						<span>Link (opcional)</span>
-						<input id="news-link" type="text" placeholder="https://..." />
-					</label>
-					<label class="create-field">
-						<span>Contenido (Markdown)</span>
-						<textarea id="news-content" class="create-textarea" placeholder="Escribe el contenido en markdown..."></textarea>
-					</label>
-					<button class="btn btn-primary create-publish" id="news-publish" type="button">Publicar</button>
+
+			<!-- List sub-view -->
+			<div id="news-list-view">
+				<div class="lanz-toolbar">
+					<input id="news-search" type="text" placeholder="Buscar por titulo o summary..." />
+					<button class="btn btn-primary lanz-toolbar-btn" id="news-new-btn" type="button">+ Nueva Noticia</button>
 				</div>
-				<div class="create-preview">
-					<div class="create-preview-label">Preview</div>
-					<div id="news-preview" class="create-preview-content"></div>
+				<div id="news-list-content"></div>
+			</div>
+
+			<!-- Form sub-view -->
+			<div id="news-form-view" class="hidden">
+				<div class="lanz-form-header">
+					<button class="btn btn-back" id="news-back-btn" type="button">&larr; Volver</button>
+					<h2 class="create-form-title" id="news-form-title">Nueva Noticia</h2>
+				</div>
+				<div class="create-layout">
+					<div class="create-form">
+						<label class="create-field">
+							<span>Titulo *</span>
+							<input id="news-title" type="text" placeholder="Nuevo lanzamiento de Zoids" />
+						</label>
+						<label class="create-field">
+							<span>Summary *</span>
+							<input id="news-summary" type="text" placeholder="Breve descripcion para el listado" />
+						</label>
+						<label class="create-field">
+							<span>Imagen URL *</span>
+							<input id="news-image" type="text" placeholder="https://..." />
+						</label>
+						<label class="create-field">
+							<span>Link (opcional)</span>
+							<input id="news-link" type="text" placeholder="https://..." />
+						</label>
+						<label class="create-field">
+							<span>Contenido (Markdown) *</span>
+							<textarea id="news-content" class="create-textarea" placeholder="Escribe el contenido en markdown..."></textarea>
+						</label>
+						<div class="lanz-form-actions">
+							<button class="btn btn-primary create-publish" id="news-publish" type="button">Guardar</button>
+							<button class="btn btn-delete lanz-delete-btn hidden" id="news-delete" type="button">Eliminar</button>
+						</div>
+					</div>
+					<div class="create-preview">
+						<div class="create-preview-label">Preview</div>
+						<div id="news-preview" class="create-preview-content"></div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Lanzamientos -->
+		<section id="tab-lanzamientos" class="hidden">
+			<div id="lanz-msg"></div>
+
+			<!-- List sub-view -->
+			<div id="lanz-list-view">
+				<div class="lanz-toolbar">
+					<input id="lanz-search" type="text" placeholder="Buscar por nombre, marca o linea..." />
+					<button class="btn btn-primary lanz-toolbar-btn" id="lanz-new-btn" type="button">+ Nuevo Lanzamiento</button>
+				</div>
+				<div id="lanz-list-content"></div>
+			</div>
+
+			<!-- Form sub-view (create/edit) -->
+			<div id="lanz-form-view" class="hidden">
+				<div class="lanz-form-header">
+					<button class="btn btn-back" id="lanz-back-btn" type="button">&larr; Volver</button>
+					<h2 class="create-form-title" id="lanz-form-title">Nuevo Lanzamiento</h2>
+				</div>
+
+				<div class="create-form">
+					<input type="hidden" id="lanz-id" />
+
+					<fieldset class="lanz-fieldset">
+						<legend>Identificacion</legend>
+						<label class="create-field">
+							<span>Nombre *</span>
+							<input id="lanz-name" type="text" placeholder="Liger Zero" />
+						</label>
+						<div class="field-row">
+							<label class="create-field field-grow">
+								<span>Marca *</span>
+								<select id="lanz-brand">
+									<option value="">Seleccionar...</option>
+									<option value="Kotobukiya">Kotobukiya</option>
+									<option value="Tomy">Tomy</option>
+									<option value="__custom">Otro...</option>
+								</select>
+							</label>
+							<label class="create-field field-grow lanz-custom-field hidden" id="lanz-brand-custom-wrap">
+								<span>Marca (custom)</span>
+								<input id="lanz-brand-custom" type="text" placeholder="Nombre de marca..." />
+							</label>
+							<label class="create-field field-grow">
+								<span>Linea *</span>
+								<select id="lanz-line">
+									<option value="">Seleccionar...</option>
+									<option value="AZ">AZ</option>
+									<option value="HMM">HMM</option>
+									<option value="RMZ">RMZ</option>
+									<option value="SYNERGENEX">SYNERGENEX</option>
+									<option value="__custom">Otro...</option>
+								</select>
+							</label>
+							<label class="create-field field-grow lanz-custom-field hidden" id="lanz-line-custom-wrap">
+								<span>Linea (custom)</span>
+								<input id="lanz-line-custom" type="text" placeholder="Nombre de linea..." />
+							</label>
+						</div>
+						<div class="field-row">
+							<label class="create-field field-grow">
+								<span>Codigo de modelo</span>
+								<input id="lanz-model-code" type="text" placeholder="ZA-001" />
+							</label>
+							<label class="create-field field-grow">
+								<span>Escala</span>
+								<input id="lanz-scale" type="text" placeholder="1/72" />
+							</label>
+						</div>
+					</fieldset>
+
+					<fieldset class="lanz-fieldset">
+						<legend>Fechas</legend>
+						<div class="field-row">
+							<label class="create-field field-grow">
+								<span>Fecha de lanzamiento</span>
+								<input id="lanz-launch-date" type="date" />
+							</label>
+							<label class="create-field">
+								<span>Precision</span>
+								<select id="lanz-launch-precision">
+									<option value="DAY">Dia</option>
+									<option value="MONTH">Mes</option>
+									<option value="YEAR">Año</option>
+								</select>
+							</label>
+						</div>
+						<div class="field-row">
+							<label class="create-field field-grow">
+								<span>Fecha de reserva</span>
+								<input id="lanz-reserve-date" type="date" />
+							</label>
+							<label class="create-field">
+								<span>Precision</span>
+								<select id="lanz-reserve-precision">
+									<option value="DAY">Dia</option>
+									<option value="MONTH">Mes</option>
+									<option value="YEAR">Año</option>
+								</select>
+							</label>
+						</div>
+					</fieldset>
+
+					<fieldset class="lanz-fieldset">
+						<legend>Precio y Exclusividad</legend>
+						<div class="field-row">
+							<label class="create-field field-grow">
+								<span>Precio</span>
+								<input id="lanz-price" type="number" step="0.01" placeholder="7800" />
+							</label>
+							<label class="create-field">
+								<span>Moneda</span>
+								<input id="lanz-currency" type="text" placeholder="JPY" />
+							</label>
+						</div>
+						<label class="create-field">
+							<span>Exclusivo</span>
+							<select id="lanz-exclusive">
+								<option value="">No exclusivo</option>
+								<option value="KOTO_SHOP">Kotobukiya Shop</option>
+								<option value="TOMY_MALL">Takara Tomy Mall</option>
+								<option value="__custom">Otro...</option>
+							</select>
+						</label>
+						<label class="create-field lanz-custom-field hidden" id="lanz-exclusive-custom-wrap">
+							<span>Exclusivo (custom)</span>
+							<input id="lanz-exclusive-custom" type="text" placeholder="Codigo de tienda..." />
+						</label>
+					</fieldset>
+
+					<fieldset class="lanz-fieldset">
+						<legend>Media y Links</legend>
+						<label class="create-field">
+							<span>Imagen URL</span>
+							<input id="lanz-image" type="text" placeholder="https://..." />
+						</label>
+						<div id="lanz-image-preview" class="lanz-image-preview hidden">
+							<img id="lanz-image-preview-img" alt="Preview" />
+						</div>
+						<label class="create-field">
+							<span>Link oficial</span>
+							<input id="lanz-link" type="text" placeholder="https://..." />
+						</label>
+					</fieldset>
+
+					<fieldset class="lanz-fieldset">
+						<legend>Descripcion y Caracteristicas</legend>
+						<label class="create-field">
+							<span>Descripcion *</span>
+							<textarea id="lanz-description" class="lanz-textarea" placeholder="Descripcion del producto..."></textarea>
+						</label>
+						<div class="create-field">
+							<span>Caracteristicas</span>
+							<div id="lanz-features-list"></div>
+							<div class="field-row">
+								<input id="lanz-feature-input" class="field-grow" type="text" placeholder="Nueva caracteristica..." />
+								<button class="btn btn-add-feature" id="lanz-add-feature" type="button">+</button>
+							</div>
+						</div>
+					</fieldset>
+
+					<div class="lanz-form-actions">
+						<button class="btn btn-primary create-publish" id="lanz-save" type="button">Guardar</button>
+						<button class="btn btn-delete lanz-delete-btn hidden" id="lanz-delete" type="button">Eliminar</button>
+					</div>
 				</div>
 			</div>
 		</section>
