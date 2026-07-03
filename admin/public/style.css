@@ -229,6 +229,63 @@ tr:hover td {
 	color: var(--color-negative);
 }
 
+.header-actions {
+	align-items: center;
+	display: flex;
+	gap: 0.5rem;
+}
+
+/* Theme selector */
+.theme-selector {
+	position: relative;
+}
+
+.btn-theme {
+	background: none;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: var(--color-text-muted);
+	cursor: pointer;
+	display: flex;
+	padding: 0.35rem 0.5rem;
+}
+
+.btn-theme:hover {
+	border-color: var(--color-accent);
+	color: var(--color-text);
+}
+
+.theme-dropdown {
+	background: var(--color-surface);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 0.2rem;
+	min-width: 180px;
+	padding: 0.4rem;
+	position: absolute;
+	right: 0;
+	top: calc(100% + 0.4rem);
+	z-index: 100;
+}
+
+.theme-option {
+	background: none;
+	border: none;
+	border-radius: 5px;
+	color: var(--color-text);
+	cursor: pointer;
+	font-family: inherit;
+	font-size: 0.85rem;
+	padding: 0.4rem 0.6rem;
+	text-align: left;
+}
+
+.theme-option:hover,
+.theme-option.active {
+	background: rgba(255, 255, 255, 0.08);
+}
+
 .btn-primary {
 	background: var(--color-accent);
 	color: var(--color-bg);

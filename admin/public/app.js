@@ -1,6 +1,71 @@
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
+// Themes
+const themes = {
+	helic: {
+		'--color-bg': '#0b1a2e', '--color-surface': '#112240', '--color-primary': '#1a6bb5',
+		'--color-accent': '#e8a020', '--color-highlight': '#ffa200', '--color-negative': '#e74c3c',
+		'--color-positive': '#2ecc71', '--color-scrim': '#000000', '--color-shadow': '#000000',
+		'--color-text': '#e0e8f0', '--color-text-contrast': '#ffffff', '--color-text-muted': '#7a9bbf',
+	},
+	zenebas: {
+		'--color-bg': '#0a0505', '--color-surface': '#151010', '--color-primary': '#6b1515',
+		'--color-accent': '#e03030', '--color-highlight': '#ff5040', '--color-negative': '#ff6b6b',
+		'--color-positive': '#6bff8a', '--color-scrim': '#000000', '--color-shadow': '#000000',
+		'--color-text': '#f0e0e0', '--color-text-contrast': '#ffffff', '--color-text-muted': '#aa6060',
+	},
+	guylos: {
+		'--color-bg': '#1a0808', '--color-surface': '#2a0e0e', '--color-primary': '#601820',
+		'--color-accent': '#d03040', '--color-highlight': '#ff5050', '--color-negative': '#ff6b6b',
+		'--color-positive': '#6bff8a', '--color-scrim': '#000000', '--color-shadow': '#000000',
+		'--color-text': '#f5d0d0', '--color-text-contrast': '#ffffff', '--color-text-muted': '#b26d6d',
+	},
+	'neo-zenebas': {
+		'--color-bg': '#f0f0f0', '--color-surface': '#e0e0e0', '--color-primary': '#c0c0c0',
+		'--color-accent': '#1a1a1a', '--color-highlight': '#404040', '--color-negative': '#c0392b',
+		'--color-positive': '#27ae60', '--color-scrim': '#222222', '--color-shadow': '#cccbcb',
+		'--color-text': '#1a1a1a', '--color-text-contrast': '#ffffff', '--color-text-muted': '#606060',
+	},
+	'dark-army': {
+		'--color-bg': '#050505', '--color-surface': '#0a0a0a', '--color-primary': '#1a3a28',
+		'--color-accent': '#0bdd5f', '--color-highlight': '#2d9b5e', '--color-negative': '#ff4444',
+		'--color-positive': '#0bdd5f', '--color-scrim': '#000000', '--color-shadow': '#000000',
+		'--color-text': '#c8e8d0', '--color-text-contrast': '#ffffff', '--color-text-muted': '#4a8a60',
+	},
+};
+
+function applyTheme(name) {
+	const theme = themes[name];
+	if (!theme) return;
+	Object.entries(theme).forEach(([prop, value]) => {
+		document.documentElement.style.setProperty(prop, value);
+	});
+	localStorage.setItem('theme', name);
+	$$('.theme-option').forEach((btn) => {
+		btn.classList.toggle('active', btn.dataset.theme === name);
+	});
+}
+
+applyTheme(localStorage.getItem('theme') || 'helic');
+
+$('#theme-toggle').addEventListener('click', () => {
+	$('#theme-dropdown').classList.toggle('hidden');
+});
+
+$$('.theme-option').forEach((btn) => {
+	btn.addEventListener('click', () => {
+		applyTheme(btn.dataset.theme);
+		$('#theme-dropdown').classList.add('hidden');
+	});
+});
+
+document.addEventListener('click', (e) => {
+	if (!e.target.closest('.theme-selector')) {
+		$('#theme-dropdown').classList.add('hidden');
+	}
+});
+
 let currentTab = 'dashboard';
 let feedbackPage = 0;
 let commentsPage = 0;

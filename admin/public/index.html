@@ -28,7 +28,23 @@
 	<div id="app-view" class="app hidden">
 		<div class="header">
 			<h1>The Core Zi Admin</h1>
-			<button class="btn btn-logout" id="logout-btn" type="button">Salir</button>
+			<div class="header-actions">
+				<div class="theme-selector">
+					<button class="btn btn-theme" id="theme-toggle" type="button">
+						<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+						</svg>
+					</button>
+					<div class="theme-dropdown hidden" id="theme-dropdown">
+						<button class="theme-option" data-theme="helic" type="button">Helic Republic</button>
+						<button class="theme-option" data-theme="zenebas" type="button">Zenebas Empire</button>
+						<button class="theme-option" data-theme="guylos" type="button">Guylos Empire</button>
+						<button class="theme-option" data-theme="neo-zenebas" type="button">Neo Zenebas</button>
+						<button class="theme-option" data-theme="dark-army" type="button">Dark Army</button>
+					</div>
+				</div>
+				<button class="btn btn-logout" id="logout-btn" type="button">Salir</button>
+			</div>
 		</div>
 
 		<div class="tabs">
