@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Email Verificado">
+	<div class="verificado-container">
+		<div class="verificado-card">
+			<div class="verificado-icon">✓</div>
+			<h1>Email Verificado</h1>
+			<p>Tu email ha sido verificado correctamente. Tu comentario ya es público.</p>
+			<p>Gracias por contribuir a la comunidad.</p>
+			<a class="verificado-link" href="/#donde-comprar">Volver al sitio</a>
+		</div>
+	</div>
+</Layout>
+
+<style>
+	.verificado-container {
+		align-items: center;
+		display: flex;
+		justify-content: center;
+		min-height: 60vh;
+		padding: 2rem;
+	}
+
+	.verificado-card {
+		background: var(--color-surface);
+		border: 1px solid var(--color-border);
+		border-radius: 12px;
+		max-width: 480px;
+		padding: 3rem 2rem;
+		text-align: center;
+	}
+
+	.verificado-icon {
+		background: rgba(76, 175, 80, 0.15);
+		border-radius: 50%;
+		color: #4caf50;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 2.5rem;
+		height: 80px;
+		margin-bottom: 1.5rem;
+		width: 80px;
+	}
+
+	.verificado-card h1 {
+		font-size: 1.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.verificado-card p {
+		color: var(--color-text-muted);
+		line-height: 1.6;
+		margin-bottom: 0.5rem;
+	}
+
+	.verificado-link {
+		color: var(--color-accent);
+		display: inline-block;
+		margin-top: 1.5rem;
+		text-decoration: none;
+	}
+
+	.verificado-link:hover {
+		text-decoration: underline;
+	}
+</style>

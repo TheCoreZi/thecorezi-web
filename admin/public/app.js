@@ -134,8 +134,8 @@ function renderTable(items, columns, extraButtons) {
 		}).join('');
 		const extra = extraButtons ? extraButtons(item) : '';
 		const btns = `<td class="actions">
-			<button class="btn btn-approve" data-id="${item.id}" data-action="approve">Aprobar</button>
-			<button class="btn btn-delete" data-id="${item.id}" data-action="delete">Eliminar</button>
+			<button class="btn btn-approve btn-icon" data-id="${item.id}" data-action="approve" title="Aprobar">✓</button>
+			<button class="btn btn-delete btn-icon" data-id="${item.id}" data-action="delete" title="Eliminar">✕</button>
 			${extra}
 		</td>`;
 		return `<tr>${cells}${btns}</tr>`;
@@ -162,18 +162,55 @@ async function loadFeedback(page) {
 	const data = await api(`feedback?page=${page}`);
 	if (!data) return;
 
-	const columns = [
-		{ key: 'seller_id', label: 'Vendedor' },
-		{ key: 'name', label: 'Nombre' },
-		{ key: 'email', label: 'Email', class: 'cell-email' },
-		{ key: 'model', label: 'Modelo' },
-		{ key: 'comment', label: 'Comentario', class: 'cell-comment' },
-	];
+	if (data.items.length === 0) {
+		container.innerHTML = '<div class="empty">No hay feedback.</div>';
+		return;
+	}
 
-	const proofBtn = (item) => `<button class="btn btn-proof" data-email="${item.email}" data-name="${item.name}" data-comment="${(item.comment || '').replace(/"/g, '&quot;')}" data-model="${item.model || ''}" data-seller="${item.seller_id || ''}">Pedir Pruebas</button>`;
+	function feedbackStatus(item) {
+		if (item.approved && item.email_verified) return '<span class="badge badge-published">Publicado</span>';
+		if (item.approved) return '<span class="badge badge-waiting">Esperando verificación</span>';
+		return '<span class="badge badge-draft">Pendiente</span>';
+	}
 
-	container.innerHTML = renderTable(data.items, columns, proofBtn) + renderPagination(page, data.total, 25);
+	const isPublished = (item) => item.approved && item.email_verified;
 
+	const header = '<th>Vendedor</th><th>Nombre</th><th>Email</th><th>Modelo</th><th>Comentario</th><th>Estado</th><th>Acciones</th>';
+	const rows = data.items.map((item) => {
+		const fullComment = (item.comment || '').replace(/"/g, '&quot;');
+		const shortComment = (item.comment || '').length > 80 ? item.comment.substring(0, 80) + '...' : (item.comment || '');
+		const fullModel = item.model || '';
+		const shortModel = fullModel.length > 30 ? fullModel.substring(0, 30) + '...' : fullModel;
+		const published = isPublished(item);
+		const actions = `
+			${!published ? `<button class="btn btn-approve btn-icon" data-id="${item.id}" data-action="approve" title="Aprobar">✓</button>` : ''}
+			<button class="btn btn-delete btn-icon" data-id="${item.id}" data-action="delete" title="Eliminar">✕</button>
+			${!published ? `<button class="btn btn-proof btn-icon" data-email="${item.email}" data-name="${item.name}" data-comment="${fullComment}" data-model="${fullModel}" data-seller="${item.seller_id || ''}" title="Pedir Pruebas">✉</button>` : ''}
+		`;
+		return `<tr>
+			<td data-label="Vendedor">${item.seller_id || ''}</td>
+			<td data-label="Nombre">${item.name || ''}</td>
+			<td class="cell-email" data-label="Email">${item.email || ''}</td>
+			<td class="cell-expandable" data-label="Modelo" data-full="${fullModel.replace(/"/g, '&quot;')}" data-short="${shortModel.replace(/"/g, '&quot;')}">${shortModel}</td>
+			<td class="cell-comment cell-expandable" data-label="Comentario" data-full="${fullComment}" data-short="${shortComment.replace(/"/g, '&quot;')}">${shortComment}</td>
+			<td data-label="Estado">${feedbackStatus(item)}</td>
+			<td class="actions">${actions}</td>
+		</tr>`;
+	}).join('');
+
+	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
+		+ renderPagination(page, data.total, 50);
+
+	container.querySelectorAll('.cell-expandable').forEach((cell) => {
+		if (cell.dataset.full !== cell.dataset.short) {
+			cell.style.cursor = 'pointer';
+			cell.addEventListener('click', () => {
+				const expanded = cell.dataset.expanded === 'true';
+				cell.textContent = expanded ? cell.dataset.short : cell.dataset.full;
+				cell.dataset.expanded = expanded ? 'false' : 'true';
+			});
+		}
+	});
 	container.querySelectorAll('.btn-approve, .btn-delete').forEach((btn) => {
 		btn.addEventListener('click', () => handleAction('feedback', btn));
 	});
@@ -184,6 +221,14 @@ async function loadFeedback(page) {
 		btn.addEventListener('click', () => loadFeedback(parseInt(btn.dataset.page)));
 	});
 }
+
+$('#feedback-search').addEventListener('input', () => {
+	const term = $('#feedback-search').value.toLowerCase();
+	$('#feedback-content').querySelectorAll('tbody tr').forEach((row) => {
+		const text = row.textContent.toLowerCase();
+		row.style.display = text.includes(term) ? '' : 'none';
+	});
+});
 
 async function loadComments(page) {
 	commentsPage = page;

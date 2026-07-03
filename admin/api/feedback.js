@@ -1,7 +1,7 @@
 const { requireAuth } = require('./_lib/auth');
 const { supabase } = require('./_lib/supabase');
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 50;
 
 module.exports = async function handler(req, res) {
 	if (!requireAuth(req)) {
@@ -27,8 +27,9 @@ module.exports = async function handler(req, res) {
 
 	const { count, data } = await supabase
 		.from('seller_feedback')
-		.select('comment, created_at, email, id, model, name, seller_id', { count: 'exact' })
-		.eq('approved', false)
+		.select('approved, comment, created_at, email, email_verified, id, model, name, seller_id', { count: 'exact' })
+		.order('approved', { ascending: true })
+		.order('email_verified', { ascending: true })
 		.order('created_at', { ascending: false })
 		.range(from, to);
 
