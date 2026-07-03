@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Admin - The Core Zi</title>
+	<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600&family=Russo+One&display=swap" rel="stylesheet" />
+	<link href="/style.css" rel="stylesheet" />
+</head>
+<body>
+	<!-- Login -->
+	<div id="login-view" class="login-wrap hidden">
+		<div class="login-card">
+			<h1>Admin Panel</h1>
+			<div id="login-error" class="login-error hidden"></div>
+			<form id="login-form">
+				<label for="username">Usuario</label>
+				<input id="username" required type="text" />
+				<label for="password">Contraseña</label>
+				<input id="password" required type="password" />
+				<button class="btn btn-primary" type="submit">Entrar</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- App -->
+	<div id="app-view" class="app hidden">
+		<div class="header">
+			<h1>The Core Zi Admin</h1>
+			<button class="btn btn-logout" id="logout-btn" type="button">Salir</button>
+		</div>
+
+		<div class="tabs">
+			<button class="tab active" data-tab="dashboard" type="button">Dashboard</button>
+			<button class="tab" data-tab="feedback" type="button">Feedback</button>
+			<button class="tab" data-tab="comments" type="button">Comentarios</button>
+		</div>
+
+		<!-- Dashboard -->
+		<section id="tab-dashboard">
+			<div class="stats">
+				<div class="stat-card">
+					<div class="stat-count" id="feedback-count">-</div>
+					<div class="stat-label">Feedback pendiente</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-count" id="comments-count">-</div>
+					<div class="stat-label">Comentarios pendientes</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Feedback -->
+		<section id="tab-feedback" class="hidden">
+			<div id="feedback-content"></div>
+		</section>
+
+		<!-- Comments -->
+		<section id="tab-comments" class="hidden">
+			<div id="comments-content"></div>
+		</section>
+	</div>
+
+	<script src="/app.js"></script>
+</body>
+</html>
