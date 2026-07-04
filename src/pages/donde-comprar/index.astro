@@ -1,8 +1,10 @@
 ---
-import { sellersByCountry } from '../../data/sellers';
+import { fetchSellersByCountry } from '../../data/sellers';
 import SellerList from '../../components/SellerList';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/seller-card.css';
+
+const sellersByCountry = await fetchSellersByCountry();
 ---
 
 <Layout title="¿Dónde comprar Zoids?" description="Directorio de vendedores y comunidades donde comprar model kits de Zoids. Tiendas verificadas por nuestra experiencia personal.">

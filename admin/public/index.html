@@ -54,6 +54,7 @@
 			<button class="tab" data-tab="curiosidades" type="button">Curiosidades</button>
 			<button class="tab" data-tab="noticias" type="button">Noticias</button>
 			<button class="tab" data-tab="lanzamientos" type="button">Lanzamientos</button>
+			<button class="tab" data-tab="sellers" type="button">Vendedores</button>
 			<button class="tab" data-tab="suggestions" type="button">Sugerencias</button>
 		</div>
 
@@ -67,6 +68,10 @@
 				<div class="stat-card">
 					<div class="stat-count" id="comments-count">-</div>
 					<div class="stat-label">Comentarios pendientes</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-count" id="sellers-count">-</div>
+					<div class="stat-label">Vendedores</div>
 				</div>
 				<div class="stat-card">
 					<div class="stat-count" id="suggestions-count">-</div>
@@ -192,6 +197,100 @@
 					<div class="create-preview">
 						<div class="create-preview-label">Preview</div>
 						<div id="news-preview" class="create-preview-content"></div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Vendedores -->
+		<section id="tab-sellers" class="hidden">
+			<div id="seller-msg"></div>
+
+			<!-- List sub-view -->
+			<div id="seller-list-view">
+				<div class="lanz-toolbar">
+					<input id="seller-search" type="text" placeholder="Buscar por nombre o descripcion..." />
+					<button class="btn btn-primary lanz-toolbar-btn" id="seller-new-btn" type="button">+ Nuevo Vendedor</button>
+				</div>
+				<div id="seller-list-content"></div>
+			</div>
+
+			<!-- Form sub-view -->
+			<div id="seller-form-view" class="hidden">
+				<div class="lanz-form-header">
+					<button class="btn btn-back" id="seller-back-btn" type="button">&larr; Volver</button>
+					<h2 class="create-form-title" id="seller-form-title">Nuevo Vendedor</h2>
+				</div>
+
+				<div class="create-form">
+					<input type="hidden" id="seller-id" />
+
+					<fieldset class="lanz-fieldset">
+						<legend>Informacion</legend>
+						<label class="create-field">
+							<span>Nombre *</span>
+							<input id="seller-name" type="text" placeholder="Amazon Japón" />
+						</label>
+						<label class="create-field">
+							<span>ID (slug)</span>
+							<input id="seller-slug" type="text" placeholder="amazon-japon" />
+						</label>
+						<div class="field-row">
+							<label class="create-field field-grow">
+								<span>Pais *</span>
+								<select id="seller-country">
+									<option value="">Seleccionar...</option>
+									<option value="GL">🌎 Global</option>
+									<option value="JP">🇯🇵 Japón</option>
+									<option value="MX">🇲🇽 México</option>
+									<option value="PE">🇵🇪 Perú</option>
+								</select>
+							</label>
+							<label class="create-field field-grow">
+								<span>Tipo *</span>
+								<select id="seller-type">
+									<option value="">Seleccionar...</option>
+									<option value="community">Comunidad</option>
+									<option value="independent">Vendedor independiente</option>
+									<option value="store">Tienda</option>
+								</select>
+							</label>
+						</div>
+						<label class="create-field">
+							<span>Link *</span>
+							<input id="seller-link" type="text" placeholder="https://..." />
+						</label>
+						<label class="create-field">
+							<span>Imagen URL</span>
+							<input id="seller-image" type="text" placeholder="/images/sellers/nombre.jpg" />
+						</label>
+						<label class="create-field">
+							<span>Descripcion *</span>
+							<textarea id="seller-description" class="lanz-textarea" placeholder="Descripcion del vendedor..."></textarea>
+						</label>
+					</fieldset>
+
+					<fieldset class="lanz-fieldset">
+						<legend>Lo bueno</legend>
+						<div id="seller-pros-list"></div>
+						<div class="field-row">
+							<input id="seller-pro-input" class="field-grow" type="text" placeholder="Nuevo pro..." />
+							<button class="btn btn-add-feature" id="seller-add-pro" type="button">+</button>
+						</div>
+					</fieldset>
+
+					<fieldset class="lanz-fieldset">
+						<legend>Lo malo</legend>
+						<div id="seller-cons-list"></div>
+						<div class="field-row">
+							<input id="seller-con-input" class="field-grow" type="text" placeholder="Nuevo contra..." />
+							<button class="btn btn-add-feature" id="seller-add-con" type="button">+</button>
+						</div>
+					</fieldset>
+
+					<div class="lanz-form-actions">
+						<button class="btn btn-primary create-publish" id="seller-save" type="button">Guardar</button>
+						<button class="btn btn-delete lanz-delete-btn hidden" id="seller-delete" type="button">Eliminar</button>
 					</div>
 				</div>
 			</div>

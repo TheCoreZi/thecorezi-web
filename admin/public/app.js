@@ -104,7 +104,7 @@ function showApp() {
 function switchTab(tab) {
 	currentTab = tab;
 	$$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-	['dashboard', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias', 'suggestions'].forEach((t) => {
+	['dashboard', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias', 'sellers', 'suggestions'].forEach((t) => {
 		$(`#tab-${t}`).classList.toggle('hidden', t !== tab);
 	});
 
@@ -113,14 +113,16 @@ function switchTab(tab) {
 	if (tab === 'comments') loadComments(0);
 	if (tab === 'lanzamientos') showLanzList();
 	if (tab === 'noticias') showNewsList();
+	if (tab === 'sellers') showSellerList();
 	if (tab === 'suggestions') loadSuggestions(0);
 }
 
 async function loadDashboard() {
 	const data = await api('dashboard');
 	if (!data) return;
-	$('#feedback-count').textContent = data.feedbackCount;
 	$('#comments-count').textContent = data.commentsCount;
+	$('#feedback-count').textContent = data.feedbackCount;
+	$('#sellers-count').textContent = data.sellersCount;
 	$('#suggestions-count').textContent = data.suggestionsCount;
 }
 
@@ -981,6 +983,221 @@ $('#lanz-delete').addEventListener('click', async () => {
 	showLanzList();
 });
 
+// Sellers
+const COUNTRY_FLAGS = { GL: '🌎', JP: '🇯🇵', MX: '🇲🇽', PE: '🇵🇪' };
+let editingSellerId = null;
+let sellerCons = [];
+let sellerPros = [];
+let sellerSearchTimeout = null;
+let sellerItems = [];
+
+async function loadSellers(page) {
+	const container = $('#seller-list-content');
+	container.innerHTML = '<div class="loading">Cargando...</div>';
+
+	const search = $('#seller-search').value;
+	const params = `page=${page}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
+	const data = await api(`sellers?${params}`);
+	if (!data) return;
+
+	sellerItems = data.items;
+
+	if (data.items.length === 0) {
+		container.innerHTML = '<div class="empty">No hay vendedores.</div>';
+		return;
+	}
+
+	const header = '<th>Nombre</th><th>Pais</th><th>Tipo</th><th>Link</th>';
+	const rows = data.items.map((s) => {
+		const flag = COUNTRY_FLAGS[s.country_code] || s.country_code;
+		const linkShort = (s.link || '').length > 30 ? s.link.substring(0, 30) + '...' : (s.link || '');
+		return `<tr class="clickable-row" data-id="${s.id}">
+			<td data-label="Nombre">${s.name}</td>
+			<td data-label="Pais">${flag}</td>
+			<td data-label="Tipo">${s.type}</td>
+			<td data-label="Link">${linkShort}</td>
+		</tr>`;
+	}).join('');
+
+	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
+		+ renderPagination(page, data.total, 50);
+
+	container.querySelectorAll('.clickable-row').forEach((row) => {
+		row.addEventListener('click', () => {
+			const item = sellerItems.find((s) => s.id === row.dataset.id);
+			if (item) showSellerForm(item);
+		});
+	});
+	container.querySelectorAll('.pagination button:not([disabled])').forEach((btn) => {
+		btn.addEventListener('click', () => loadSellers(parseInt(btn.dataset.page)));
+	});
+}
+
+function renderSellerTags(containerId, items, removeCallback) {
+	const container = $(containerId);
+	container.innerHTML = items.map((item, i) =>
+		`<span class="lanz-feature-tag">${item} <button data-idx="${i}" class="btn-remove-feature">&times;</button></span>`
+	).join('');
+	container.querySelectorAll('.btn-remove-feature').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			removeCallback(parseInt(btn.dataset.idx));
+		});
+	});
+}
+
+function renderSellerPros() {
+	renderSellerTags('#seller-pros-list', sellerPros, (idx) => {
+		sellerPros.splice(idx, 1);
+		renderSellerPros();
+	});
+}
+
+function renderSellerCons() {
+	renderSellerTags('#seller-cons-list', sellerCons, (idx) => {
+		sellerCons.splice(idx, 1);
+		renderSellerCons();
+	});
+}
+
+function addSellerPro() {
+	const input = $('#seller-pro-input');
+	const val = input.value.trim();
+	if (!val) return;
+	sellerPros.push(val);
+	input.value = '';
+	renderSellerPros();
+}
+
+function addSellerCon() {
+	const input = $('#seller-con-input');
+	const val = input.value.trim();
+	if (!val) return;
+	sellerCons.push(val);
+	input.value = '';
+	renderSellerCons();
+}
+
+$('#seller-add-pro').addEventListener('click', addSellerPro);
+$('#seller-pro-input').addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') { e.preventDefault(); addSellerPro(); }
+});
+
+$('#seller-add-con').addEventListener('click', addSellerCon);
+$('#seller-con-input').addEventListener('keydown', (e) => {
+	if (e.key === 'Enter') { e.preventDefault(); addSellerCon(); }
+});
+
+function showSellerForm(item) {
+	$('#seller-list-view').classList.add('hidden');
+	$('#seller-form-view').classList.remove('hidden');
+	$('#seller-msg').innerHTML = '';
+
+	if (item) {
+		editingSellerId = item.id;
+		$('#seller-form-title').textContent = `Editar: ${item.name}`;
+		$('#seller-delete').classList.remove('hidden');
+		$('#seller-id').value = item.id;
+		$('#seller-name').value = item.name;
+		$('#seller-slug').value = item.id;
+		$('#seller-slug').disabled = true;
+		$('#seller-country').value = item.country_code;
+		$('#seller-type').value = item.type;
+		$('#seller-link').value = item.link || '';
+		$('#seller-image').value = item.image || '';
+		$('#seller-description').value = item.description || '';
+		sellerPros = item.pros ? [...item.pros] : [];
+		sellerCons = item.cons ? [...item.cons] : [];
+	} else {
+		editingSellerId = null;
+		$('#seller-form-title').textContent = 'Nuevo Vendedor';
+		$('#seller-delete').classList.add('hidden');
+		$('#seller-id').value = '';
+		$('#seller-name').value = '';
+		$('#seller-slug').value = '';
+		$('#seller-slug').disabled = false;
+		$('#seller-country').value = '';
+		$('#seller-type').value = '';
+		$('#seller-link').value = '';
+		$('#seller-image').value = '';
+		$('#seller-description').value = '';
+		sellerPros = [];
+		sellerCons = [];
+	}
+	renderSellerPros();
+	renderSellerCons();
+}
+
+function showSellerList() {
+	$('#seller-form-view').classList.add('hidden');
+	$('#seller-list-view').classList.remove('hidden');
+	loadSellers(0);
+}
+
+$('#seller-new-btn').addEventListener('click', () => showSellerForm(null));
+$('#seller-back-btn').addEventListener('click', showSellerList);
+
+$('#seller-name').addEventListener('input', (e) => {
+	if (!editingSellerId) {
+		$('#seller-slug').value = toSlug(e.target.value);
+	}
+});
+
+$('#seller-search').addEventListener('input', () => {
+	clearTimeout(sellerSearchTimeout);
+	sellerSearchTimeout = setTimeout(() => loadSellers(0), 300);
+});
+
+$('#seller-save').addEventListener('click', async () => {
+	const msgEl = $('#seller-msg');
+	const btn = $('#seller-save');
+
+	const fields = {
+		cons: sellerCons,
+		country_code: $('#seller-country').value,
+		description: $('#seller-description').value,
+		id: editingSellerId || ($('#seller-slug').value || toSlug($('#seller-name').value)),
+		image: $('#seller-image').value || null,
+		link: $('#seller-link').value,
+		name: $('#seller-name').value,
+		pros: sellerPros,
+		type: $('#seller-type').value,
+	};
+
+	if (!fields.name || !fields.country_code || !fields.type || !fields.link || !fields.description) {
+		msgEl.innerHTML = '<div class="create-error">Nombre, Pais, Tipo, Link y Descripcion son obligatorios.</div>';
+		return;
+	}
+
+	btn.disabled = true;
+	const method = editingSellerId ? 'PUT' : 'POST';
+	const data = await api('sellers', { method, body: fields });
+	btn.disabled = false;
+
+	if (!data) return;
+	if (data.error) {
+		msgEl.innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+
+	msgEl.innerHTML = `<div class="create-success">${editingSellerId ? 'Vendedor actualizado' : 'Vendedor creado'} correctamente.</div>`;
+	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
+
+	if (!editingSellerId) showSellerList();
+});
+
+$('#seller-delete').addEventListener('click', async () => {
+	if (!editingSellerId) return;
+	if (!confirm('Seguro que quieres eliminar este vendedor?')) return;
+
+	const data = await api('sellers', { method: 'DELETE', body: { id: editingSellerId } });
+	if (!data) return;
+	if (data.error) {
+		$('#seller-msg').innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+	showSellerList();
+});
+
 // Suggestions
 let suggestionsPage = 0;
 
@@ -1050,8 +1267,9 @@ async function loadSuggestions(page) {
 	const data = await api('dashboard');
 	if (data) {
 		showApp();
-		$('#feedback-count').textContent = data.feedbackCount;
 		$('#comments-count').textContent = data.commentsCount;
+		$('#feedback-count').textContent = data.feedbackCount;
+		$('#sellers-count').textContent = data.sellersCount;
 		$('#suggestions-count').textContent = data.suggestionsCount;
 	} else {
 		showLogin();

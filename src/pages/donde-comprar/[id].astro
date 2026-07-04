@@ -1,5 +1,5 @@
 ---
-import { getAllSellers, type Seller, type SellerType } from '../../data/sellers';
+import { fetchAllSellers, type Seller, type SellerType } from '../../data/sellers';
 import SellerFeedbackForm from '../../components/SellerFeedbackForm';
 import SellerFeedbackList from '../../components/SellerFeedbackList';
 import SellerVoteButtons from '../../components/SellerVoteButtons';
@@ -8,8 +8,9 @@ import '../../styles/curiosidad-comments.css';
 import '../../styles/seller-card.css';
 import '../../styles/seller-feedback.css';
 
-export function getStaticPaths() {
-	return getAllSellers().map((seller) => ({
+export async function getStaticPaths() {
+	const sellers = await fetchAllSellers();
+	return sellers.map((seller) => ({
 		params: { id: seller.id },
 		props: { seller },
 	}));
