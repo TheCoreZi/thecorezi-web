@@ -17,19 +17,36 @@ export default function SellerVoteButtons({ sellerId }: Props) {
 	const [myVote, setMyVote] = useState<-1 | 1 | null>(null);
 
 	useEffect(() => {
-		const localVotes = getLocalVotes();
-		if (localVotes[sellerId]) setMyVote(localVotes[sellerId]);
+		async function init() {
+			const localVotes = getLocalVotes();
+			if (localVotes[sellerId]) setMyVote(localVotes[sellerId]);
 
-		fetchAllVoteCounts().then((all) => {
+			const [all, voterId] = await Promise.all([fetchAllVoteCounts(), getVoterId()]);
 			setCounts(all[sellerId] ?? DEFAULT_COUNTS);
-		});
+
+			// Recuperar voto desde Supabase si no hay cache local (ej: incógnito o datos borrados)
+			if (!localVotes[sellerId]) {
+				const { data } = await supabase
+					.from('seller_votes')
+					.select('vote')
+					.eq('seller_id', sellerId)
+					.eq('voter_id', voterId)
+					.maybeSingle();
+
+				if (data) {
+					setMyVote(data.vote as 1 | -1);
+					setLocalVote(sellerId, data.vote as 1 | -1);
+				}
+			}
+		}
+		init();
 	}, []);
 
 	async function handleVote(vote: -1 | 1) {
 		if (loading) return;
 		setLoading(true);
 
-		const voterId = getVoterId();
+		const voterId = await getVoterId();
 
 		if (myVote === vote) {
 			await supabase
@@ -57,7 +74,7 @@ export default function SellerVoteButtons({ sellerId }: Props) {
 	}
 
 	return (
-		<div class="seller-vote-buttons" onClick={(e) => e.stopPropagation()}>
+		<div class="seller-vote-buttons" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
 			<button
 				class={`seller-vote-btn seller-vote-btn--like${myVote === 1 ? ' seller-vote-btn--active' : ''}`}
 				disabled={loading}

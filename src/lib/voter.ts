@@ -1,13 +1,17 @@
+import { generateFingerprint } from './fingerprint';
+
 const STORAGE_KEY = 'thecorezi_voter_id';
 const VOTES_KEY = 'thecorezi_seller_votes';
 
-export function getVoterId(): string {
-	let id = localStorage.getItem(STORAGE_KEY);
-	if (!id) {
-		id = crypto.randomUUID();
-		localStorage.setItem(STORAGE_KEY, id);
+export async function getVoterId(): Promise<string> {
+	const fingerprint = await generateFingerprint();
+	const storedId = localStorage.getItem(STORAGE_KEY);
+
+	if (storedId !== fingerprint) {
+		localStorage.setItem(STORAGE_KEY, fingerprint);
 	}
-	return id;
+
+	return fingerprint;
 }
 
 export function getLocalVotes(): Record<string, 1 | -1> {
