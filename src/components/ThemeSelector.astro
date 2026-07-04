@@ -198,8 +198,10 @@ const factions = [
 		});
 	}
 
-	const saved = localStorage.getItem('theme') || 'helic';
-	applyTheme(saved);
+	document.addEventListener('astro:page-load', () => {
+		const saved = localStorage.getItem('theme') || 'helic';
+		applyTheme(saved);
+	});
 
 	document.addEventListener('click', (e) => {
 		const target = e.target as HTMLElement;
