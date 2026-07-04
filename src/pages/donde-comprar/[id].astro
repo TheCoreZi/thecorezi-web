@@ -1,0 +1,103 @@
+---
+import { getAllSellers, type Seller, type SellerType } from '../../data/sellers';
+import SellerFeedbackForm from '../../components/SellerFeedbackForm';
+import SellerFeedbackList from '../../components/SellerFeedbackList';
+import SellerVoteButtons from '../../components/SellerVoteButtons';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/curiosidad-comments.css';
+import '../../styles/seller-card.css';
+import '../../styles/seller-feedback.css';
+
+export function getStaticPaths() {
+	return getAllSellers().map((seller) => ({
+		params: { id: seller.id },
+		props: { seller },
+	}));
+}
+
+interface Props {
+	seller: Seller;
+}
+
+const SELLER_TYPE_TITLES: Record<SellerType, string> = {
+	community: 'Comunidad',
+	independent: 'Vendedor independiente',
+	store: 'Tienda',
+};
+
+const { seller } = Astro.props;
+---
+
+<Layout title={`${seller.name} — ¿Dónde comprar Zoids?`}>
+	<a class="seller-back-link" href="/donde-comprar/">← Volver a la lista</a>
+	<div class="seller-detail-header">
+		{seller.image && (
+			<img alt={seller.name} class="seller-detail-image" src={seller.image} />
+		)}
+		<div class="seller-detail-info">
+			<div class="seller-detail-title-row">
+				<h1 class="seller-detail-name">{seller.name}</h1>
+				<img
+					alt={SELLER_TYPE_TITLES[seller.type]}
+					class={`seller-type-icon seller-type-icon--${seller.type}`}
+					height="20"
+					src={`/images/sellers/type-${seller.type}.svg`}
+					title={SELLER_TYPE_TITLES[seller.type]}
+					width="20"
+				/>
+			</div>
+			<div class="seller-detail-actions">
+				<a class="seller-link" href={seller.link} rel="noopener noreferrer" target="_blank">Visitar ↗</a>
+				<SellerVoteButtons client:idle sellerId={seller.id} />
+			</div>
+		</div>
+	</div>
+	<p class="seller-detail-description">{seller.description}</p>
+	<div class="seller-details">
+		<div class="seller-pros">
+			<h5>Lo bueno</h5>
+			<ul>
+				{seller.pros.map((p) => <li>{p}</li>)}
+			</ul>
+		</div>
+		<div class="seller-cons">
+			<h5>Lo malo</h5>
+			<ul>
+				{seller.cons.map((c) => <li>{c}</li>)}
+			</ul>
+		</div>
+	</div>
+	<SellerFeedbackList client:idle sellerId={seller.id} />
+	<SellerFeedbackForm client:idle sellerId={seller.id} />
+</Layout>
+
+<style>
+	.seller-back-link {
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		color: var(--color-text);
+		display: inline-block;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.85rem;
+		padding: 0.5rem 1rem;
+		position: sticky;
+		text-decoration: none;
+		top: 80px;
+		transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+		z-index: 10;
+	}
+
+	.seller-back-link:hover {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-bg);
+	}
+
+	@media (max-width: 550px) {
+		.seller-back-link {
+			top: 50px;
+		}
+	}
+</style>

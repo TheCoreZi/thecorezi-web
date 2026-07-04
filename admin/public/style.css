@@ -816,3 +816,20 @@ tr.clickable-row:hover td {
 
 	.create-preview { padding: 1rem; }
 }
+
+.suggestion-list-preview {
+	font-size: 0.8rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.suggestion-list-preview li {
+	line-height: 1.4;
+	padding: 0.1rem 0;
+}
+
+.suggestion-list-preview li::before {
+	content: '• ';
+	color: var(--color-text-muted);
+}

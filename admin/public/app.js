@@ -104,7 +104,7 @@ function showApp() {
 function switchTab(tab) {
 	currentTab = tab;
 	$$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-	['dashboard', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias'].forEach((t) => {
+	['dashboard', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias', 'suggestions'].forEach((t) => {
 		$(`#tab-${t}`).classList.toggle('hidden', t !== tab);
 	});
 
@@ -113,6 +113,7 @@ function switchTab(tab) {
 	if (tab === 'comments') loadComments(0);
 	if (tab === 'lanzamientos') showLanzList();
 	if (tab === 'noticias') showNewsList();
+	if (tab === 'suggestions') loadSuggestions(0);
 }
 
 async function loadDashboard() {
@@ -120,6 +121,7 @@ async function loadDashboard() {
 	if (!data) return;
 	$('#feedback-count').textContent = data.feedbackCount;
 	$('#comments-count').textContent = data.commentsCount;
+	$('#suggestions-count').textContent = data.suggestionsCount;
 }
 
 function renderTable(items, columns, extraButtons) {
@@ -979,6 +981,70 @@ $('#lanz-delete').addEventListener('click', async () => {
 	showLanzList();
 });
 
+// Suggestions
+let suggestionsPage = 0;
+
+async function loadSuggestions(page) {
+	suggestionsPage = page;
+	const container = $('#suggestions-content');
+	container.innerHTML = '<div class="loading">Cargando...</div>';
+
+	const data = await api(`suggestions?page=${page}`);
+	if (!data) return;
+
+	if (data.items.length === 0) {
+		container.innerHTML = '<div class="empty">No hay sugerencias.</div>';
+		return;
+	}
+
+	const header = '<th>Nombre</th><th>Pais</th><th>Link</th><th>Descripcion</th><th>Lo bueno</th><th>Lo malo</th><th>Fecha</th><th>Acciones</th>';
+	const rows = data.items.map((item) => {
+		const pros = Array.isArray(item.pros) ? item.pros.map((p) => `<li>${p}</li>`).join('') : '';
+		const cons = Array.isArray(item.cons) ? item.cons.map((c) => `<li>${c}</li>`).join('') : '';
+		const desc = (item.description || '').length > 100 ? item.description.substring(0, 100) + '...' : (item.description || '');
+		const date = item.created_at ? new Date(item.created_at).toLocaleDateString('es') : '';
+		const linkShort = (item.link || '').length > 30 ? item.link.substring(0, 30) + '...' : (item.link || '');
+		return `<tr>
+			<td data-label="Nombre">${item.name || ''}</td>
+			<td data-label="Pais">${item.country || ''}</td>
+			<td data-label="Link"><a href="${item.link || ''}" target="_blank" rel="noopener">${linkShort}</a></td>
+			<td class="cell-comment cell-expandable" data-label="Descripcion" data-full="${(item.description || '').replace(/"/g, '&quot;')}" data-short="${desc.replace(/"/g, '&quot;')}">${desc}</td>
+			<td data-label="Lo bueno"><ul class="suggestion-list-preview">${pros}</ul></td>
+			<td data-label="Lo malo"><ul class="suggestion-list-preview">${cons}</ul></td>
+			<td data-label="Fecha">${date}</td>
+			<td class="actions">
+				<button class="btn btn-delete btn-icon" data-id="${item.id}" data-action="delete" title="Eliminar">✕</button>
+			</td>
+		</tr>`;
+	}).join('');
+
+	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
+		+ renderPagination(page, data.total, 50);
+
+	container.querySelectorAll('.cell-expandable').forEach((cell) => {
+		if (cell.dataset.full !== cell.dataset.short) {
+			cell.style.cursor = 'pointer';
+			cell.addEventListener('click', () => {
+				const expanded = cell.dataset.expanded === 'true';
+				cell.textContent = expanded ? cell.dataset.short : cell.dataset.full;
+				cell.dataset.expanded = expanded ? 'false' : 'true';
+			});
+		}
+	});
+	container.querySelectorAll('.btn-delete').forEach((btn) => {
+		btn.addEventListener('click', async () => {
+			const id = btn.dataset.id;
+			btn.disabled = true;
+			await api('suggestions', { method: 'POST', body: { action: 'delete', id } });
+			btn.closest('tr').remove();
+			loadDashboard();
+		});
+	});
+	container.querySelectorAll('.pagination button:not([disabled])').forEach((btn) => {
+		btn.addEventListener('click', () => loadSuggestions(parseInt(btn.dataset.page)));
+	});
+}
+
 // Init
 (async () => {
 	const data = await api('dashboard');
@@ -986,6 +1052,7 @@ $('#lanz-delete').addEventListener('click', async () => {
 		showApp();
 		$('#feedback-count').textContent = data.feedbackCount;
 		$('#comments-count').textContent = data.commentsCount;
+		$('#suggestions-count').textContent = data.suggestionsCount;
 	} else {
 		showLogin();
 	}

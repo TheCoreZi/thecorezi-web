@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { ClientRouter } from 'astro:transitions';
 import logo from '../assets/images/thecorezi.png';
 import CurrencySelector from '../components/CurrencySelector.astro';
 import ThemeSelector from '../components/ThemeSelector.astro';
@@ -50,13 +51,14 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		<meta name="twitter:image" content={new URL(image, Astro.site)} />
 
 		<title>{fullTitle}</title>
+		<ClientRouter />
 	</head>
 	<body>
 		<nav class="navbar" id="navbar">
 			<ul class="navbar-links navbar-links--desktop">
 				<li><a href="/noticias/">Noticias</a></li>
 				<li><a href="/lanzamientos/">Lanzamientos</a></li>
-				<li><a href="/#donde-comprar">¿Dónde comprar?</a></li>
+				<li><a href="/donde-comprar/">¿Dónde comprar?</a></li>
 			</ul>
 			<a href="/" class="navbar-brand" id="navbar-brand">
 				<Image src={logo} alt="The Core Zi" height={48} loading="eager" />
@@ -74,7 +76,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 			<div class="navbar-mobile-menu" id="navbar-mobile-menu" hidden>
 				<a href="/noticias/">Noticias</a>
 				<a href="/lanzamientos/">Lanzamientos</a>
-				<a href="/#donde-comprar">¿Dónde comprar?</a>
+				<a href="/donde-comprar/">¿Dónde comprar?</a>
 				<a href="/#podcast">Podcast</a>
 				<a href="/archivo/">Archivo Zi</a>
 				<a href="/#zoids-sleeper">Zoids Sleeper</a>
@@ -85,50 +87,56 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		</main>
 
 		<script>
-			const navbar = document.getElementById('navbar')!;
-			const navbarBrand = document.getElementById('navbar-brand')!;
-			const heroLogo = document.querySelector('.hero-logo') as HTMLImageElement | null;
+			document.addEventListener('astro:page-load', () => {
+				const navbar = document.getElementById('navbar')!;
+				const navbarBrand = document.getElementById('navbar-brand')!;
+				const heroLogo = document.querySelector('.hero-logo') as HTMLImageElement | null;
 
-			if (heroLogo) {
-				const scrollThreshold = 200;
+				if (heroLogo) {
+					const scrollThreshold = 200;
 
-				function updateLogoOnScroll() {
-					const scrollY = window.scrollY;
-					const progress = Math.min(scrollY / scrollThreshold, 1);
+					function updateLogoOnScroll() {
+						const scrollY = window.scrollY;
+						const progress = Math.min(scrollY / scrollThreshold, 1);
 
-					heroLogo!.style.opacity = String(1 - progress);
-					heroLogo!.style.transform = `scale(${1 - progress * 0.5})`;
+						heroLogo!.style.opacity = String(1 - progress);
+						heroLogo!.style.transform = `scale(${1 - progress * 0.5})`;
 
-					navbarBrand.style.opacity = String(progress);
-					navbarBrand.style.pointerEvents = progress > 0.5 ? 'auto' : 'none';
+						navbarBrand.style.opacity = String(progress);
+						navbarBrand.style.pointerEvents = progress > 0.5 ? 'auto' : 'none';
 
-					if (progress > 0) {
-						navbar.classList.add('navbar--scrolled');
-					} else {
-						navbar.classList.remove('navbar--scrolled');
+						if (progress > 0) {
+							navbar.classList.add('navbar--scrolled');
+						} else {
+							navbar.classList.remove('navbar--scrolled');
+						}
 					}
+
+					navbarBrand.style.opacity = '0';
+					navbarBrand.style.pointerEvents = 'none';
+
+					window.addEventListener('scroll', updateLogoOnScroll, { passive: true });
+					updateLogoOnScroll();
+				} else {
+					navbarBrand.style.opacity = '1';
+					navbarBrand.style.pointerEvents = 'auto';
+					navbar.classList.add('navbar--scrolled');
 				}
 
-				navbarBrand.style.opacity = '0';
-				navbarBrand.style.pointerEvents = 'none';
+				const hamburger = document.getElementById('navbar-hamburger')!;
+				const mobileMenu = document.getElementById('navbar-mobile-menu')!;
 
-				window.addEventListener('scroll', updateLogoOnScroll, { passive: true });
-				updateLogoOnScroll();
-			}
+				hamburger.addEventListener('click', () => {
+					const isOpen = !mobileMenu.hidden;
+					mobileMenu.hidden = isOpen;
+					hamburger.classList.toggle('open', !isOpen);
+				});
 
-			const hamburger = document.getElementById('navbar-hamburger')!;
-			const mobileMenu = document.getElementById('navbar-mobile-menu')!;
-
-			hamburger.addEventListener('click', () => {
-				const isOpen = !mobileMenu.hidden;
-				mobileMenu.hidden = isOpen;
-				hamburger.classList.toggle('open', !isOpen);
-			});
-
-			mobileMenu.querySelectorAll('a').forEach((link) => {
-				link.addEventListener('click', () => {
-					mobileMenu.hidden = true;
-					hamburger.classList.remove('open');
+				mobileMenu.querySelectorAll('a').forEach((link) => {
+					link.addEventListener('click', () => {
+						mobileMenu.hidden = true;
+						hamburger.classList.remove('open');
+					});
 				});
 			});
 		</script>

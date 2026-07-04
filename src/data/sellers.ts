@@ -16,6 +16,10 @@ export interface CountryGroup {
 	sellers: Seller[];
 }
 
+export function getAllSellers(): Seller[] {
+	return sellersByCountry.flatMap((group) => group.sellers);
+}
+
 export const sellersByCountry: CountryGroup[] = [
 	{
 		country: '🌎',

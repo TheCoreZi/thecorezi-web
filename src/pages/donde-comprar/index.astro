@@ -1,0 +1,205 @@
+---
+import { sellersByCountry } from '../../data/sellers';
+import SellerList from '../../components/SellerList';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/seller-card.css';
+---
+
+<Layout title="¿Dónde comprar Zoids?">
+	<h1 class="sellers-page-title">¿Dónde comprar?</h1>
+	<p class="sellers-description">Encontrar dónde comprar Zoids no es fácil. No es una franquicia que encuentres en cualquier estante, así que la mayoría de vendedores son independientes que se mueven en redes sociales y grupos. Armamos esta lista con vendedores y comunidades donde hemos comprado personalmente. No estamos afiliados a ninguno y, siendo honestos, la mayoría nos cae mal. Aun así, esperamos que esta lista les ayude a conseguir el Zoid que tanto buscan.</p>
+	<p class="sellers-disclaimer">The Core Zi no se hace responsable por ninguna transacción realizada con los vendedores listados. Esta lista es solo una referencia basada en nuestra experiencia personal. Cualquier compra es bajo tu propio riesgo.</p>
+	<div class="country-flags">
+		{sellersByCountry.map((group, i) => (
+			<button class={`country-flag${i === 0 ? ' active' : ''}`} data-country-index={i}>
+				{group.country}
+			</button>
+		))}
+	</div>
+	{sellersByCountry.map((group, i) => (
+		<div class="country-group" data-country-group={i} hidden={i !== 0}>
+			<SellerList client:visible sellers={group.sellers} />
+		</div>
+	))}
+
+	<section class="suggest-cta">
+		<h2 class="suggest-cta-title">¿Conoces otro vendedor?</h2>
+		<p class="suggest-cta-text">Si sabes de un vendedor o comunidad que debería estar en esta lista, cuéntanos. Revisamos cada sugerencia personalmente.</p>
+		<a class="suggest-cta-btn" href="/donde-comprar/sugerir">Sugerir un vendedor</a>
+	</section>
+
+	<script>
+		document.addEventListener('astro:page-load', () => {
+			document.querySelectorAll('.country-flag').forEach((btn) => {
+				btn.addEventListener('click', () => {
+					const index = (btn as HTMLElement).dataset.countryIndex;
+					const group = document.querySelector(`[data-country-group="${index}"]`);
+					const isVisible = !group?.hasAttribute('hidden');
+
+					document.querySelectorAll('.country-group').forEach((g) => g.setAttribute('hidden', ''));
+					document.querySelectorAll('.country-flag').forEach((b) => b.classList.remove('active'));
+
+					if (!isVisible) {
+						group?.removeAttribute('hidden');
+						btn.classList.add('active');
+					}
+				});
+			});
+		});
+	</script>
+</Layout>
+
+<style>
+	.sellers-page-title {
+		color: var(--color-accent);
+		font-family: 'Russo One', sans-serif;
+		font-size: 2.25rem;
+		margin-bottom: 1.5rem;
+		margin-top: 1rem;
+		padding-bottom: 1rem;
+		position: relative;
+		text-align: center;
+	}
+
+	.sellers-page-title::after {
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
+		bottom: 0;
+		content: '';
+		height: 3px;
+		left: 50%;
+		position: absolute;
+		transform: translateX(-50%);
+		width: 80px;
+	}
+
+	.sellers-description {
+		color: var(--color-text-muted);
+		font-size: 1rem;
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 700px;
+		text-align: center;
+	}
+
+	.sellers-disclaimer {
+		color: var(--color-text-muted);
+		font-size: 0.8rem;
+		font-style: italic;
+		line-height: 1.5;
+		margin-bottom: 2.5rem;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 700px;
+		opacity: 0.7;
+		text-align: center;
+	}
+
+	.country-flags {
+		display: flex;
+		gap: 1.5rem;
+		justify-content: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.country-flag {
+		background: var(--color-surface);
+		border: 2px solid rgba(255, 255, 255, 0.08);
+		border-radius: 16px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+		font-size: 3.5rem;
+		padding: 0.75rem 1.25rem;
+		transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+	}
+
+	.country-flag:hover {
+		border-color: rgba(255, 255, 255, 0.15);
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+		transform: scale(1.15);
+	}
+
+	.country-flag.active {
+		border-color: var(--color-accent);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(232, 160, 32, 0.15);
+		transform: scale(1.15);
+	}
+
+	.country-group {
+		margin-bottom: 2rem;
+	}
+
+	.suggest-cta {
+		align-items: center;
+		background: linear-gradient(135deg, var(--color-surface) 0%, transparent 70%);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+		border-radius: 16px;
+		display: flex;
+		flex-direction: column;
+		margin-top: 3rem;
+		padding: 3rem 2rem;
+		text-align: center;
+	}
+
+	.suggest-cta-title {
+		color: var(--color-accent);
+		font-family: 'Russo One', sans-serif;
+		font-size: 1.75rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.suggest-cta-text {
+		color: var(--color-text-muted);
+		font-size: 1rem;
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+		max-width: 500px;
+	}
+
+	.suggest-cta-btn {
+		background: var(--color-accent);
+		border-radius: 8px;
+		box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+		color: var(--color-bg);
+		display: inline-block;
+		font-family: 'Russo One', sans-serif;
+		font-size: 1rem;
+		padding: 0.75rem 2rem;
+		text-decoration: none;
+		transition: transform 0.2s, box-shadow 0.2s;
+	}
+
+	.suggest-cta-btn:hover {
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 160, 32, 0.2);
+		transform: translateY(-2px);
+	}
+
+	@media (max-width: 550px) {
+		.sellers-page-title {
+			font-size: 1.5rem;
+		}
+
+		.sellers-description {
+			font-size: 0.85rem;
+			padding: 0 0.5rem;
+		}
+
+		.sellers-disclaimer {
+			font-size: 0.7rem;
+			margin-bottom: 1.5rem;
+			padding: 0 0.5rem;
+		}
+
+		.country-flags {
+			gap: 0.5rem;
+		}
+
+		.country-flag {
+			border-radius: 10px;
+			font-size: 2rem;
+			padding: 0.5rem 0.75rem;
+		}
+	}
+</style>

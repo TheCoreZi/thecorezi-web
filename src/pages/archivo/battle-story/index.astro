@@ -46,7 +46,7 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 
 		<div id="era-detail" hidden>
 			<nav class="era-nav">
-				{timelineByEra.map((era, i) => (
+				{timelineByEra.map((era) => (
 					<a href={`#era-${era.era}`} class="era-nav-item" style={`--era-color: ${era.color}`}>
 						<span class="era-nav-dot"></span>
 						<span class="era-nav-label">{era.label} <span class="era-nav-range">({era.yearRange})</span></span>
@@ -132,79 +132,83 @@ const iconMap = { book: iconBook, box: iconBox, magazine: iconMagazine, web: ico
 </Layout>
 
 <script>
-	const eraSelector = document.getElementById('era-selector')!;
-	const eraDetail = document.getElementById('era-detail')!;
-	const eraBackBtns = document.querySelectorAll('[data-era-back]');
-	const eraPages = document.querySelectorAll('.era-page');
-	const eraNavItems = document.querySelectorAll('.era-nav-item');
+	document.addEventListener('astro:page-load', () => {
+		const eraSelector = document.getElementById('era-selector');
+		const eraDetail = document.getElementById('era-detail');
+		if (!eraSelector || !eraDetail) return;
 
-	const eraKeys = Array.from(document.querySelectorAll('[data-era-key]')).map(
-		(node) => (node as HTMLElement).dataset.eraKey!,
-	);
+		const eraBackBtns = document.querySelectorAll('[data-era-back]');
+		const eraPages = document.querySelectorAll('.era-page');
+		const eraNavItems = document.querySelectorAll('.era-nav-item');
 
-	function showSelector() {
-		eraDetail.hidden = true;
-		eraSelector.hidden = false;
-		history.replaceState(null, '', window.location.pathname);
-		document.querySelector('.timeline-section')?.scrollIntoView({ behavior: 'smooth' });
-	}
+		const eraKeys = Array.from(document.querySelectorAll('[data-era-key]')).map(
+			(node) => (node as HTMLElement).dataset.eraKey!,
+		);
 
-	function showEra(index: number, scroll = true) {
-		document.querySelectorAll('.timeline-content--open').forEach((c) => c.classList.remove('timeline-content--open'));
-		eraSelector.hidden = true;
-		eraDetail.hidden = false;
-		eraPages.forEach((g, i) => {
-			(g as HTMLElement).hidden = i !== index;
-		});
-		eraNavItems.forEach((item, i) => {
-			item.classList.toggle('era-nav-item--active', i === index);
-		});
-		history.replaceState(null, '', `#${eraKeys[index]}`);
-		if (scroll) {
+		function showSelector() {
+			eraDetail.hidden = true;
+			eraSelector.hidden = false;
+			history.replaceState(null, '', window.location.pathname);
 			document.querySelector('.timeline-section')?.scrollIntoView({ behavior: 'smooth' });
 		}
-	}
 
-	document.querySelectorAll('.era-selector-node').forEach((node) => {
-		node.addEventListener('click', () => {
-			showEra(Number((node as HTMLElement).dataset.eraSelect));
-		});
-	});
-
-	eraBackBtns.forEach((btn) => btn.addEventListener('click', showSelector));
-
-	eraNavItems.forEach((item, i) => {
-		item.addEventListener('click', (e) => {
-			e.preventDefault();
-			showEra(i);
-		});
-	});
-
-	document.querySelectorAll('.era-arrow').forEach((btn) => {
-		btn.addEventListener('click', () => {
-			const currentIndex = Number((btn as HTMLElement).dataset.eraIndex);
-			const direction = (btn as HTMLElement).dataset.direction;
-			showEra(direction === 'next' ? currentIndex + 1 : currentIndex - 1);
-		});
-	});
-
-	document.querySelectorAll('.timeline-content[data-collapsible]').forEach((card) => {
-		card.addEventListener('click', () => {
-			const isOpen = card.classList.contains('timeline-content--open');
+		function showEra(index: number, scroll = true) {
 			document.querySelectorAll('.timeline-content--open').forEach((c) => c.classList.remove('timeline-content--open'));
-			if (!isOpen) {
-				card.classList.add('timeline-content--open');
+			eraSelector.hidden = true;
+			eraDetail.hidden = false;
+			eraPages.forEach((g, i) => {
+				(g as HTMLElement).hidden = i !== index;
+			});
+			eraNavItems.forEach((item, i) => {
+				item.classList.toggle('era-nav-item--active', i === index);
+			});
+			history.replaceState(null, '', `#${eraKeys[index]}`);
+			if (scroll) {
+				document.querySelector('.timeline-section')?.scrollIntoView({ behavior: 'smooth' });
 			}
-		});
-	});
-
-	const hash = window.location.hash.slice(1);
-	if (hash) {
-		const eraIndex = eraKeys.indexOf(hash);
-		if (eraIndex !== -1) {
-			showEra(eraIndex, false);
 		}
-	}
+
+		document.querySelectorAll('.era-selector-node').forEach((node) => {
+			node.addEventListener('click', () => {
+				showEra(Number((node as HTMLElement).dataset.eraSelect));
+			});
+		});
+
+		eraBackBtns.forEach((btn) => btn.addEventListener('click', showSelector));
+
+		eraNavItems.forEach((item, i) => {
+			item.addEventListener('click', (e) => {
+				e.preventDefault();
+				showEra(i);
+			});
+		});
+
+		document.querySelectorAll('.era-arrow').forEach((btn) => {
+			btn.addEventListener('click', () => {
+				const currentIndex = Number((btn as HTMLElement).dataset.eraIndex);
+				const direction = (btn as HTMLElement).dataset.direction;
+				showEra(direction === 'next' ? currentIndex + 1 : currentIndex - 1);
+			});
+		});
+
+		document.querySelectorAll('.timeline-content[data-collapsible]').forEach((card) => {
+			card.addEventListener('click', () => {
+				const isOpen = card.classList.contains('timeline-content--open');
+				document.querySelectorAll('.timeline-content--open').forEach((c) => c.classList.remove('timeline-content--open'));
+				if (!isOpen) {
+					card.classList.add('timeline-content--open');
+				}
+			});
+		});
+
+		const hash = window.location.hash.slice(1);
+		if (hash) {
+			const eraIndex = eraKeys.indexOf(hash);
+			if (eraIndex !== -1) {
+				showEra(eraIndex, false);
+			}
+		}
+	});
 </script>
 
 <style is:global>

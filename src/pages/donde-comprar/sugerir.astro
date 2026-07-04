@@ -1,0 +1,80 @@
+---
+import SellerSuggestionForm from '../../components/SellerSuggestionForm';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/seller-feedback.css';
+import '../../styles/seller-suggestion.css';
+---
+
+<Layout title="Sugerir un vendedor — ¿Dónde comprar Zoids?">
+	<a class="suggest-back-link" href="/donde-comprar/">← Volver al directorio</a>
+	<h1 class="suggest-title">Sugerir un vendedor</h1>
+	<p class="suggest-description">¿Conoces un vendedor que no está en nuestra lista? Cuéntanos sobre él. Revisaremos tu sugerencia y, si cumple con nuestros criterios, lo agregaremos al directorio.</p>
+	<SellerSuggestionForm client:visible />
+</Layout>
+
+<style>
+	.suggest-back-link {
+		background: var(--color-surface);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 8px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		color: var(--color-text);
+		display: inline-block;
+		font-family: 'Russo One', sans-serif;
+		font-size: 0.85rem;
+		padding: 0.5rem 1rem;
+		text-decoration: none;
+		transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+	}
+
+	.suggest-back-link:hover {
+		background: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-bg);
+	}
+
+	.suggest-title {
+		color: var(--color-accent);
+		font-family: 'Russo One', sans-serif;
+		font-size: 2.25rem;
+		margin-bottom: 1rem;
+		margin-top: 1.5rem;
+		padding-bottom: 1rem;
+		position: relative;
+		text-align: center;
+	}
+
+	.suggest-title::after {
+		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+		border-radius: 2px;
+		bottom: 0;
+		content: '';
+		height: 3px;
+		left: 50%;
+		position: absolute;
+		transform: translateX(-50%);
+		width: 80px;
+	}
+
+	.suggest-description {
+		color: var(--color-text-muted);
+		font-size: 1rem;
+		line-height: 1.6;
+		margin-bottom: 2rem;
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 700px;
+		text-align: center;
+	}
+
+	@media (max-width: 550px) {
+		.suggest-title {
+			font-size: 1.5rem;
+		}
+
+		.suggest-description {
+			font-size: 0.85rem;
+			padding: 0 0.5rem;
+		}
+	}
+</style>

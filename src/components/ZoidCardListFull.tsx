@@ -8,7 +8,7 @@ type SortKey = 'brand_line' | 'launch_asc' | 'launch_desc' | 'name';
 
 const PAGE_SIZE = 10;
 
-function applySort(query: any, sort: SortKey) {
+function applySort(query: ReturnType<typeof supabase.from>, sort: SortKey) {
 	switch (sort) {
 		case 'brand_line':
 			return query.order('brand').order('line').order('launch_date', { ascending: true, nullsFirst: false });

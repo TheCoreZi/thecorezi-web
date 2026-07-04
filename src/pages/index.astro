@@ -1,22 +1,15 @@
 ---
 import { Image } from 'astro:assets';
-import { sellersByCountry } from '../data/sellers';
 import NewsCarousel from '../components/NewsCarousel';
-import SellerFeedbackDynamic from '../components/SellerFeedbackDynamic';
-import SellerList from '../components/SellerList';
-import SellerVoteButtonsDynamic from '../components/SellerVoteButtonsDynamic';
 import ZoidCardList from '../components/ZoidCardList';
 import Layout from '../layouts/Layout.astro';
 import logo from '../assets/images/thecorezi.png';
 import '../styles/curiosidad-comments.css';
 import '../styles/news.css';
-import '../styles/seller-card.css';
-import '../styles/seller-feedback.css';
 import '../styles/zoid-card.css';
 ---
 
 <Layout title="Lanzamientos, Vendedores y Podcast de Zoids">
-	<div id="main-view">
 		<section class="hero">
 			<Image src={logo} alt="The Core Zi" class="hero-logo" height={200} loading="eager" />
 			<p>Zoids corre por nuestras venas. Bienvenido al núcleo.</p>
@@ -35,7 +28,7 @@ import '../styles/zoid-card.css';
 		<section id="donde-comprar-cta" class="animate-from-left">
 			<h2 class="cta-headline">¿No sabes dónde comprar?</h2>
 			<p class="cta-subtitle">Sabemos lo difícil que es encontrar dónde comprar Zoids. No es algo que encuentres en cualquier estante. Por eso armamos una lista con vendedores y comunidades donde hemos comprado personalmente.</p>
-			<button id="open-sellers-btn" class="cta-btn" type="button">Ver directorio de vendedores</button>
+			<a href="/donde-comprar/" class="cta-btn">Ver directorio de vendedores</a>
 		</section>
 
 		<section id="podcast" class="animate-from-right">
@@ -113,242 +106,24 @@ import '../styles/zoid-card.css';
 				</div>
 			</div>
 		</section>
-	</div>
-
-	<div id="sellers-view" hidden>
-		<button class="sellers-back-btn" id="sellers-back-btn" type="button">← Volver</button>
-		<h2 class="section-title sellers-title">¿Dónde comprar?</h2>
-		<p class="section-description">Encontrar dónde comprar Zoids no es fácil. No es una franquicia que encuentres en cualquier estante, así que la mayoría de vendedores son independientes que se mueven en redes sociales y grupos. Armamos esta lista con vendedores y comunidades donde hemos comprado personalmente. No estamos afiliados a ninguno y, siendo honestos, la mayoría nos cae mal. Aun así, esperamos que esta lista les ayude a conseguir el Zoid que tanto buscan.</p>
-		<p class="section-disclaimer">The Core Zi no se hace responsable por ninguna transacción realizada con los vendedores listados. Esta lista es solo una referencia basada en nuestra experiencia personal. Cualquier compra es bajo tu propio riesgo.</p>
-		<div class="country-flags">
-			{sellersByCountry.map((group, i) => (
-				<button class={`country-flag${i === 0 ? ' active' : ''}`} data-country-index={i}>
-					{group.country}
-				</button>
-			))}
-		</div>
-		{sellersByCountry.map((group, i) => (
-			<div class="country-group" data-country-group={i} hidden={i !== 0}>
-				<SellerList client:visible sellers={group.sellers} />
-			</div>
-		))}
-	</div>
-
-	<div id="seller-detail-view" hidden>
-		<button class="sellers-back-btn" id="seller-detail-back-btn" type="button">← Volver a la lista</button>
-		<div class="seller-detail-header">
-			<img alt="" class="seller-detail-image" id="seller-detail-image" src="" />
-			<div class="seller-detail-info">
-				<div class="seller-detail-title-row">
-					<h3 class="seller-detail-name" id="seller-detail-name"></h3>
-					<img alt="" class="seller-type-icon" id="seller-detail-type-icon" height="20" src="" width="20" />
-				</div>
-				<div class="seller-detail-actions">
-					<a class="seller-link" id="seller-detail-link" href="" rel="noopener noreferrer" target="_blank">Visitar ↗</a>
-					<SellerVoteButtonsDynamic client:idle />
-				</div>
-			</div>
-		</div>
-		<p class="seller-detail-description" id="seller-detail-description"></p>
-		<div class="seller-details">
-			<div class="seller-pros">
-				<h5>Lo bueno</h5>
-				<ul id="seller-detail-pros"></ul>
-			</div>
-			<div class="seller-cons">
-				<h5>Lo malo</h5>
-				<ul id="seller-detail-cons"></ul>
-			</div>
-		</div>
-		<SellerFeedbackDynamic client:idle />
-	</div>
-
 	<script>
-		const mainView = document.getElementById('main-view')!;
-		const sellersView = document.getElementById('sellers-view')!;
-		const sellerDetailView = document.getElementById('seller-detail-view')!;
-		const openBtn = document.getElementById('open-sellers-btn')!;
-		const backBtn = document.getElementById('sellers-back-btn')!;
-		const detailBackBtn = document.getElementById('seller-detail-back-btn')!;
+		document.addEventListener('astro:page-load', () => {
+			const observer = new IntersectionObserver(
+				(entries) => {
+					entries.forEach((entry) => {
+						if (entry.isIntersecting) {
+							entry.target.classList.add('visible');
+						} else {
+							entry.target.classList.remove('visible');
+						}
+					});
+				},
+				{ threshold: 0.1 },
+			);
 
-		const SELLER_TYPE_TITLES: Record<string, string> = {
-			community: 'Comunidad',
-			independent: 'Vendedor independiente',
-			store: 'Tienda',
-		};
-
-		const views = [mainView, sellersView, sellerDetailView];
-		let savedScrollY = 0;
-		let sellersScrollY = 0;
-
-		function getActiveView() {
-			return views.find((v) => !v.hidden) ?? null;
-		}
-
-		function transitionTo(target: HTMLElement, scrollY: number) {
-			const current = getActiveView();
-			if (current === target) return Promise.resolve();
-
-			return new Promise<void>((resolve) => {
-				if (current) {
-					current.classList.add('view-fade-out');
-					current.addEventListener('animationend', () => {
-						current.classList.remove('view-fade-out');
-						views.forEach((v) => { v.hidden = true; });
-						target.hidden = false;
-						target.classList.add('view-fade-in');
-						window.scrollTo(0, scrollY);
-						target.addEventListener('animationend', () => {
-							target.classList.remove('view-fade-in');
-							resolve();
-						}, { once: true });
-					}, { once: true });
-				} else {
-					views.forEach((v) => { v.hidden = true; });
-					target.hidden = false;
-					target.classList.add('view-fade-in');
-					window.scrollTo(0, scrollY);
-					target.addEventListener('animationend', () => {
-						target.classList.remove('view-fade-in');
-						resolve();
-					}, { once: true });
-				}
+			document.querySelectorAll('.animate-from-left, .animate-from-right').forEach((el) => {
+				observer.observe(el);
 			});
-		}
-
-		function showSellers(pushHistory = true) {
-			savedScrollY = window.scrollY;
-			transitionTo(sellersView, 0);
-			if (pushHistory) {
-				history.pushState({ view: 'sellers' }, '', '#donde-comprar');
-			}
-		}
-
-		function showMain(pushHistory = true, restoreScroll = true) {
-			transitionTo(mainView, restoreScroll ? savedScrollY : 0);
-			if (pushHistory) {
-				history.pushState({ view: 'main' }, '', window.location.pathname);
-			}
-		}
-
-		function populateSellerDetail(seller: any) {
-			const nameEl = document.getElementById('seller-detail-name')!;
-			const imageEl = document.getElementById('seller-detail-image') as HTMLImageElement;
-			const typeIconEl = document.getElementById('seller-detail-type-icon') as HTMLImageElement;
-			const linkEl = document.getElementById('seller-detail-link') as HTMLAnchorElement;
-			const descEl = document.getElementById('seller-detail-description')!;
-			const prosEl = document.getElementById('seller-detail-pros')!;
-			const consEl = document.getElementById('seller-detail-cons')!;
-
-			nameEl.textContent = seller.name;
-			descEl.textContent = seller.description;
-			linkEl.href = seller.link;
-
-			if (seller.image) {
-				imageEl.src = seller.image;
-				imageEl.alt = seller.name;
-				imageEl.hidden = false;
-			} else {
-				imageEl.hidden = true;
-			}
-
-			typeIconEl.src = `/images/sellers/type-${seller.type}.svg`;
-			typeIconEl.alt = SELLER_TYPE_TITLES[seller.type] ?? '';
-			typeIconEl.title = SELLER_TYPE_TITLES[seller.type] ?? '';
-			typeIconEl.className = `seller-type-icon seller-type-icon--${seller.type}`;
-
-			prosEl.innerHTML = seller.pros.map((p: string) => `<li>${p}</li>`).join('');
-			consEl.innerHTML = seller.cons.map((c: string) => `<li>${c}</li>`).join('');
-
-			window.dispatchEvent(new CustomEvent('seller:detail', { detail: seller }));
-		}
-
-		function showSellerDetail(seller: any, pushHistory = true) {
-			sellersScrollY = window.scrollY;
-			populateSellerDetail(seller);
-			transitionTo(sellerDetailView, 0);
-			if (pushHistory) {
-				history.pushState({ view: 'seller-detail', seller }, '', `#vendedor/${seller.id}`);
-			}
-		}
-
-		function backToSellers(pushHistory = true) {
-			transitionTo(sellersView, sellersScrollY);
-			if (pushHistory) {
-				history.pushState({ view: 'sellers' }, '', '#donde-comprar');
-			}
-		}
-
-		openBtn.addEventListener('click', () => showSellers());
-		backBtn.addEventListener('click', () => showMain());
-		detailBackBtn.addEventListener('click', () => backToSellers());
-
-		document.querySelectorAll('a[href="#donde-comprar"]').forEach((link) => {
-			link.addEventListener('click', (e) => {
-				e.preventDefault();
-				showSellers();
-			});
-		});
-
-		window.addEventListener('seller:open', ((e: CustomEvent) => {
-			showSellerDetail(e.detail);
-		}) as EventListener);
-
-		function switchInstant(target: HTMLElement, scrollY: number) {
-			views.forEach((v) => { v.hidden = true; });
-			target.hidden = false;
-			window.scrollTo(0, scrollY);
-		}
-
-		window.addEventListener('popstate', (e) => {
-			const state = e.state;
-			if (state?.view === 'seller-detail' && state.seller) {
-				populateSellerDetail(state.seller);
-				switchInstant(sellerDetailView, 0);
-			} else if (state?.view === 'sellers' || window.location.hash === '#donde-comprar') {
-				switchInstant(sellersView, sellersScrollY);
-			} else {
-				switchInstant(mainView, savedScrollY);
-			}
-		});
-
-		if (window.location.hash === '#donde-comprar') {
-			showSellers(false);
-		}
-
-		// Country flag toggle
-		document.querySelectorAll('.country-flag').forEach((btn) => {
-			btn.addEventListener('click', () => {
-				const index = (btn as HTMLElement).dataset.countryIndex;
-				const group = document.querySelector(`[data-country-group="${index}"]`);
-				const isVisible = !group?.hasAttribute('hidden');
-
-				document.querySelectorAll('.country-group').forEach((g) => g.setAttribute('hidden', ''));
-				document.querySelectorAll('.country-flag').forEach((b) => b.classList.remove('active'));
-
-				if (!isVisible) {
-					group?.removeAttribute('hidden');
-					btn.classList.add('active');
-				}
-			});
-		});
-
-		// Scroll animations
-		const observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						entry.target.classList.add('visible');
-					} else {
-						entry.target.classList.remove('visible');
-					}
-				});
-			},
-			{ threshold: 0.1 },
-		);
-
-		document.querySelectorAll('.animate-from-left, .animate-from-right').forEach((el) => {
-			observer.observe(el);
 		});
 	</script>
 </Layout>
@@ -373,7 +148,7 @@ import '../styles/zoid-card.css';
 		color: var(--color-text-muted);
 	}
 
-	#main-view > section + section {
+	section + section {
 		margin-top: 4rem;
 	}
 
@@ -448,113 +223,6 @@ import '../styles/zoid-card.css';
 	.cta-btn:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(232, 160, 32, 0.2);
-	}
-
-	/* Sellers view */
-	#sellers-view,
-	#seller-detail-view {
-		padding-top: 1rem;
-	}
-
-	.sellers-back-btn {
-		background: var(--color-surface);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		border-radius: 8px;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-		color: var(--color-text);
-		cursor: pointer;
-		font-family: 'Russo One', sans-serif;
-		font-size: 0.85rem;
-		padding: 0.5rem 1rem;
-		position: sticky;
-		top: 80px;
-		transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-		z-index: 10;
-	}
-
-	.sellers-back-btn:hover {
-		background: var(--color-accent);
-		border-color: var(--color-accent);
-		color: var(--color-bg);
-	}
-
-	.sellers-title {
-		text-align: center;
-		font-size: 2.25rem;
-		position: relative;
-		padding-bottom: 1rem;
-		margin-bottom: 1.5rem;
-		margin-top: 1rem;
-	}
-
-	.sellers-title::after {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 80px;
-		height: 3px;
-		background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
-		border-radius: 2px;
-	}
-
-	.section-description {
-		color: var(--color-text-muted);
-		font-size: 1rem;
-		line-height: 1.6;
-		margin-bottom: 1.5rem;
-		text-align: center;
-		max-width: 700px;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	.section-disclaimer {
-		color: var(--color-text-muted);
-		font-size: 0.8rem;
-		font-style: italic;
-		line-height: 1.5;
-		margin-bottom: 2.5rem;
-		max-width: 700px;
-		margin-left: auto;
-		margin-right: auto;
-		opacity: 0.7;
-		text-align: center;
-	}
-
-	.country-flags {
-		display: flex;
-		gap: 1.5rem;
-		justify-content: center;
-		margin-bottom: 2.5rem;
-	}
-
-	.country-flag {
-		font-size: 3.5rem;
-		background: var(--color-surface);
-		border: 2px solid rgba(255, 255, 255, 0.08);
-		border-radius: 16px;
-		padding: 0.75rem 1.25rem;
-		cursor: pointer;
-		transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	}
-
-	.country-flag:hover {
-		transform: scale(1.15);
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-		border-color: rgba(255, 255, 255, 0.15);
-	}
-
-	.country-flag.active {
-		border-color: var(--color-accent);
-		transform: scale(1.15);
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(232, 160, 32, 0.15);
-	}
-
-	.country-group {
-		margin-bottom: 2rem;
 	}
 
 	/* Podcast */
@@ -884,7 +552,7 @@ import '../styles/zoid-card.css';
 			margin-bottom: 1.25rem;
 		}
 
-		#main-view > section + section {
+		section + section {
 			margin-top: 2.5rem;
 		}
 
@@ -903,35 +571,6 @@ import '../styles/zoid-card.css';
 		.cta-btn {
 			font-size: 1rem;
 			padding: 0.75rem 2rem;
-		}
-
-		.sellers-back-btn {
-			top: 50px;
-		}
-
-		.sellers-title {
-			font-size: 1.5rem;
-		}
-
-		.country-flags {
-			gap: 0.5rem;
-		}
-
-		.country-flag {
-			font-size: 2rem;
-			padding: 0.5rem 0.75rem;
-			border-radius: 10px;
-		}
-
-		.section-description {
-			font-size: 0.85rem;
-			padding: 0 0.5rem;
-		}
-
-		.section-disclaimer {
-			font-size: 0.7rem;
-			padding: 0 0.5rem;
-			margin-bottom: 1.5rem;
 		}
 
 		.terminal-body {
@@ -987,22 +626,4 @@ import '../styles/zoid-card.css';
 		transform: translateX(0);
 	}
 
-	/* View transitions */
-	@keyframes view-fade-out {
-		from { opacity: 1; transform: translateY(0); }
-		to { opacity: 0; transform: translateY(-10px); }
-	}
-
-	@keyframes view-fade-in {
-		from { opacity: 0; transform: translateY(10px); }
-		to { opacity: 1; transform: translateY(0); }
-	}
-
-	:global(.view-fade-out) {
-		animation: view-fade-out 0.2s ease forwards;
-	}
-
-	:global(.view-fade-in) {
-		animation: view-fade-in 0.25s ease forwards;
-	}
 </style>

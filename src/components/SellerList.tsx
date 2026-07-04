@@ -27,14 +27,10 @@ export default function SellerList({ sellers }: Props) {
 		});
 	}, []);
 
-	function openSeller(seller: Seller) {
-		window.dispatchEvent(new CustomEvent('seller:open', { detail: seller }));
-	}
-
 	return (
 		<>
 			{sorted.map((seller) => (
-				<div class="seller-card" key={seller.id} onClick={() => openSeller(seller)}>
+				<a class="seller-card" href={`/donde-comprar/${seller.id}`} key={seller.id}>
 					<div class="seller-summary">
 						{seller.image && (
 							<img alt={seller.name} class="seller-image" height="60" src={seller.image} width="160" />
@@ -49,7 +45,7 @@ export default function SellerList({ sellers }: Props) {
 							</div>
 						</div>
 					</div>
-				</div>
+				</a>
 			))}
 		</>
 	);
