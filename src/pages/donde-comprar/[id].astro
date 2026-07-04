@@ -28,7 +28,7 @@ const SELLER_TYPE_TITLES: Record<SellerType, string> = {
 const { seller } = Astro.props;
 ---
 
-<Layout title={`${seller.name} — ¿Dónde comprar Zoids?`}>
+<Layout title={`${seller.name} — ¿Dónde comprar Zoids?`} description={`Reseña de ${seller.name}: opiniones, pros, contras y experiencias de la comunidad comprando Zoids.`}>
 	<a class="seller-back-link" href="/donde-comprar/">← Volver a la lista</a>
 	<div class="seller-detail-header">
 		{seller.image && (
