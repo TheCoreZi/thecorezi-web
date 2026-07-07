@@ -1,0 +1,7 @@
+name = "thecorezi-image-proxy"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+[vars]
+CACHE_TTL = "31536000"
+# SUPABASE_URL se configura como secreto: npx wrangler secret put SUPABASE_URL

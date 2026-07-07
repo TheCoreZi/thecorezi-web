@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { Seller, SellerType } from '../data/sellers';
+import { proxyImageUrl } from '../lib/imageProxy';
 import { fetchAllVoteCounts } from '../lib/sellerVotes';
 import SellerVoteButtons from './SellerVoteButtons';
 
@@ -33,7 +34,7 @@ export default function SellerList({ sellers }: Props) {
 				<a class="seller-card" href={`/donde-comprar/${seller.id}`} key={seller.id}>
 					<div class="seller-summary">
 						{seller.image && (
-							<img alt={seller.name} class="seller-image" height="60" src={seller.image} width="160" />
+							<img alt={seller.name} class="seller-image" height="60" src={proxyImageUrl(seller.image)} width="160" />
 						)}
 						<div class="seller-summary-text">
 							<div class="seller-header">
