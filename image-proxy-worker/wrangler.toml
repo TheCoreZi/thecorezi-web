@@ -3,5 +3,5 @@ main = "src/index.ts"
 compatibility_date = "2024-12-01"
 
 [vars]
-SUPABASE_URL = "https://dxdksccsgckuizhjucjz.supabase.co"
 CACHE_TTL = "31536000"
+# SUPABASE_URL se configura como secreto: npx wrangler secret put SUPABASE_URL
