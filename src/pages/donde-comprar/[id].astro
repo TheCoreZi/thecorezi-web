@@ -3,6 +3,7 @@ import { fetchAllSellers, type Seller, type SellerType } from '../../data/seller
 import SellerFeedbackForm from '../../components/SellerFeedbackForm';
 import SellerFeedbackList from '../../components/SellerFeedbackList';
 import SellerVoteButtons from '../../components/SellerVoteButtons';
+import { proxyImageUrl } from '../../lib/imageProxy';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/curiosidad-comments.css';
 import '../../styles/seller-card.css';
@@ -33,7 +34,7 @@ const { seller } = Astro.props;
 	<a class="seller-back-link" href="/donde-comprar/">← Volver a la lista</a>
 	<div class="seller-detail-header">
 		{seller.image && (
-			<img alt={seller.name} class="seller-detail-image" src={seller.image} />
+			<img alt={seller.name} class="seller-detail-image" src={proxyImageUrl(seller.image)} />
 		)}
 		<div class="seller-detail-info">
 			<div class="seller-detail-title-row">

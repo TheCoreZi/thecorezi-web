@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { proxyImageUrl } from '../lib/imageProxy';
 import { supabase } from '../lib/supabase';
 import type { NewsItem } from '../types/news';
 import ImageLightbox from './ImageLightbox';
@@ -107,7 +108,7 @@ export default function NewsList() {
 				<p class="news-detail-date">{formatDate(selectedNews.published_at)}</p>
 				<h1 class="news-detail-title">{selectedNews.title}</h1>
 				<div class="news-detail-body">
-					<img alt="" class="news-detail-image" src={selectedNews.image_url} />
+					<img alt="" class="news-detail-image" src={proxyImageUrl(selectedNews.image_url)} />
 					<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedNews.content) }} ref={contentRef} />
 				</div>
 				{selectedNews.link && (
@@ -123,7 +124,7 @@ export default function NewsList() {
 			<div class="news-list-grid">
 				{news.map((item) => (
 					<article class="news-card" key={item.id} onClick={() => openDetail(item.id)}>
-						<img alt="" class="news-card-image" loading="lazy" src={item.image_url} />
+						<img alt="" class="news-card-image" loading="lazy" src={proxyImageUrl(item.image_url)} />
 						<div class="news-card-body">
 							<p class="news-card-date">{formatDate(item.published_at)}</p>
 							<h3 class="news-card-title">{item.title}</h3>
@@ -159,7 +160,7 @@ function NewsDetail({ id, onBack }: { id: string; onBack: () => void }) {
 			<p class="news-detail-date">{formatDate(item.published_at)}</p>
 			<h1 class="news-detail-title">{item.title}</h1>
 			<div class="news-detail-body">
-				<img alt="" class="news-detail-image" src={item.image_url} />
+				<img alt="" class="news-detail-image" src={proxyImageUrl(item.image_url)} />
 				<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} ref={contentRef} />
 			</div>
 			{item.link && (

@@ -6,6 +6,7 @@ import lineAz from '../assets/images/lines/az.png';
 import lineHmm from '../assets/images/lines/hmm.png';
 import lineRmz from '../assets/images/lines/rmz.png';
 import lineSynergenex from '../assets/images/lines/synergenex.png';
+import { proxyImageUrl } from '../lib/imageProxy';
 import type { DatePrecision, Zoid } from '../types/zoid';
 
 const DURATION = 350;
@@ -147,8 +148,8 @@ export default function ZoidCard({ defaultOpen = false, eager = false, onSelect,
 			<summary class="zoid-summary" onClick={handleClick}>
 				{zoid.image_url && (
 					<>
-						<img src={zoid.image_url} alt="" class="zoid-image-bg" aria-hidden="true" width={640} height={360} loading={loading} />
-						<img src={zoid.image_url} alt={zoid.name} class="zoid-image" width={640} height={360} loading={loading} />
+						<img src={proxyImageUrl(zoid.image_url)} alt="" class="zoid-image-bg" aria-hidden="true" width={640} height={360} loading={loading} />
+						<img src={proxyImageUrl(zoid.image_url)} alt={zoid.name} class="zoid-image" width={640} height={360} loading={loading} />
 					</>
 				)}
 				<div class="zoid-scrim" />

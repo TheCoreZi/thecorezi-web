@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { proxyImageUrl } from '../lib/imageProxy';
 import { supabase } from '../lib/supabase';
 import type { CuriosidadItem } from '../types/curiosidad';
 import CuriosidadCommentForm from './CuriosidadCommentForm';
@@ -108,7 +109,7 @@ export default function CuriosidadesList() {
 				<p class="news-detail-date">{formatDate(selected.published_at)}</p>
 				<h1 class="news-detail-title">{selected.title}</h1>
 				<div class="news-detail-body">
-					<img alt="" class="news-detail-image" src={selected.image_url} />
+					<img alt="" class="news-detail-image" src={proxyImageUrl(selected.image_url)} />
 					<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(selected.content) }} ref={contentRef} />
 				</div>
 				<ImageLightbox containerRef={contentRef} />
@@ -124,7 +125,7 @@ export default function CuriosidadesList() {
 			<div class="news-list-grid">
 				{curiosidades.map((item) => (
 					<article class="news-card" key={item.slug} onClick={() => openDetail(item.slug)}>
-						<img alt="" class="news-card-image" loading="lazy" src={item.image_url} />
+						<img alt="" class="news-card-image" loading="lazy" src={proxyImageUrl(item.image_url)} />
 						<div class="news-card-body">
 							<p class="news-card-date">{formatDate(item.published_at)}</p>
 							<h3 class="news-card-title">{item.title}</h3>
@@ -170,7 +171,7 @@ function CuriosidadDetail({ hashKey, onBack }: { hashKey: string; onBack: () => 
 			<p class="news-detail-date">{formatDate(item.published_at)}</p>
 			<h1 class="news-detail-title">{item.title}</h1>
 			<div class="news-detail-body">
-				<img alt="" class="news-detail-image" src={item.image_url} />
+				<img alt="" class="news-detail-image" src={proxyImageUrl(item.image_url)} />
 				<div class="news-detail-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(item.content) }} ref={contentRef} />
 			</div>
 			<ImageLightbox containerRef={contentRef} />

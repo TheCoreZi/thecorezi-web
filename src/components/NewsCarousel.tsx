@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { proxyImageUrl } from '../lib/imageProxy';
 import { supabase } from '../lib/supabase';
 import type { NewsItem } from '../types/news';
 
@@ -71,7 +72,7 @@ export default function NewsCarousel() {
 			<div class="news-carousel-track" ref={trackRef} style={{ transform: `translateX(-${current * 100}%)` }}>
 				{news.map((item) => (
 					<a class="news-carousel-slide" href={`/noticias/#${item.id}`} key={item.id}>
-						<img alt="" class="news-carousel-image" loading="lazy" src={item.image_url} />
+						<img alt="" class="news-carousel-image" loading="lazy" src={proxyImageUrl(item.image_url)} />
 						<div class="news-carousel-overlay">
 							<div class="news-carousel-content">
 								<p class="news-carousel-date">{formatDate(item.published_at)}</p>
