@@ -1,6 +1,18 @@
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
+const IMAGE_PROXY_URL = 'https://thecorezi-image-proxy.thecorezi.workers.dev';
+const SUPABASE_URL = 'https://dxdksccsgckuizhjucjz.supabase.co';
+
+function proxyImageUrl(url) {
+	if (!url || !url.startsWith(SUPABASE_URL)) return url;
+	return url.replace(SUPABASE_URL, IMAGE_PROXY_URL);
+}
+
+function proxyContentUrls(html) {
+	return html.replaceAll(SUPABASE_URL, IMAGE_PROXY_URL);
+}
+
 // Themes
 const themes = {
 	helic: {
@@ -356,8 +368,8 @@ function renderPreview(title, summary, image, content) {
 	let html = '';
 	if (title) html += `<h1 class="news-detail-title">${title}</h1>`;
 	if (summary) html += `<p class="preview-summary">${summary}</p>`;
-	if (image) html += `<img class="news-detail-image" src="${image}" alt="" />`;
-	if (content) html += `<div class="news-detail-content">${marked.parse(content)}</div>`;
+	if (image) html += `<img class="news-detail-image" src="${proxyImageUrl(image)}" alt="" />`;
+	if (content) html += `<div class="news-detail-content">${proxyContentUrls(marked.parse(content))}</div>`;
 	return html || '<p style="color:var(--color-text-muted)">Escribe algo para ver el preview...</p>';
 }
 
@@ -881,7 +893,7 @@ function updateImagePreview(url) {
 	const preview = $('#lanz-image-preview');
 	const img = $('#lanz-image-preview-img');
 	if (url) {
-		img.src = url;
+		img.src = proxyImageUrl(url);
 		preview.classList.remove('hidden');
 	} else {
 		img.src = '';

@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { proxyImageUrl } from '../lib/imageProxy';
+import { proxyContentUrls, proxyImageUrl } from '../lib/imageProxy';
 import { supabase } from '../lib/supabase';
 import type { NewsItem } from '../types/news';
 import ImageLightbox from './ImageLightbox';
@@ -18,7 +18,7 @@ function normalizeLink(link: string): string {
 }
 
 function renderMarkdown(content: string): string {
-	return marked.parse(content, { async: false }) as string;
+	return proxyContentUrls(marked.parse(content, { async: false }) as string);
 }
 
 export default function NewsList() {
