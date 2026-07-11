@@ -4,6 +4,7 @@ import { ClientRouter } from 'astro:transitions';
 import logo from '../assets/images/thecorezi.png';
 import CurrencySelector from '../components/CurrencySelector.astro';
 import ThemeSelector from '../components/ThemeSelector.astro';
+import VisitorCounter from '../components/VisitorCounter.tsx';
 
 interface Props {
 	description?: string;
@@ -51,6 +52,8 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		<meta name="twitter:image" content={new URL(image, Astro.site)} />
 
 		<title>{fullTitle}</title>
+		<script data-goatcounter="https://thecorezi.goatcounter.com/count"
+			async src="//gc.zgo.at/count.js"></script>
 		<ClientRouter />
 	</head>
 	<body>
@@ -159,6 +162,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 				<CurrencySelector />
 				<ThemeSelector />
 			</div>
+			<VisitorCounter client:load />
 			<p>&copy; {new Date().getFullYear()} The Core Zi</p>
 		</footer>
 	</body>
@@ -356,6 +360,46 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 		display: flex;
 		justify-content: center;
 		gap: 1rem;
+	}
+
+	footer :global(.visitor-counter) {
+		font-size: 0.85rem;
+		margin: 0.75rem 0 0.25rem;
+		opacity: 0.7;
+	}
+
+	footer :global(.rolling-counter) {
+		display: inline-flex;
+	}
+
+	footer :global(.rolling-digit) {
+		display: inline-block;
+		height: 1.2em;
+		overflow: hidden;
+		line-height: 1.2em;
+	}
+
+	footer :global(.rolling-digit__strip) {
+		display: flex;
+		flex-direction: column;
+		animation: roll-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+
+	footer :global(.rolling-digit__strip span) {
+		height: 1.2em;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	footer :global(.rolling-separator) {
+		display: inline-block;
+	}
+
+	@keyframes roll-in {
+		from {
+			transform: translateY(-90%);
+		}
 	}
 
 	@media (max-width: 768px) {
