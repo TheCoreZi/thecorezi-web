@@ -32,7 +32,7 @@ export default function VisitorCounter() {
 		};
 
 		const script = document.createElement('script');
-		script.src = `https://thecorezi.goatcounter.com/counter/*.json?callback=${callbackName}`;
+		script.src = `https://thecorezi.goatcounter.com/counter/TOTAL.json?callback=${callbackName}`;
 		script.onerror = () => {
 			delete (window as any)[callbackName];
 			script.remove();
