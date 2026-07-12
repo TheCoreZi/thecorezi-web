@@ -24,21 +24,10 @@ export default function VisitorCounter() {
 	const [count, setCount] = useState<string | null>(null);
 
 	useEffect(() => {
-		const callbackName = '__gc_counter';
-		(window as any)[callbackName] = (data: any) => {
-			setCount(data.count ?? '0');
-			delete (window as any)[callbackName];
-			script.remove();
-		};
-
-		const script = document.createElement('script');
-		script.src = `https://thecorezi.goatcounter.com/counter/TOTAL.json?callback=${callbackName}`;
-		script.onerror = () => {
-			delete (window as any)[callbackName];
-			script.remove();
-			setCount('0');
-		};
-		document.body.appendChild(script);
+		fetch('https://thecorezi.goatcounter.com/counter/TOTAL.json')
+			.then((res) => res.json())
+			.then((data: { count?: string }) => setCount(data.count ?? '0'))
+			.catch(() => setCount('0'));
 	}, []);
 
 	if (count === null) return null;
