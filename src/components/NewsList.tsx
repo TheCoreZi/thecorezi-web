@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { trackPath } from '../lib/goatcounter';
 import { proxyContentUrls, proxyImageUrl } from '../lib/imageProxy';
 import { supabase } from '../lib/supabase';
 import type { NewsItem } from '../types/news';
@@ -70,13 +71,17 @@ export default function NewsList() {
 
 	useEffect(() => {
 		const hash = window.location.hash.slice(1);
-		if (hash) setSelectedId(hash);
+		if (hash) {
+			setSelectedId(hash);
+			trackPath(`/noticias/#${hash}`);
+		}
 	}, []);
 
 	function openDetail(id: string) {
 		setSelectedId(id);
 		window.scrollTo(0, 0);
 		history.pushState(null, '', `/noticias/#${id}`);
+		trackPath(`/noticias/#${id}`);
 	}
 
 	function closeDetail() {

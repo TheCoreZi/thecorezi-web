@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import loadingLogo from '../assets/images/lines/thecorezi_center.png';
+import { trackPath } from '../lib/goatcounter';
 import { supabase } from '../lib/supabase';
 import type { Zoid } from '../types/zoid';
 import ZoidCard from './ZoidCard';
@@ -67,6 +68,7 @@ export default function ZoidCardListFull() {
 	useEffect(() => {
 		const hashId = getHashId();
 		if (hashId) {
+			trackPath(`/lanzamientos/#${hashId}`);
 			supabase
 				.from('Zoids Releases')
 				.select('*')
@@ -89,6 +91,7 @@ export default function ZoidCardListFull() {
 	function selectZoid(zoid: Zoid) {
 		setSelectedZoid(zoid);
 		history.pushState(null, '', `#${zoid.id}`);
+		trackPath(`/lanzamientos/#${zoid.id}`);
 	}
 
 	function closeDetail() {

@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { trackPath } from '../lib/goatcounter';
 import { proxyContentUrls, proxyImageUrl } from '../lib/imageProxy';
 import { supabase } from '../lib/supabase';
 import type { CuriosidadItem } from '../types/curiosidad';
@@ -69,13 +70,17 @@ export default function CuriosidadesList() {
 
 	useEffect(() => {
 		const hash = window.location.hash.slice(1);
-		if (hash) setSelectedSlug(hash);
+		if (hash) {
+			setSelectedSlug(hash);
+			trackPath(`/archivo/curiosidades/#${hash}`);
+		}
 	}, []);
 
 	function openDetail(slug: string) {
 		setSelectedSlug(slug);
 		window.scrollTo(0, 0);
 		history.pushState(null, '', `/archivo/curiosidades/#${slug}`);
+		trackPath(`/archivo/curiosidades/#${slug}`);
 	}
 
 	function closeDetail() {
