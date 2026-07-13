@@ -24,13 +24,19 @@ module.exports = async function handler(req, res) {
 
 	try {
 		const token = await getUmamiToken();
+		if (!token) {
+			return res.status(500).json({ error: 'auth failed', hasUrl: !!UMAMI_URL, hasUser: !!UMAMI_USERNAME });
+		}
 		const statsRes = await fetch(
 			`${UMAMI_URL}/api/websites/${UMAMI_WEBSITE_ID}/stats?startAt=0&endAt=${Date.now()}`,
 			{ headers: { Authorization: `Bearer ${token}` } },
 		);
 		const stats = await statsRes.json();
+		if (stats.error) {
+			return res.status(500).json({ error: 'stats failed', details: stats.error });
+		}
 		res.json({ visitors: stats.visitors });
-	} catch {
-		res.status(500).json({ visitors: 0 });
+	} catch (e) {
+		res.status(500).json({ error: e.message });
 	}
 };
