@@ -88,7 +88,7 @@ export default function SellerFeedbackForm({ sellerId }: Props) {
 		if (state === 'success') {
 			return (
 				<div class="feedback-form">
-					<p class="feedback-success">Tu comentario fue enviado y sera visible una vez que sea revisado.</p>
+					<p class="feedback-success">Tu comentario fue enviado. Cuando sea aprobado, recibiras un correo para confirmar tu email. Revisa tu bandeja de entrada y la carpeta de spam.</p>
 				</div>
 			);
 		}
