@@ -24,9 +24,9 @@ export default function VisitorCounter() {
 	const [count, setCount] = useState<string | null>(null);
 
 	useEffect(() => {
-		fetch('https://thecorezi.goatcounter.com/counter/TOTAL.json')
+		fetch('https://admin.thecorezi.com/api/visitors')
 			.then((res) => res.json())
-			.then((data: { count?: string }) => setCount(data.count ?? '0'))
+			.then((data: { visitors?: number }) => setCount(String(data.visitors ?? 0)))
 			.catch(() => setCount('0'));
 	}, []);
 

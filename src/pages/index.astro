@@ -146,7 +146,7 @@ import '../styles/zoid-card.css';
 						const id = entry.target.id;
 						if (entry.isIntersecting && !tracked.has(id)) {
 							tracked.add(id);
-							window.goatcounter?.count({ path: `/#${id}` });
+							window.umami?.track('section-view', { section: id });
 						}
 					});
 				},

@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { trackPath } from '../lib/goatcounter';
+import { trackPath } from '../lib/analytics';
 import { proxyContentUrls, proxyImageUrl } from '../lib/imageProxy';
 import { supabase } from '../lib/supabase';
 import type { NewsItem } from '../types/news';

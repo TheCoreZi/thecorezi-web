@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import loadingLogo from '../assets/images/lines/thecorezi_center.png';
-import { trackPath } from '../lib/goatcounter';
+import { trackPath } from '../lib/analytics';
 import { supabase } from '../lib/supabase';
 import type { Zoid } from '../types/zoid';
 import ZoidCard from './ZoidCard';
