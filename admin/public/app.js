@@ -116,7 +116,7 @@ function showApp() {
 function switchTab(tab) {
 	currentTab = tab;
 	$$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
-	['dashboard', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias', 'sellers', 'suggestions'].forEach((t) => {
+	['dashboard', 'discord', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias', 'sellers', 'suggestions'].forEach((t) => {
 		$(`#tab-${t}`).classList.toggle('hidden', t !== tab);
 	});
 
@@ -1208,6 +1208,65 @@ $('#seller-delete').addEventListener('click', async () => {
 		return;
 	}
 	showSellerList();
+});
+
+// Discord
+$('#discord-content').addEventListener('input', (e) => {
+	$('#discord-chars').textContent = e.target.value.length;
+});
+
+$('#discord-image').addEventListener('input', (e) => {
+	const url = e.target.value.trim();
+	const preview = $('#discord-image-preview');
+	const img = $('#discord-image-preview-img');
+	if (url) {
+		img.src = proxyImageUrl(url);
+		preview.classList.remove('hidden');
+	} else {
+		img.src = '';
+		preview.classList.add('hidden');
+	}
+});
+
+$('#discord-image-preview-img').addEventListener('error', () => {
+	$('#discord-image-preview').classList.add('hidden');
+});
+
+$('#discord-send').addEventListener('click', async () => {
+	const msgEl = $('#discord-msg');
+	const btn = $('#discord-send');
+	const content = $('#discord-content').value;
+	const imageUrl = $('#discord-image').value.trim();
+
+	if (!content.trim()) {
+		msgEl.innerHTML = '<div class="create-error">El mensaje no puede estar vacio.</div>';
+		return;
+	}
+
+	if (content.length > 2000) {
+		msgEl.innerHTML = '<div class="create-error">El mensaje no puede superar los 2000 caracteres.</div>';
+		return;
+	}
+
+	btn.disabled = true;
+	const body = { content };
+	if (imageUrl) body.image_url = imageUrl;
+
+	const data = await api('discord', { method: 'POST', body });
+	btn.disabled = false;
+
+	if (!data) return;
+	if (data.error) {
+		msgEl.innerHTML = `<div class="create-error">${data.error}</div>`;
+		return;
+	}
+
+	msgEl.innerHTML = '<div class="create-success">Mensaje enviado a Discord correctamente.</div>';
+	$('#discord-content').value = '';
+	$('#discord-chars').textContent = '0';
+	$('#discord-image').value = '';
+	$('#discord-image-preview').classList.add('hidden');
+	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
 });
 
 // Suggestions

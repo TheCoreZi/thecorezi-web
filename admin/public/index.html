@@ -56,6 +56,7 @@
 			<button class="tab" data-tab="noticias" type="button">Noticias</button>
 			<button class="tab" data-tab="lanzamientos" type="button">Lanzamientos</button>
 			<button class="tab" data-tab="sellers" type="button">Vendedores</button>
+			<button class="tab" data-tab="discord" type="button">Discord</button>
 			<button class="tab" data-tab="suggestions" type="button">Sugerencias</button>
 		</div>
 
@@ -293,6 +294,30 @@
 						<button class="btn btn-primary create-publish" id="seller-save" type="button">Guardar</button>
 						<button class="btn btn-delete lanz-delete-btn hidden" id="seller-delete" type="button">Eliminar</button>
 					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Discord -->
+		<section id="tab-discord" class="hidden">
+			<div id="discord-msg"></div>
+			<div class="create-form">
+				<label class="create-field">
+					<span>Mensaje *</span>
+					<textarea id="discord-content" class="lanz-textarea" placeholder="Escribe el mensaje para Discord..."></textarea>
+				</label>
+				<div class="discord-char-count">
+					<span id="discord-chars">0</span> / 2000
+				</div>
+				<label class="create-field">
+					<span>Imagen URL (opcional)</span>
+					<input id="discord-image" type="text" placeholder="https://..." />
+				</label>
+				<div id="discord-image-preview" class="lanz-image-preview hidden">
+					<img id="discord-image-preview-img" alt="Preview" />
+				</div>
+				<div class="lanz-form-actions">
+					<button class="btn btn-primary create-publish" id="discord-send" type="button">Enviar a Discord</button>
 				</div>
 			</div>
 		</section>
