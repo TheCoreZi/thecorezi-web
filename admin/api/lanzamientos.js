@@ -84,5 +84,6 @@ function buildRow(body) {
 		reserve_date_precision: body.reserve_date_precision,
 		retail_price: body.retail_price ?? null,
 		scale: body.scale || null,
+		slug: body.slug || null,
 	};
 }

@@ -752,6 +752,7 @@ function showNewsForm(item) {
 		$('#news-form-title').textContent = `Editar: ${item.title}`;
 		$('#news-delete').classList.remove('hidden');
 		$('#news-title').value = item.title;
+		$('#news-slug').value = item.slug || '';
 		$('#news-summary').value = item.summary || '';
 		$('#news-image').value = item.image_url || '';
 		$('#news-link').value = item.link || '';
@@ -761,6 +762,7 @@ function showNewsForm(item) {
 		$('#news-form-title').textContent = 'Nueva Noticia';
 		$('#news-delete').classList.add('hidden');
 		$('#news-title').value = '';
+		$('#news-slug').value = '';
 		$('#news-summary').value = '';
 		$('#news-image').value = '';
 		$('#news-link').value = '';
@@ -779,6 +781,12 @@ function showNewsList() {
 $('#news-new-btn').addEventListener('click', () => showNewsForm(null));
 $('#news-back-btn').addEventListener('click', showNewsList);
 
+$('#news-title').addEventListener('input', (e) => {
+	if (!editingNewsId) {
+		$('#news-slug').value = toSlug(e.target.value);
+	}
+});
+
 $('#news-search').addEventListener('input', () => {
 	clearTimeout(newsSearchTimeout);
 	newsSearchTimeout = setTimeout(() => loadNoticias(0), 300);
@@ -791,6 +799,7 @@ $('#news-publish').addEventListener('click', async () => {
 		content: $('#news-content').value,
 		image_url: $('#news-image').value,
 		link: $('#news-link').value,
+		slug: $('#news-slug').value,
 		summary: $('#news-summary').value,
 		title: $('#news-title').value,
 	};
@@ -934,6 +943,7 @@ function showLanzForm(zoid) {
 		setSelectOrCustom('lanz-line', zoid.line);
 		$('#lanz-model-code').value = zoid.model_code || '';
 		$('#lanz-scale').value = zoid.scale || '';
+		$('#lanz-slug').value = zoid.slug || '';
 		$('#lanz-launch-date').value = timestampToDateStr(zoid.launch_date);
 		$('#lanz-launch-precision').value = zoid.launch_date_precission || 'MONTH';
 		$('#lanz-reserve-date').value = timestampToDateStr(zoid.reserve_date);
@@ -961,6 +971,7 @@ function showLanzForm(zoid) {
 		$('#lanz-line-custom-wrap').classList.add('hidden');
 		$('#lanz-model-code').value = '';
 		$('#lanz-scale').value = '';
+		$('#lanz-slug').value = '';
 		$('#lanz-launch-date').value = '';
 		$('#lanz-launch-precision').value = 'MONTH';
 		$('#lanz-reserve-date').value = '';
@@ -1074,6 +1085,12 @@ $('#lanz-image-preview-img').addEventListener('error', () => {
 	});
 });
 
+$('#lanz-name').addEventListener('input', (e) => {
+	if (!editingLanzId) {
+		$('#lanz-slug').value = toSlug(e.target.value);
+	}
+});
+
 // Search
 $('#lanz-search').addEventListener('input', () => {
 	clearTimeout(lanzSearchTimeout);
@@ -1112,6 +1129,7 @@ $('#lanz-save').addEventListener('click', async () => {
 		reserve_date_precision: $('#lanz-reserve-precision').value,
 		retail_price: $('#lanz-price').value ? parseFloat($('#lanz-price').value) : null,
 		scale: $('#lanz-scale').value || null,
+		slug: $('#lanz-slug').value || null,
 	};
 
 	if (!fields.name || !fields.brand || !fields.line || !fields.description) {

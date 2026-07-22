@@ -71,7 +71,7 @@ export default function NewsCarousel() {
 		>
 			<div class="news-carousel-track" ref={trackRef} style={{ transform: `translateX(-${current * 100}%)` }}>
 				{news.map((item) => (
-					<a class="news-carousel-slide" href={`/noticias/#${item.id}`} key={item.id}>
+					<a class="news-carousel-slide" href={`/noticias/#${item.slug || item.id}`} key={item.id}>
 						<img alt="" class="news-carousel-image" loading="lazy" src={proxyImageUrl(item.image_url)} />
 						<div class="news-carousel-overlay">
 							<div class="news-carousel-content">

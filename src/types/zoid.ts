@@ -18,4 +18,5 @@ export interface Zoid {
 	reserve_date_precision: DatePrecision;
 	retail_price: number | null;
 	scale: string | null;
+	slug: string | null;
 }

@@ -4,6 +4,7 @@ export interface NewsItem {
 	image_url: string;
 	link: string | null;
 	published_at: string;
+	slug: string | null;
 	summary: string;
 	title: string;
 }

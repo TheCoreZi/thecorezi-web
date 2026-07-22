@@ -5,7 +5,9 @@ describe('Zoid type', () => {
 	it('should accept a valid zoid object with DAY precision', () => {
 		const zoid: Zoid = {
 			brand: 'Kotobukiya',
+			currency: 'JPY',
 			description: 'Liger Zero con armadura CAS',
+			exclusive: null,
 			features: ['Falcon Wings bañadas en oro', 'Dos figuras de piloto'],
 			id: '123',
 			image_url: 'https://example.com/liger.jpg',
@@ -17,6 +19,9 @@ describe('Zoid type', () => {
 			official_link: 'https://example.com',
 			reserve_date: 1742083200000,
 			reserve_date_precision: 'DAY',
+			retail_price: 7800,
+			scale: '1/72',
+			slug: 'liger-zero',
 		};
 
 		expect(zoid.name).toBe('Liger Zero');
@@ -26,7 +31,9 @@ describe('Zoid type', () => {
 	it('should accept null optional fields and MONTH precision', () => {
 		const zoid: Zoid = {
 			brand: 'Takara Tomy',
+			currency: null,
 			description: 'Próximamente',
+			exclusive: null,
 			features: null,
 			id: '456',
 			image_url: null,
@@ -38,6 +45,9 @@ describe('Zoid type', () => {
 			official_link: null,
 			reserve_date: null,
 			reserve_date_precision: 'MONTH',
+			retail_price: null,
+			scale: null,
+			slug: null,
 		};
 
 		expect(zoid.launch_date).toBeNull();
@@ -48,7 +58,9 @@ describe('Zoid type', () => {
 	it('should accept YEAR precision', () => {
 		const zoid: Zoid = {
 			brand: 'Kotobukiya',
+			currency: null,
 			description: 'Sin fecha definida',
+			exclusive: null,
 			features: null,
 			id: '789',
 			image_url: null,
@@ -60,6 +72,9 @@ describe('Zoid type', () => {
 			official_link: null,
 			reserve_date: null,
 			reserve_date_precision: 'YEAR',
+			retail_price: null,
+			scale: null,
+			slug: null,
 		};
 
 		expect(zoid.launch_date_precission).toBe('YEAR');

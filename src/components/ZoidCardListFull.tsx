@@ -66,13 +66,15 @@ export default function ZoidCardListFull() {
 	}
 
 	useEffect(() => {
-		const hashId = getHashId();
-		if (hashId) {
-			trackPath(`/lanzamientos/#${hashId}`);
+		const hash = getHashId();
+		if (hash) {
+			trackPath(`/lanzamientos/#${hash}`);
+			const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hash);
+			const column = isUuid ? 'id' : 'slug';
 			supabase
 				.from('Zoids Releases')
 				.select('*')
-				.eq('id', hashId)
+				.eq(column, hash)
 				.single()
 				.then(({ data }) => {
 					if (data) setSelectedZoid(data as Zoid);
@@ -90,8 +92,9 @@ export default function ZoidCardListFull() {
 
 	function selectZoid(zoid: Zoid) {
 		setSelectedZoid(zoid);
-		history.pushState(null, '', `#${zoid.id}`);
-		trackPath(`/lanzamientos/#${zoid.id}`);
+		const hash = zoid.slug || zoid.id;
+		history.pushState(null, '', `#${hash}`);
+		trackPath(`/lanzamientos/#${hash}`);
 	}
 
 	function closeDetail() {

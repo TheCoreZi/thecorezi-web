@@ -72,16 +72,29 @@ export default function NewsList() {
 	useEffect(() => {
 		const hash = window.location.hash.slice(1);
 		if (hash) {
-			setSelectedId(hash);
 			trackPath(`/noticias/#${hash}`);
+			const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hash);
+			if (isUuid) {
+				setSelectedId(hash);
+			} else {
+				supabase
+					.from('News')
+					.select('id')
+					.eq('slug', hash)
+					.single()
+					.then(({ data }) => {
+						if (data) setSelectedId(data.id);
+					});
+			}
 		}
 	}, []);
 
-	function openDetail(id: string) {
-		setSelectedId(id);
+	function openDetail(item: NewsItem) {
+		setSelectedId(item.id);
 		window.scrollTo(0, 0);
-		history.pushState(null, '', `/noticias/#${id}`);
-		trackPath(`/noticias/#${id}`);
+		const hash = item.slug || item.id;
+		history.pushState(null, '', `/noticias/#${hash}`);
+		trackPath(`/noticias/#${hash}`);
 	}
 
 	function closeDetail() {
@@ -92,7 +105,23 @@ export default function NewsList() {
 	useEffect(() => {
 		function onPopState() {
 			const hash = window.location.hash.slice(1);
-			setSelectedId(hash || null);
+			if (!hash) {
+				setSelectedId(null);
+				return;
+			}
+			const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(hash);
+			if (isUuid) {
+				setSelectedId(hash);
+			} else {
+				supabase
+					.from('News')
+					.select('id')
+					.eq('slug', hash)
+					.single()
+					.then(({ data }) => {
+						if (data) setSelectedId(data.id);
+					});
+			}
 		}
 		window.addEventListener('popstate', onPopState);
 		return () => window.removeEventListener('popstate', onPopState);
@@ -128,7 +157,7 @@ export default function NewsList() {
 		<>
 			<div class="news-list-grid">
 				{news.map((item) => (
-					<article class="news-card" key={item.id} onClick={() => openDetail(item.id)}>
+					<article class="news-card" key={item.id} onClick={() => openDetail(item)}>
 						<img alt="" class="news-card-image" loading="lazy" src={proxyImageUrl(item.image_url)} />
 						<div class="news-card-body">
 							<p class="news-card-date">{formatDate(item.published_at)}</p>
