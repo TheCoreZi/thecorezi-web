@@ -276,6 +276,15 @@ tr:hover td {
 
 .btn-proof:hover { background: rgba(255, 152, 0, 0.1); }
 
+.btn-thumbnail {
+	background: transparent;
+	border: 1px solid var(--color-accent);
+	color: var(--color-accent);
+	font-size: 0.85rem;
+}
+
+.btn-thumbnail:hover { background: rgba(255, 255, 255, 0.08); }
+
 .modal-overlay {
 	align-items: center;
 	background: rgba(0, 0, 0, 0.7);

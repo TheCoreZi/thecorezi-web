@@ -5,6 +5,7 @@ import brandTomy from '../assets/images/brand/tomy.png';
 import lineAz from '../assets/images/lines/az.png';
 import lineHmm from '../assets/images/lines/hmm.png';
 import lineRmz from '../assets/images/lines/rmz.png';
+import lineSparkfig from '../assets/images/lines/sparkfig.png';
 import lineSynergenex from '../assets/images/lines/synergenex.png';
 import { proxyImageUrl } from '../lib/imageProxy';
 import type { DatePrecision, Zoid } from '../types/zoid';
@@ -21,6 +22,7 @@ const lineLogos: Record<string, string> = {
 	AZ: lineAz.src,
 	HMM: lineHmm.src,
 	RMZ: lineRmz.src,
+	SPARKFIG: lineSparkfig.src,
 	SYNERGENEX: lineSynergenex.src,
 };
 

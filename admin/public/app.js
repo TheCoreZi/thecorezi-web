@@ -555,6 +555,137 @@ $('#cur-delete').addEventListener('click', async () => {
 	showCurList();
 });
 
+// Thumbnail generation
+function generateThumbnail(imageUrl, title, subtitle, mode) {
+	const isStory = mode === 'story';
+	const canvas = document.createElement('canvas');
+	canvas.width = isStory ? 1080 : 1200;
+	canvas.height = isStory ? 1920 : 630;
+	const ctx = canvas.getContext('2d');
+	const titleSize = isStory ? 80 : 52;
+	const titleLeading = isStory ? 90 : 62;
+	const subSize = isStory ? 46 : 30;
+	const subLeading = isStory ? 54 : 38;
+
+	const img = new Image();
+	img.crossOrigin = 'anonymous';
+	img.onload = () => {
+		const bgScale = Math.max(canvas.width / img.width, canvas.height / img.height) * 1.1;
+		const bgX = (canvas.width - img.width * bgScale) / 2;
+		const bgY = (canvas.height - img.height * bgScale) / 2;
+		ctx.filter = 'blur(20px) brightness(0.6)';
+		ctx.drawImage(img, bgX, bgY, img.width * bgScale, img.height * bgScale);
+		ctx.filter = 'none';
+
+		const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+		const w = img.width * scale;
+		const h = img.height * scale;
+		const x = (canvas.width - w) / 2;
+		const y = (canvas.height - h) / 2;
+
+		const tmp = document.createElement('canvas');
+		tmp.width = canvas.width;
+		tmp.height = canvas.height;
+		const tctx = tmp.getContext('2d');
+		tctx.drawImage(img, x, y, w, h);
+
+		tctx.globalCompositeOperation = 'destination-in';
+		const hMask = tctx.createLinearGradient(x, 0, x + w, 0);
+		hMask.addColorStop(0, 'rgba(0,0,0,0)');
+		hMask.addColorStop(0.05, 'rgba(0,0,0,1)');
+		hMask.addColorStop(0.95, 'rgba(0,0,0,1)');
+		hMask.addColorStop(1, 'rgba(0,0,0,0)');
+		tctx.fillStyle = hMask;
+		tctx.fillRect(x, y, w, h);
+
+		const vMask = tctx.createLinearGradient(0, y, 0, y + h);
+		vMask.addColorStop(0, 'rgba(0,0,0,0)');
+		vMask.addColorStop(0.08, 'rgba(0,0,0,1)');
+		vMask.addColorStop(0.92, 'rgba(0,0,0,1)');
+		vMask.addColorStop(1, 'rgba(0,0,0,0)');
+		tctx.fillStyle = vMask;
+		tctx.fillRect(x, y, w, h);
+		tctx.globalCompositeOperation = 'source-over';
+
+		ctx.drawImage(tmp, 0, 0);
+
+		const maxTextWidth = canvas.width - 120;
+		ctx.textBaseline = 'top';
+		ctx.textAlign = 'center';
+		const centerX = canvas.width / 2;
+
+		const drawOutlinedText = (text, tx, ty) => {
+			ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+			ctx.lineWidth = 6;
+			ctx.lineJoin = 'round';
+			ctx.strokeText(text, tx, ty);
+			ctx.fillText(text, tx, ty);
+		};
+
+		ctx.font = `${titleSize}px "Russo One", sans-serif`;
+		ctx.fillStyle = '#e8a020';
+		ctx.shadowColor = 'rgba(0,0,0,0.8)';
+		ctx.shadowBlur = 20;
+		ctx.shadowOffsetX = 0;
+		ctx.shadowOffsetY = 2;
+		const titleLines = wrapText(ctx, title, maxTextWidth);
+		let textY = isStory ? 250 : 40;
+		titleLines.forEach((line) => {
+			drawOutlinedText(line, centerX, textY);
+			textY += titleLeading;
+		});
+
+		ctx.shadowColor = 'rgba(0,0,0,0.6)';
+		ctx.shadowBlur = 10;
+		ctx.shadowOffsetY = 1;
+
+		if (subtitle) {
+			ctx.font = `bold ${subSize}px Rajdhani, sans-serif`;
+			ctx.fillStyle = '#ffffff';
+			let subText = subtitle;
+			const subLines = wrapText(ctx, subText, maxTextWidth);
+			if (subLines.length > 2) {
+				subText = subtitle.split(/(?<=[.!?])\s+/)[0] || subtitle;
+			}
+			const finalLines = wrapText(ctx, subText, maxTextWidth).slice(0, 2);
+			let subY = canvas.height - (isStory ? 260 : 50) - finalLines.length * subLeading;
+			finalLines.forEach((line) => {
+				drawOutlinedText(line, centerX, subY);
+				subY += subLeading;
+			});
+		}
+
+		ctx.shadowColor = 'transparent';
+		ctx.shadowBlur = 0;
+		ctx.shadowOffsetY = 0;
+
+		canvas.toBlob((blob) => {
+			window.open(URL.createObjectURL(blob), '_blank');
+		}, 'image/png');
+	};
+	img.onerror = () => {
+		alert('No se pudo cargar la imagen. Verifica la URL.');
+	};
+	img.src = proxyImageUrl(imageUrl);
+}
+
+function wrapText(ctx, text, maxWidth) {
+	const words = text.split(' ');
+	const lines = [];
+	let currentLine = words[0] || '';
+	for (let i = 1; i < words.length; i++) {
+		const test = currentLine + ' ' + words[i];
+		if (ctx.measureText(test).width > maxWidth) {
+			lines.push(currentLine);
+			currentLine = words[i];
+		} else {
+			currentLine = test;
+		}
+	}
+	lines.push(currentLine);
+	return lines;
+}
+
 // Noticias list
 let newsItems = [];
 
@@ -574,20 +705,32 @@ async function loadNoticias(page) {
 		return;
 	}
 
-	const header = '<th>Titulo</th><th>Summary</th><th>Fecha</th>';
+	const header = '<th>Titulo</th><th>Summary</th><th>Fecha</th><th></th>';
 	const rows = data.items.map((n) => {
 		const date = n.published_at ? new Date(n.published_at).toLocaleDateString('es') : '-';
 		const summary = (n.summary || '').length > 80 ? n.summary.substring(0, 80) + '...' : (n.summary || '');
+		const hasImage = n.image_url ? '' : ' disabled title="Sin imagen"';
 		return `<tr class="clickable-row" data-id="${n.id}">
 			<td data-label="Titulo">${n.title}</td>
 			<td class="cell-comment" data-label="Summary">${summary}</td>
 			<td class="cell-date" data-label="Fecha">${date}</td>
+			<td class="actions">
+				<button class="btn btn-thumbnail btn-icon" data-id="${n.id}" data-mode="post" title="Thumbnail Facebook"${hasImage}>🖼</button>
+				<button class="btn btn-thumbnail btn-icon" data-id="${n.id}" data-mode="story" title="Thumbnail Story"${hasImage}>📱</button>
+			</td>
 		</tr>`;
 	}).join('');
 
 	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
 		+ renderPagination(page, data.total, 25);
 
+	container.querySelectorAll('.btn-thumbnail').forEach((btn) => {
+		btn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			const item = newsItems.find((n) => n.id === btn.dataset.id);
+			if (item) generateThumbnail(item.image_url, item.title, item.summary, btn.dataset.mode);
+		});
+	});
 	container.querySelectorAll('.clickable-row').forEach((row) => {
 		row.addEventListener('click', () => {
 			const item = newsItems.find((n) => n.id === row.dataset.id);
@@ -734,22 +877,36 @@ async function loadLanzamientos(page) {
 		return;
 	}
 
-	const header = '<th>Nombre</th><th>Marca</th><th>Linea</th><th>Lanzamiento</th><th>Precio</th>';
+	const header = '<th>Nombre</th><th>Marca</th><th>Linea</th><th>Lanzamiento</th><th>Precio</th><th></th>';
 	const rows = data.items.map((z) => {
 		const date = formatLanzDate(z.launch_date, z.launch_date_precission);
 		const price = formatLanzPrice(z.retail_price, z.currency);
+		const hasImage = z.image_url ? '' : ' disabled title="Sin imagen"';
 		return `<tr class="clickable-row" data-id="${z.id}">
 			<td data-label="Nombre">${z.name}</td>
 			<td data-label="Marca">${z.brand}</td>
 			<td data-label="Linea">${z.line}</td>
 			<td class="cell-date" data-label="Lanzamiento">${date}</td>
 			<td class="cell-price" data-label="Precio">${price}</td>
+			<td class="actions">
+				<button class="btn btn-thumbnail btn-icon" data-id="${z.id}" data-mode="post" title="Thumbnail Facebook"${hasImage}>🖼</button>
+				<button class="btn btn-thumbnail btn-icon" data-id="${z.id}" data-mode="story" title="Thumbnail Story"${hasImage}>📱</button>
+			</td>
 		</tr>`;
 	}).join('');
 
 	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
 		+ renderPagination(page, data.total, 25);
 
+	container.querySelectorAll('.btn-thumbnail').forEach((btn) => {
+		btn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			const zoid = lanzItems.find((z) => z.id === btn.dataset.id);
+			if (!zoid) return;
+			const title = [zoid.model_code, zoid.name].filter(Boolean).join(' - ');
+			generateThumbnail(zoid.image_url, title, zoid.description, btn.dataset.mode);
+		});
+	});
 	container.querySelectorAll('.clickable-row').forEach((row) => {
 		row.addEventListener('click', () => {
 			const zoid = lanzItems.find((z) => z.id === row.dataset.id);
