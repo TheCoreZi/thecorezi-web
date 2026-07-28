@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import diamondIcon from '../assets/icons/diamond.svg?raw';
 import brandKotobukiya from '../assets/images/brand/kotobukiya.png';
 import brandTomy from '../assets/images/brand/tomy.png';
+import lineAdamas from '../assets/images/lines/adamas.png'
 import lineAz from '../assets/images/lines/az.png';
 import lineHmm from '../assets/images/lines/hmm.png';
 import lineRmz from '../assets/images/lines/rmz.png';
@@ -19,6 +20,7 @@ const brandLogos: Record<string, string> = {
 };
 
 const lineLogos: Record<string, string> = {
+	ADAMAS: lineAdamas.src,
 	AZ: lineAz.src,
 	HMM: lineHmm.src,
 	RMZ: lineRmz.src,
