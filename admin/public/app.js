@@ -889,10 +889,14 @@ async function loadLanzamientos(page) {
 	const header = '<th>Nombre</th><th>Marca</th><th>Linea</th><th>Lanzamiento</th><th>Precio</th><th></th>';
 	const rows = data.items.map((z) => {
 		const date = formatLanzDate(z.launch_date, z.launch_date_precission);
-		const price = formatLanzPrice(z.retail_price, z.currency);
 		const hasImage = z.image_url ? '' : ' disabled title="Sin imagen"';
+		const issues = getLanzIssues(z);
+		const price = formatLanzPrice(z.retail_price, z.currency);
+		const warning = issues.length
+			? `<span class="lanz-warning" title="${issues.join('&#10;')}" aria-label="${issues.join('. ')}" role="img">!</span>`
+			: '';
 		return `<tr class="clickable-row" data-id="${z.id}">
-			<td data-label="Nombre">${z.name}</td>
+			<td data-label="Nombre">${z.name}${warning}</td>
 			<td data-label="Marca">${z.brand}</td>
 			<td data-label="Linea">${z.line}</td>
 			<td class="cell-date" data-label="Lanzamiento">${date}</td>
@@ -933,6 +937,50 @@ async function loadLanzamientos(page) {
 	container.querySelectorAll('.pagination button:not([disabled])').forEach((btn) => {
 		btn.addEventListener('click', () => loadLanzamientos(parseInt(btn.dataset.page)));
 	});
+}
+
+function getLanzIssues(zoid) {
+	const dateFields = ['launch_date', 'launch_date_precission', 'reserve_date', 'reserve_date_precision'];
+	const ignoredFields = ['exclusive', 'id', ...dateFields];
+	const issues = Object.entries(zoid)
+		.filter(([field, value]) => value === null && !ignoredFields.includes(field))
+		.map(([field]) => `Falta ${getLanzFieldLabel(field)}`);
+
+	if (zoid.launch_date === null) {
+		issues.push('Falta fecha de lanzamiento');
+	} else if (zoid.launch_date_precission === null) {
+		issues.push('Falta precisión de fecha de lanzamiento');
+	} else if (zoid.launch_date_precission !== 'DAY') {
+		issues.push('La fecha de lanzamiento no tiene día exacto');
+	}
+
+	if (zoid.reserve_date === null) {
+		issues.push('Falta fecha de reserva');
+	} else if (zoid.reserve_date_precision === null) {
+		issues.push('Falta precisión de fecha de reserva');
+	} else if (zoid.reserve_date_precision !== 'DAY') {
+		issues.push('La fecha de reserva no tiene día exacto');
+	}
+
+	return issues;
+}
+
+function getLanzFieldLabel(field) {
+	const labels = {
+		brand: 'marca',
+		currency: 'moneda',
+		description: 'descripción',
+		features: 'características',
+		image_url: 'URL de imagen',
+		line: 'línea',
+		model_code: 'código de modelo',
+		name: 'nombre',
+		official_link: 'link oficial',
+		retail_price: 'precio',
+		scale: 'escala',
+		slug: 'slug',
+	};
+	return labels[field] || field.replaceAll('_', ' ');
 }
 
 // Lanzamientos form
