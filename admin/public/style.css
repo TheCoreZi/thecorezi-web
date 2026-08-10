@@ -220,6 +220,14 @@ tr:hover td {
 	color: #fff;
 }
 
+.btn-copy {
+	background: transparent;
+	border: 1px solid var(--color-accent);
+	color: var(--color-accent);
+}
+
+.btn-copy:hover { background: rgba(255, 255, 255, 0.08); }
+
 .btn-delete {
 	background: var(--color-negative);
 	color: #fff;

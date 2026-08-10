@@ -898,6 +898,7 @@ async function loadLanzamientos(page) {
 			<td class="cell-date" data-label="Lanzamiento">${date}</td>
 			<td class="cell-price" data-label="Precio">${price}</td>
 			<td class="actions">
+				<button class="btn btn-copy btn-icon" data-id="${z.id}" title="Copiar lanzamiento" aria-label="Copiar lanzamiento">⎘</button>
 				<button class="btn btn-thumbnail btn-icon" data-id="${z.id}" data-mode="post" title="Thumbnail Facebook"${hasImage}>🖼</button>
 				<button class="btn btn-thumbnail btn-icon" data-id="${z.id}" data-mode="story" title="Thumbnail Story"${hasImage}>📱</button>
 			</td>
@@ -907,6 +908,13 @@ async function loadLanzamientos(page) {
 	container.innerHTML = `<div class="table-wrap"><table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table></div>`
 		+ renderPagination(page, data.total, 25);
 
+	container.querySelectorAll('.btn-copy').forEach((btn) => {
+		btn.addEventListener('click', (e) => {
+			e.stopPropagation();
+			const zoid = lanzItems.find((z) => z.id === btn.dataset.id);
+			if (zoid) showLanzForm(zoid, true);
+		});
+	});
 	container.querySelectorAll('.btn-thumbnail').forEach((btn) => {
 		btn.addEventListener('click', (e) => {
 			e.stopPropagation();
@@ -928,15 +936,15 @@ async function loadLanzamientos(page) {
 }
 
 // Lanzamientos form
-function showLanzForm(zoid) {
+function showLanzForm(zoid, copy = false) {
 	$('#lanz-list-view').classList.add('hidden');
 	$('#lanz-form-view').classList.remove('hidden');
 	$('#lanz-msg').innerHTML = '';
 
 	if (zoid) {
-		editingLanzId = zoid.id;
-		$('#lanz-form-title').textContent = `Editar: ${zoid.name}`;
-		$('#lanz-delete').classList.remove('hidden');
+		editingLanzId = copy ? null : zoid.id;
+		$('#lanz-form-title').textContent = copy ? 'Nuevo Lanzamiento' : `Editar: ${zoid.name}`;
+		$('#lanz-delete').classList.toggle('hidden', copy);
 
 		$('#lanz-name').value = zoid.name;
 		setSelectOrCustom('lanz-brand', zoid.brand);
