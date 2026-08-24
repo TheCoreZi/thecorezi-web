@@ -41,3 +41,15 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## Deployment
+
+The GitHub Pages workflow publishes the website at `thecorezi.com`. It also
+builds the latest stable release from `TheCoreZi/scars-of-steel` and adds it to
+`dist/scars-of-steel/`.
+
+The game repository sends a `scars-of-steel-release` repository dispatch event
+when it publishes a stable release. The event includes the release tag. Regular
+website deployments query the latest stable release so that they do not remove
+the game. The workflow checks the deployed game version and commit after each
+deployment.

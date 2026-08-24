@@ -4,7 +4,7 @@ on:
   push:
     branches: [master]
   repository_dispatch:
-    types: [supabase-update]
+    types: [scars-of-steel-release, supabase-update]
 
 permissions:
   contents: read
@@ -22,8 +22,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -34,8 +34,61 @@ jobs:
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_IMAGE_PROXY_URL: ${{ secrets.PUBLIC_IMAGE_PROXY_URL }}
           PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.PUBLIC_TURNSTILE_SITE_KEY }}
+      - id: game-release
+        name: Find game release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_TAG: ${{ github.event.client_payload.tag }}
+        run: |
+          tag="$REQUESTED_TAG"
+          if [ -z "$tag" ]; then
+            tag="$(gh api repos/TheCoreZi/scars-of-steel/releases/latest --jq .tag_name 2>/dev/null || true)"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - if: steps.game-release.outputs.tag != ''
+        name: Check out game release
+        uses: actions/checkout@v6
+        with:
+          path: .scars-of-steel
+          ref: ${{ steps.game-release.outputs.tag }}
+          repository: TheCoreZi/scars-of-steel
+      - if: steps.game-release.outputs.tag != ''
+        name: Set up game Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: npm
+          cache-dependency-path: .scars-of-steel/package-lock.json
+          node-version: 22
+      - if: steps.game-release.outputs.tag != ''
+        name: Install game dependencies
+        run: npm ci --registry=https://registry.npmjs.org/
+        working-directory: .scars-of-steel
+      - if: steps.game-release.outputs.tag != ''
+        name: Set game build metadata
+        env:
+          RELEASE_VERSION: ${{ steps.game-release.outputs.tag }}
+        run: |
+          echo "COMMIT_SHA=$(git -C .scars-of-steel rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> "$GITHUB_ENV"
+      - if: steps.game-release.outputs.tag != ''
+        name: Build game release
+        run: npm run build
+        working-directory: .scars-of-steel
+      - if: steps.game-release.outputs.tag != ''
+        name: Add game release to website
+        run: |
+          mkdir -p dist/scars-of-steel
+          cp -R .scars-of-steel/dist/. dist/scars-of-steel/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist/
       - id: deployment
         uses: actions/deploy-pages@v5
+      - if: steps.game-release.outputs.tag != ''
+        name: Check deployed game release
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          curl --fail --location --output /dev/null --retry 12 --retry-all-errors --retry-delay 5 "${SITE_URL%/}/scars-of-steel/"
+          curl --fail --location --output build-info.json --retry 12 --retry-all-errors --retry-delay 5 "${SITE_URL%/}/scars-of-steel/build-info.json"
+          jq --exit-status --arg commit "$COMMIT_SHA" --arg version "$RELEASE_VERSION" '.commit == $commit and .version == $version' build-info.json
