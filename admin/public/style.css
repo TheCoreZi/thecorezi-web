@@ -618,6 +618,66 @@ tr:hover td {
 	flex: 1;
 }
 
+.image-upload {
+	margin-bottom: 0.75rem;
+}
+
+.image-upload-name {
+	font-size: 0.85rem;
+	margin-bottom: 0.5rem;
+	overflow-wrap: anywhere;
+}
+
+.image-upload-pending {
+	align-items: center;
+	display: flex;
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+}
+
+.image-upload-pending.hidden {
+	display: none;
+}
+
+.image-upload-pending img {
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 8px;
+	height: 96px;
+	object-fit: contain;
+	width: 128px;
+}
+
+.image-upload-status {
+	color: var(--color-text-muted);
+	font-size: 0.85rem;
+	min-height: 1.25rem;
+	padding-top: 0.5rem;
+}
+
+.image-upload-status.error {
+	color: var(--color-negative);
+}
+
+.image-upload-status.success {
+	color: var(--color-positive);
+}
+
+.image-upload-zone {
+	align-items: center;
+	border: 1px dashed rgba(255, 255, 255, 0.2);
+	border-radius: 6px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	justify-content: space-between;
+	padding: 0.75rem;
+}
+
+.image-upload-zone:focus {
+	border-color: var(--color-accent);
+	outline: none;
+}
+
 .create-field select {
 	appearance: none;
 	background: rgba(255, 255, 255, 0.05) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a9bbf' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 0.75rem center;

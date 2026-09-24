@@ -2,7 +2,14 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
 const IMAGE_PROXY_URL = 'https://thecorezi-image-proxy.thecorezi.workers.dev';
+const IMAGE_UPLOAD_TABS = {
+	curiosidades: 'curiosity',
+	lanzamientos: 'release',
+	noticias: 'news',
+};
+const MAX_IMAGE_FILE_SIZE = 50 * 1024 * 1024;
 const SUPABASE_URL = 'https://dxdksccsgckuizhjucjz.supabase.co';
+const imageUploads = {};
 
 function proxyImageUrl(url) {
 	if (!url || !url.startsWith(SUPABASE_URL)) return url;
@@ -103,6 +110,182 @@ async function api(path, opts = {}) {
 	return res.json();
 }
 
+function initializeImageUpload(id, prefix, target) {
+	const upload = {
+		file: null,
+		fileInput: $(`#${prefix}-image-file`),
+		fileName: '',
+		folderInput: $(`#${prefix}-image-folder`),
+		name: $(`#${prefix}-image-pending-name`),
+		pending: $(`#${prefix}-image-pending`),
+		preview: $(`#${prefix}-image-pending-preview`),
+		previewUrl: '',
+		settings: $(`#${prefix}-image-settings`),
+		slugInput: $(`#${prefix}-slug`),
+		status: $(`#${prefix}-image-status`),
+		storageNameEdited: false,
+		storageNameInput: $(`#${prefix}-image-name`),
+		target,
+		urlInput: $(`#${prefix}-image`),
+	};
+	imageUploads[id] = upload;
+
+	$(`#${prefix}-image-paste`).addEventListener('paste', (event) => handleImagePaste(upload, event));
+	$(`#${prefix}-image-select`).addEventListener('click', () => upload.fileInput.click());
+	$(`#${prefix}-image-remove`).addEventListener('click', () => {
+		clearPendingImage(upload, true);
+		upload.status.textContent = '';
+	});
+	upload.fileInput.addEventListener('change', () => handleImageSelection(upload));
+	upload.slugInput.addEventListener('input', () => {
+		if (upload.file && !upload.storageNameEdited) {
+			upload.storageNameInput.value = upload.slugInput.value.trim();
+		}
+	});
+	upload.storageNameInput.addEventListener('input', () => {
+		upload.storageNameEdited = true;
+	});
+	upload.urlInput.addEventListener('input', () => {
+		if (upload.file) {
+			clearPendingImage(upload, true);
+			upload.status.textContent = '';
+		}
+	});
+}
+
+function resetImageUpload(id) {
+	const upload = imageUploads[id];
+	clearPendingImage(upload, true);
+	upload.status.textContent = '';
+	upload.status.className = 'image-upload-status';
+}
+
+function hasPendingImage(id) {
+	return Boolean(imageUploads[id].file);
+}
+
+async function uploadPendingImage(id) {
+	const upload = imageUploads[id];
+	if (!upload.file) return upload.urlInput.value.trim() || null;
+
+	upload.status.textContent = 'Subiendo imagen...';
+	upload.status.className = 'image-upload-status';
+
+	try {
+		const data = await api('image-upload', {
+			method: 'POST',
+			body: {
+				contentType: upload.file.type,
+				fileName: upload.fileName,
+				folder: upload.folderInput.value,
+				size: upload.file.size,
+				storageName: upload.storageNameInput.value,
+				target: upload.target,
+			},
+		});
+		if (!data) throw new Error('No se pudo autorizar la carga');
+		if (data.error) throw new Error(data.error);
+
+		await uploadImageToSignedUrl(data.signedUrl, upload.file, upload.fileName);
+		clearPendingImage(upload, true);
+		upload.urlInput.value = data.publicUrl;
+		upload.urlInput.dispatchEvent(new Event('input', { bubbles: true }));
+		upload.status.textContent = 'Imagen cargada correctamente.';
+		upload.status.className = 'image-upload-status success';
+		return data.publicUrl;
+	} catch (error) {
+		upload.status.textContent = error.message;
+		upload.status.className = 'image-upload-status error';
+		throw error;
+	}
+}
+
+function handleImagePaste(upload, event) {
+	const item = [...(event.clipboardData?.items || [])]
+		.find((clipboardItem) => clipboardItem.kind === 'file' && clipboardItem.type.startsWith('image/'));
+	if (!item) {
+		upload.status.textContent = 'El portapapeles no contiene una imagen.';
+		upload.status.className = 'image-upload-status error';
+		return;
+	}
+
+	event.preventDefault();
+	setPendingImage(upload, item.getAsFile(), 'imagen-pegada');
+}
+
+function handleImageSelection(upload) {
+	const [file] = upload.fileInput.files;
+	if (file) setPendingImage(upload, file, file.name);
+}
+
+function setPendingImage(upload, file, fileName) {
+	try {
+		validateImage(file);
+		clearPendingImage(upload);
+		upload.file = file;
+		upload.fileName = fileName;
+		upload.previewUrl = URL.createObjectURL(file);
+		if (!upload.storageNameEdited) {
+			upload.storageNameInput.value = upload.slugInput.value.trim();
+		}
+		upload.status.textContent = 'La imagen se cargara cuando guardes.';
+		upload.status.className = 'image-upload-status';
+		renderPendingImage(upload);
+	} catch (error) {
+		upload.fileInput.value = '';
+		upload.status.textContent = error.message;
+		upload.status.className = 'image-upload-status error';
+	}
+}
+
+function validateImage(file) {
+	if (!file || !file.type.startsWith('image/')) throw new Error('El archivo debe ser una imagen.');
+	if (!file.size || file.size > MAX_IMAGE_FILE_SIZE) {
+		throw new Error('La imagen debe pesar como maximo 50 MB.');
+	}
+}
+
+function clearPendingImage(upload, clearSettings = false) {
+	if (upload.previewUrl) URL.revokeObjectURL(upload.previewUrl);
+	upload.file = null;
+	upload.fileInput.value = '';
+	upload.fileName = '';
+	upload.previewUrl = '';
+	if (clearSettings) {
+		upload.folderInput.value = '';
+		upload.storageNameEdited = false;
+		upload.storageNameInput.value = '';
+	}
+	renderPendingImage(upload);
+}
+
+function renderPendingImage(upload) {
+	upload.pending.classList.toggle('hidden', !upload.file);
+	upload.preview.src = upload.previewUrl;
+	upload.settings.classList.toggle('hidden', !upload.file);
+	upload.name.textContent = upload.file ? `${upload.fileName} (${(upload.file.size / 1024 / 1024).toFixed(2)} MB)` : '';
+}
+
+async function uploadImageToSignedUrl(signedUrl, file, fileName) {
+	const body = new FormData();
+	body.append('cacheControl', '3600');
+	body.append('', file, fileName);
+
+	const response = await fetch(signedUrl, {
+		body,
+		headers: { 'x-upsert': 'false' },
+		method: 'PUT',
+	});
+	if (response.ok) return;
+
+	const data = await response.json().catch(() => ({}));
+	throw new Error(data.message || data.error || 'No se pudo subir la imagen');
+}
+
+initializeImageUpload('curiosity', 'cur', 'curiosity');
+initializeImageUpload('news', 'news', 'news');
+initializeImageUpload('release', 'lanz', 'release');
+
 function showLogin() {
 	$('#login-view').classList.remove('hidden');
 	$('#app-view').classList.add('hidden');
@@ -114,6 +297,8 @@ function showApp() {
 }
 
 function switchTab(tab) {
+	const previousUpload = IMAGE_UPLOAD_TABS[currentTab];
+	if (previousUpload && currentTab !== tab) resetImageUpload(previousUpload);
 	currentTab = tab;
 	$$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === tab));
 	['dashboard', 'discord', 'feedback', 'comments', 'curiosidades', 'lanzamientos', 'noticias', 'sellers', 'suggestions'].forEach((t) => {
@@ -408,6 +593,7 @@ function toSlug(text) {
 $('#cur-title').addEventListener('input', (e) => {
 	if (!editingCurId) {
 		$('#cur-slug').value = toSlug(e.target.value);
+		$('#cur-slug').dispatchEvent(new Event('input', { bubbles: true }));
 	}
 });
 
@@ -458,6 +644,7 @@ async function loadCuriosidades(page) {
 }
 
 function showCurForm(item) {
+	resetImageUpload('curiosity');
 	$('#cur-list-view').classList.add('hidden');
 	$('#cur-form-view').classList.remove('hidden');
 	$('#curiosidad-msg').innerHTML = '';
@@ -488,6 +675,7 @@ function showCurForm(item) {
 }
 
 function showCurList() {
+	resetImageUpload('curiosity');
 	$('#cur-form-view').classList.add('hidden');
 	$('#cur-list-view').classList.remove('hidden');
 	loadCuriosidades(0);
@@ -512,7 +700,7 @@ async function saveCuriosidad(isPublished) {
 		title: $('#cur-title').value,
 	};
 
-	if (!fields.title || !fields.summary || !fields.image_url || !fields.content) {
+	if (!fields.title || !fields.summary || (!fields.image_url && !hasPendingImage('curiosity')) || !fields.content) {
 		msgEl.innerHTML = '<div class="create-error">Todos los campos son obligatorios.</div>';
 		return;
 	}
@@ -521,6 +709,14 @@ async function saveCuriosidad(isPublished) {
 	$('#cur-draft').disabled = true;
 	const method = editingCurId ? 'PUT' : 'POST';
 	if (editingCurId) fields.id = editingCurId;
+	try {
+		fields.image_url = await uploadPendingImage('curiosity');
+	} catch {
+		$('#cur-publish').disabled = false;
+		$('#cur-draft').disabled = false;
+		msgEl.innerHTML = '<div class="create-error">No se pudo cargar la imagen.</div>';
+		return;
+	}
 
 	const data = await api('curiosidades', { method, body: fields });
 	$('#cur-publish').disabled = false;
@@ -534,6 +730,7 @@ async function saveCuriosidad(isPublished) {
 
 	const label = isPublished ? 'Curiosidad publicada' : 'Borrador guardado';
 	msgEl.innerHTML = `<div class="create-success">${editingCurId ? 'Curiosidad actualizada' : label} correctamente.</div>`;
+	resetImageUpload('curiosity');
 	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
 
 	if (!editingCurId) showCurList();
@@ -743,6 +940,7 @@ async function loadNoticias(page) {
 }
 
 function showNewsForm(item) {
+	resetImageUpload('news');
 	$('#news-list-view').classList.add('hidden');
 	$('#news-form-view').classList.remove('hidden');
 	$('#noticia-msg').innerHTML = '';
@@ -773,6 +971,7 @@ function showNewsForm(item) {
 }
 
 function showNewsList() {
+	resetImageUpload('news');
 	$('#news-form-view').classList.add('hidden');
 	$('#news-list-view').classList.remove('hidden');
 	loadNoticias(0);
@@ -784,6 +983,7 @@ $('#news-back-btn').addEventListener('click', showNewsList);
 $('#news-title').addEventListener('input', (e) => {
 	if (!editingNewsId) {
 		$('#news-slug').value = toSlug(e.target.value);
+		$('#news-slug').dispatchEvent(new Event('input', { bubbles: true }));
 	}
 });
 
@@ -804,7 +1004,7 @@ $('#news-publish').addEventListener('click', async () => {
 		title: $('#news-title').value,
 	};
 
-	if (!fields.title || !fields.summary || !fields.image_url || !fields.content) {
+	if (!fields.title || !fields.summary || (!fields.image_url && !hasPendingImage('news')) || !fields.content) {
 		msgEl.innerHTML = '<div class="create-error">Todos los campos son obligatorios (link es opcional).</div>';
 		return;
 	}
@@ -812,6 +1012,13 @@ $('#news-publish').addEventListener('click', async () => {
 	btn.disabled = true;
 	const method = editingNewsId ? 'PUT' : 'POST';
 	if (editingNewsId) fields.id = editingNewsId;
+	try {
+		fields.image_url = await uploadPendingImage('news');
+	} catch {
+		btn.disabled = false;
+		msgEl.innerHTML = '<div class="create-error">No se pudo cargar la imagen.</div>';
+		return;
+	}
 
 	const data = await api('noticias', { method, body: fields });
 	btn.disabled = false;
@@ -823,6 +1030,7 @@ $('#news-publish').addEventListener('click', async () => {
 	}
 
 	msgEl.innerHTML = `<div class="create-success">${editingNewsId ? 'Noticia actualizada' : 'Noticia publicada'} correctamente.</div>`;
+	resetImageUpload('news');
 	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
 
 	if (!editingNewsId) showNewsList();
@@ -985,6 +1193,7 @@ function getLanzFieldLabel(field) {
 
 // Lanzamientos form
 function showLanzForm(zoid, copy = false) {
+	resetImageUpload('release');
 	$('#lanz-list-view').classList.add('hidden');
 	$('#lanz-form-view').classList.remove('hidden');
 	$('#lanz-msg').innerHTML = '';
@@ -1076,6 +1285,7 @@ function getSelectOrCustom(selectId) {
 }
 
 function showLanzList() {
+	resetImageUpload('release');
 	$('#lanz-form-view').classList.add('hidden');
 	$('#lanz-list-view').classList.remove('hidden');
 	loadLanzamientos(0);
@@ -1144,6 +1354,7 @@ $('#lanz-image-preview-img').addEventListener('error', () => {
 $('#lanz-name').addEventListener('input', (e) => {
 	if (!editingLanzId) {
 		$('#lanz-slug').value = toSlug(e.target.value);
+		$('#lanz-slug').dispatchEvent(new Event('input', { bubbles: true }));
 	}
 });
 
@@ -1196,6 +1407,13 @@ $('#lanz-save').addEventListener('click', async () => {
 	btn.disabled = true;
 	const method = editingLanzId ? 'PUT' : 'POST';
 	if (editingLanzId) fields.id = editingLanzId;
+	try {
+		fields.image_url = await uploadPendingImage('release');
+	} catch {
+		btn.disabled = false;
+		msgEl.innerHTML = '<div class="create-error">No se pudo cargar la imagen.</div>';
+		return;
+	}
 
 	const data = await api('lanzamientos', { method, body: fields });
 	btn.disabled = false;
@@ -1207,6 +1425,7 @@ $('#lanz-save').addEventListener('click', async () => {
 	}
 
 	msgEl.innerHTML = `<div class="create-success">${editingLanzId ? 'Lanzamiento actualizado' : 'Lanzamiento creado'} correctamente.</div>`;
+	resetImageUpload('release');
 	setTimeout(() => { msgEl.innerHTML = ''; }, 3000);
 
 	if (!editingLanzId) showLanzList();

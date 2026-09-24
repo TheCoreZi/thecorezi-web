@@ -132,6 +132,31 @@
 							<span>Imagen URL *</span>
 							<input id="cur-image" type="text" placeholder="https://..." />
 						</label>
+						<div class="image-upload" id="cur-image-upload">
+							<div class="image-upload-zone" id="cur-image-paste" tabindex="0">
+								<span>Pega una imagen aqui con Ctrl+V o Cmd+V</span>
+								<button class="btn btn-secondary" id="cur-image-select" type="button">Seleccionar imagen</button>
+								<input accept="image/*" class="hidden" id="cur-image-file" type="file" />
+							</div>
+							<div class="hidden" id="cur-image-settings">
+								<label class="create-field">
+									<span>Carpeta en curiosity (opcional)</span>
+									<input id="cur-image-folder" type="text" placeholder="modelos/2026" />
+								</label>
+								<label class="create-field">
+									<span>Nombre del archivo</span>
+									<input id="cur-image-name" type="text" placeholder="liger-zero (extension automatica)" />
+								</label>
+							</div>
+							<div class="image-upload-pending hidden" id="cur-image-pending">
+								<img alt="Vista previa de la imagen pendiente" id="cur-image-pending-preview" />
+								<div>
+									<div class="image-upload-name" id="cur-image-pending-name"></div>
+									<button class="btn btn-secondary" id="cur-image-remove" type="button">Descartar imagen</button>
+								</div>
+							</div>
+							<div aria-live="polite" class="image-upload-status" id="cur-image-status"></div>
+						</div>
 						<label class="create-field">
 							<span>Contenido (Markdown) *</span>
 							<textarea id="cur-content" class="create-textarea" placeholder="Escribe el contenido en markdown..."></textarea>
@@ -187,6 +212,31 @@
 							<span>Imagen URL *</span>
 							<input id="news-image" type="text" placeholder="https://..." />
 						</label>
+						<div class="image-upload" id="news-image-upload">
+							<div class="image-upload-zone" id="news-image-paste" tabindex="0">
+								<span>Pega una imagen aqui con Ctrl+V o Cmd+V</span>
+								<button class="btn btn-secondary" id="news-image-select" type="button">Seleccionar imagen</button>
+								<input accept="image/*" class="hidden" id="news-image-file" type="file" />
+							</div>
+							<div class="hidden" id="news-image-settings">
+								<label class="create-field">
+									<span>Carpeta en news (opcional)</span>
+									<input id="news-image-folder" type="text" placeholder="lanzamientos/2026" />
+								</label>
+								<label class="create-field">
+									<span>Nombre del archivo</span>
+									<input id="news-image-name" type="text" placeholder="liger-zero (extension automatica)" />
+								</label>
+							</div>
+							<div class="image-upload-pending hidden" id="news-image-pending">
+								<img alt="Vista previa de la imagen pendiente" id="news-image-pending-preview" />
+								<div>
+									<div class="image-upload-name" id="news-image-pending-name"></div>
+									<button class="btn btn-secondary" id="news-image-remove" type="button">Descartar imagen</button>
+								</div>
+							</div>
+							<div aria-live="polite" class="image-upload-status" id="news-image-status"></div>
+						</div>
 						<label class="create-field">
 							<span>Link (opcional)</span>
 							<input id="news-link" type="text" placeholder="https://..." />
@@ -381,6 +431,7 @@
 									<option value="ADAMAS">Adamas Machina</option>
 									<option value="AZ">AZ</option>
 									<option value="HMM">HMM</option>
+									<option value="METAMOR VERSE">METAMOR VERSE</option>
 									<option value="RMZ">RMZ</option>
 									<option value="SPARKFIG">Spark Fig</option>
 									<option value="SYNERGENEX">SYNERGENEX</option>
@@ -473,6 +524,31 @@
 							<span>Imagen URL</span>
 							<input id="lanz-image" type="text" placeholder="https://..." />
 						</label>
+						<div class="image-upload" id="lanz-image-upload">
+							<div class="image-upload-zone" id="lanz-image-paste" tabindex="0">
+								<span>Pega una imagen aqui con Ctrl+V o Cmd+V</span>
+								<button class="btn btn-secondary" id="lanz-image-select" type="button">Seleccionar imagen</button>
+								<input accept="image/*" class="hidden" id="lanz-image-file" type="file" />
+							</div>
+							<div class="hidden" id="lanz-image-settings">
+								<label class="create-field">
+									<span>Carpeta en zoid-model-images (opcional)</span>
+									<input id="lanz-image-folder" type="text" placeholder="hmm/2026" />
+								</label>
+								<label class="create-field">
+									<span>Nombre del archivo</span>
+									<input id="lanz-image-name" type="text" placeholder="liger-zero (extension automatica)" />
+								</label>
+							</div>
+							<div class="image-upload-pending hidden" id="lanz-image-pending">
+								<img alt="Vista previa de la imagen pendiente" id="lanz-image-pending-preview" />
+								<div>
+									<div class="image-upload-name" id="lanz-image-pending-name"></div>
+									<button class="btn btn-secondary" id="lanz-image-remove" type="button">Descartar imagen</button>
+								</div>
+							</div>
+							<div aria-live="polite" class="image-upload-status" id="lanz-image-status"></div>
+						</div>
 						<div id="lanz-image-preview" class="lanz-image-preview hidden">
 							<img id="lanz-image-preview-img" alt="Preview" />
 						</div>
