@@ -172,7 +172,7 @@ async function uploadPendingImage(id) {
 	upload.status.className = 'image-upload-status';
 
 	try {
-		const data = await api('image-upload', {
+		const data = await api('dashboard', {
 			method: 'POST',
 			body: {
 				contentType: upload.file.type,
